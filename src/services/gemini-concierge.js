@@ -38,7 +38,7 @@ function buildSystemContext(data) {
   const zoomSummary = weeklyVirtualSchedule
     .map(
       (z) =>
-        `- ${z.title} (${z.cadence} · ${z.timeLabel}): Zoom ID ${z.zoomId}, Passcode ${z.zoomPasscode}${z.zoomUrl ? `, Direct Link: ${z.zoomUrl}` : ""}`
+        `- ${z.title} (${z.cadence} · ${z.timeLabel}): ${z.description}${z.zoomUrl ? ` Direct Join Zoom Link: ${z.zoomUrl}` : ""}`
     )
     .join("\n");
   const faqSummary = faqs.map((f) => `Q: ${f.q}\nA: ${f.a}`).join("\n\n");
@@ -48,7 +48,8 @@ function buildSystemContext(data) {
     .join("\n");
 
   return `You are the warm, knowledgeable, welcoming AI Church Concierge for **${church.name}** (${church.denomination}) in Somerville, MA.
-Always answer accurately using ONLY the verified church facts below. Be concise, encouraging, well-structured (use short bullet points where helpful), and hospitable to both first-time guests and church members.
+Always answer accurately using ONLY the verified church facts below. Be concise, encouraging, well-structured (use short bullet points starting with "• " rather than asterisks where helpful), and hospitable to both first-time guests and church members.
+Do not list raw Zoom IDs or passcodes unless a user explicitly asks for a numeric dial-in ID; instead direct them to click the 'Join Zoom ↗' button in the Events Slider or Counseling portal. Note that Abundant Life Groups were a summer-season series and are not part of the current Fall/Winter schedule.
 
 CHURCH CORE DETAILS:
 - Pastor: ${church.pastor}
@@ -59,13 +60,13 @@ CHURCH CORE DETAILS:
 - Sunday Schedule:
 ${sundaySchedule.map((s) => `  • ${s.time}: ${s.title} (${s.location}) — ${s.description}`).join("\n")}
 
-WEEKLY VIRTUAL GATHERINGS & ZOOM DETAILS:
+WEEKLY VIRTUAL GATHERINGS & ZOOM LINKS:
 ${zoomSummary}
 
 INTERACTIVE PUBLIC MINISTRIES:
 1. Tabitha's Closet: ${ministries.interactiveThree[0].description} Facebook: ${church.social.tabithasClosetFb}
 2. Shepherd's Kitchen (10th Year Food Pantry): ${ministries.interactiveThree[1].description} Next distribution: ${ministries.interactiveThree[1].nextDistribution}. Items: ${ministries.interactiveThree[1].items.join(", ")}. Facebook: ${church.social.shepherdsKitchenFb}
-3. Counseling Ministry: ${ministries.interactiveThree[2].description} Zoom ID: ${ministries.interactiveThree[2].zoomId}, Passcode: ${ministries.interactiveThree[2].zoomPasscode}. Official Intake Form: ${ministries.interactiveThree[2].intakeFormUrl}
+3. Counseling Ministry: ${ministries.interactiveThree[2].description} Direct Zoom Link: ${ministries.interactiveThree[2].zoomUrl}. Official Intake Form: ${ministries.interactiveThree[2].intakeFormUrl}
 
 RECENT EVENTS & FEED:
 ${upcomingSummary}
@@ -101,8 +102,8 @@ function deriveSuggestedActions(question, replyText) {
   if (combined.includes("sunday") || combined.includes("visit") || combined.includes("park") || combined.includes("wear") || combined.includes("address")) {
     actions.push({ label: "Plan a Sunday Visit", action: "scroll", target: "#visit-section" });
   }
-  if (combined.includes("zoom") || combined.includes("bible study") || combined.includes("prayer") || combined.includes("abundant")) {
-    actions.push({ label: "View Zoom Rooms", action: "scroll", target: "#zoom-hub" });
+  if (combined.includes("zoom") || combined.includes("bible study") || combined.includes("prayer")) {
+    actions.push({ label: "View Schedule & Join Zoom", action: "scroll", target: "#zoom-hub" });
   }
   if (combined.includes("give") || combined.includes("tithe") || combined.includes("cashapp") || combined.includes("venmo") || combined.includes("building")) {
     actions.push({ label: "Go to Giving", action: "scroll", target: "#give-section" });
@@ -126,11 +127,10 @@ function deterministicFallback(question, data) {
     return `**Tabitha's Closet** provides new and gently used seasonal clothing, coats, and essentials for families in need.\n\nYou can **request clothing assistance** by size/category or **schedule a gently used clothing drop-off** directly in the **Tabitha's Closet** interactive portal on this page, or visit our Tabitha's Closet Facebook page.`;
   }
   if (q.includes("counsel") || q.includes("intake")) {
-    const cm = data.ministries.interactiveThree[2];
-    return `Our **Counseling Ministry** (*"Pray on it, Pray over it, Pray through it"*) offers confidential, prayerful support with lay counselors.\n\n• **Monthly Gathering:** Last Friday of every month at **8:00 PM** on Zoom (ID: **${cm.zoomId}**, Passcode: **${cm.zoomPasscode}**).\n• **Confidential Intake:** You can submit a request right inside the **Counseling Ministry** interactive portal or open the official intake form.`;
+    return `Our **Counseling Ministry** (*"Pray on it, Pray over it, Pray through it"*) offers confidential, prayerful support with lay counselors.\n\n• **Monthly Gathering:** Last Friday of every month at **8:00 PM** on Zoom (click **Join Zoom ↗** in the Counseling Ministry portal or Events Slider).\n• **Confidential Intake:** You can submit a request right inside the **Counseling Ministry** interactive portal or open the official intake form.`;
   }
   if (q.includes("zoom") || q.includes("bible study") || q.includes("prayer") || q.includes("abundant")) {
-    return `Here are our weekly **Zoom Gatherings**:\n\n• **Monday Morning Prayer:** Mondays 6:00/6:30 AM · ID \`820 2250 7181\` · Passcode \`683745\`\n• **Weekly Prayer Line (Tue–Thu):** 7:00–7:10 AM · ID \`820 2250 7181\` · Passcode \`683745\`\n• **Tuesday Bible Study (Bishop Mitchell):** Tuesdays 7:30 PM · ID \`819 0334 5217\` · Passcode \`823028\`\n• **Abundant Life Groups:** Tue & Thu 7:30 PM (Passcode \`ALG2022\`)\n• **Friday Prayer / Counseling:** Fridays 8:00 PM · ID \`832 5047 3693\` · Passcode \`012849\``;
+    return `Here are our active **Weekly Virtual Zoom Gatherings**:\n\n• **Monday Morning Prayer with Pastor:** Every Monday · **6:00 AM – 6:30 AM**\n• **Weekly Morning Prayer Line:** Tue, Wed & Thu · **7:00 AM – 7:10 AM**\n• **Tuesday Night Bible Study (Bishop Mitchell):** Every Tuesday · **7:30 PM**\n• **Counseling Ministry Service:** Last Friday Monthly · **8:00 PM**\n• **Friday Virtual Prayer & Study ('The Bait of Satan'):** Fridays · **8:00 PM**\n\n*(Note: Abundant Life Groups were our summer-season series and are not part of the current Fall/Winter schedule.)* Click **View Schedule & Join Zoom** below to launch any room in one tap!`;
   }
   if (q.includes("give") || q.includes("tithe") || q.includes("cash") || q.includes("venmo") || q.includes("building")) {
     return `You can support **${church.name}** through:\n\n• **Cash App:** \`${church.giving.cashApp.handle}\`\n• **Venmo:** \`${church.giving.venmo.handle}\`\n• **2026 Building Fund Pledge:** Supports painting, handicap ramps, and sanctuary sound upgrades.\n• **In Person:** During Sunday worship.\n\nPlease include a memo (such as *tithe*, *offering*, or *building fund*). For non-cash donations, reach Administrator **${church.administrator}** at **${church.email}** or **${church.phone}**.`;

@@ -156,7 +156,7 @@
         <div class="container">
           <div class="section-head">
             <div>
-              <span class="eyebrow">CONTINUOUS COMMUNITY STREAM</span>
+              <span class="eyebrow">STAY CONNECTED, STAY PROTECTED</span>
               <h2 class="section-title">What's Happening at Mission</h2>
               <p class="section-sub">
                 Swipe or scroll continuously through upcoming services, ministry flyers, BAND updates, and outreach events. Add any item to your phone calendar in one tap.
@@ -177,17 +177,21 @@
 
           <div id="feed-grid" class="feed-grid"></div>
 
-          <!-- Weekly Virtual Zoom Rooms Hub -->
+          <!-- Interactive Event & Zoom Schedule Slider -->
           <div id="zoom-hub" class="zoom-hub">
             <div class="zoom-hub-head">
               <div>
-                <span class="eyebrow">MIDWEEK &amp; ABUNDANT LIFE GROUPS</span>
-                <h3>Weekly Virtual Gathering Rooms (Zoom)</h3>
-                <p>Click any passcode to copy, or launch the Zoom room directly. Abundant Life Groups meet Tuesdays &amp; Thursdays at 7:30 PM.</p>
+                <span class="eyebrow">PAST, TODAY &amp; UPCOMING SCHEDULE</span>
+                <h3>Recent &amp; Upcoming Events Slider</h3>
+                <p>Swipe or use the arrows to browse from last week's highlights on the left into today's and upcoming services and 1-click Zoom gatherings on the right.</p>
               </div>
-              <a href="https://forms.gle/JNwxSeQJh31TjbRw7" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Submit ALG Discussion Question ↗</a>
+              <div class="slider-controls" aria-label="Event timeline navigation">
+                <button id="slider-prev-btn" class="slider-nav-btn" type="button" aria-label="Scroll left to recent past events">← Past Events</button>
+                <span id="slider-status-pill" class="slider-status-pill">Today &amp; Upcoming →</span>
+                <button id="slider-next-btn" class="slider-nav-btn" type="button" aria-label="Scroll right to upcoming events">Upcoming →</button>
+              </div>
             </div>
-            <div id="zoom-cards-grid" class="zoom-grid"></div>
+            <div id="zoom-cards-grid" class="events-slider-track" role="region" aria-label="Church events timeline slider"></div>
           </div>
         </div>
       </section>
@@ -457,18 +461,17 @@
     <div class="chat-header">
       <div>
         <strong>✦ Mission Church AI Concierge</strong>
-        <small id="chat-model-badge">Grounded on live church info</small>
       </div>
       <button id="close-chat-btn" class="icon-close" type="button" aria-label="Close AI chat">✕</button>
     </div>
     <div id="chat-messages" class="chat-messages">
       <div class="chat-msg chat-msg-bot">
-        <p>Welcome to <strong>Mission Church of Our Lord Jesus Christ</strong>! Ask me anything about Sunday worship, Zoom Bible Study IDs, Shepherd's Kitchen food pantry, Tabitha's Closet, Counseling Ministry, or visiting 130 Highland Ave.</p>
+        <p>Welcome to <strong>Mission Church of Our Lord Jesus Christ</strong>! Ask me anything about Sunday worship, Zoom Bible Study &amp; Prayer, Shepherd's Kitchen food pantry, Tabitha's Closet, Counseling Ministry, or visiting 130 Highland Ave.</p>
       </div>
     </div>
     <div class="chat-prompts">
       <button class="prompt-chip" type="button" data-prompt="When is Shepherd's Kitchen food pantry and what should I bring?">Shepherd's Kitchen?</button>
-      <button class="prompt-chip" type="button" data-prompt="What are the Zoom IDs and passcodes for Bible Study and Abundant Life Groups?">Zoom Bible Study?</button>
+      <button class="prompt-chip" type="button" data-prompt="When is Tuesday Night Bible Study and Morning Prayer on Zoom?">Zoom Bible Study?</button>
       <button class="prompt-chip" type="button" data-prompt="How can I connect with Tabitha's Closet or Counseling Ministry?">Tabitha's &amp; Counseling</button>
       <button class="prompt-chip" type="button" data-prompt="I'm visiting this Sunday — where do I park and what should I wear?">First Visit FAQ</button>
     </div>

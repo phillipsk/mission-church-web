@@ -25,6 +25,7 @@ function esc(value) {
 function formatSimpleMarkdown(text) {
   const safe = esc(text);
   return safe
+    .replace(/(^|\n)[ \t]*[\*-][ \t]+/g, "$1• ")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/`([^`]+)`/g, "<code>$1</code>");
 }
@@ -189,12 +190,9 @@ function renderNextGathering() {
   const actionsEl = qs("#ng-actions");
   if (nextItem.type === "zoom") {
     actionsEl.innerHTML = `
-      <button type="button" class="btn btn-gold btn-sm" id="copy-next-zoom">Copy Zoom ID: ${esc(nextItem.zoomId)} (Code: ${esc(nextItem.zoomPasscode)})</button>
-      ${nextItem.zoomUrl ? `<a href="${esc(nextItem.zoomUrl)}" target="_blank" rel="noopener" class="btn btn-glass btn-sm">Launch Zoom ↗</a>` : ""}
+      ${nextItem.zoomUrl ? `<a href="${esc(nextItem.zoomUrl)}" target="_blank" rel="noopener" class="btn btn-gold btn-sm">Join Zoom ↗</a>` : ""}
+      <a href="#zoom-hub" class="btn btn-glass btn-sm">Full Schedule</a>
     `;
-    qs("#copy-next-zoom")?.addEventListener("click", () => {
-      copyText(`Zoom ID: ${nextItem.zoomId} | Passcode: ${nextItem.zoomPasscode}`, "Zoom details copied");
-    });
   } else {
     actionsEl.innerHTML = `
       <a href="${esc(state.data.church.directionsUrl)}" target="_blank" rel="noopener" class="btn btn-gold btn-sm">Get Directions ↗</a>
@@ -338,8 +336,8 @@ function renderFeed() {
           }
           <button type="button" class="chip-action feed-ics-btn" data-id="${esc(item.id)}">+ Calendar</button>
           ${
-            item.zoomId
-              ? `<button type="button" class="chip-action feed-zoom-btn" data-zoom="${esc(`Zoom ID: ${item.zoomId} | Passcode: ${item.zoomPasscode}`)}">Copy Zoom</button>`
+            item.zoomUrl
+              ? `<a href="${esc(item.zoomUrl)}" target="_blank" rel="noopener" class="chip-action chip-action-primary">Join Zoom ↗</a>`
               : ""
           }
           <button type="button" class="chip-action feed-ai-btn" data-title="${esc(item.title)}">✦ Ask AI</button>
@@ -355,10 +353,6 @@ function renderFeed() {
       const found = state.data.feed.find((f) => f.id === btn.dataset.id);
       if (found) downloadIcsEvent(found);
     });
-  });
-
-  qsa(".feed-zoom-btn", grid).forEach((btn) => {
-    btn.addEventListener("click", () => copyText(btn.dataset.zoom, "Zoom details copied"));
   });
 
   qsa(".feed-ai-btn", grid).forEach((btn) => {
@@ -390,24 +384,85 @@ function handleFeedAction(action) {
 
 function renderZoomHub() {
   const grid = qs("#zoom-cards-grid");
-  grid.innerHTML = state.data.weeklyVirtualSchedule
-    .map(
-      (z) => `
-    <article class="zoom-card">
-      <span class="zoom-cadence">${esc(z.cadence)} · ${esc(z.timeLabel)}</span>
-      <h4>${esc(z.title)}</h4>
-      <div class="zoom-creds">ID: ${esc(z.zoomId)}<br/>Passcode: ${esc(z.zoomPasscode)}</div>
-      <div class="zoom-card-actions">
-        <button type="button" class="chip-action copy-zoom-btn" data-copy="${esc(`Zoom ID: ${z.zoomId} | Passcode: ${z.zoomPasscode}`)}">Copy ID &amp; Code</button>
-        ${z.zoomUrl ? `<a href="${esc(z.zoomUrl)}" target="_blank" rel="noopener" class="chip-action chip-action-primary">Join Zoom ↗</a>` : ""}
-      </div>
-    </article>
-  `
-    )
+  const statusPill = qs("#slider-status-pill");
+  const prevBtn = qs("#slider-prev-btn");
+  const nextBtn = qs("#slider-next-btn");
+
+  const items =
+    state.data.timelineEvents && state.data.timelineEvents.length
+      ? state.data.timelineEvents
+      : state.data.weeklyVirtualSchedule.map((z) => ({
+          id: z.id,
+          state: "upcoming",
+          badge: `${z.cadence} · ${z.timeLabel}`,
+          title: z.title,
+          when: `${z.cadence} · ${z.timeLabel} · ${z.location}`,
+          summary: z.description,
+          zoomUrl: z.zoomUrl,
+        }));
+
+  grid.innerHTML = items
+    .map((item) => {
+      const stateClass = item.state === "past" ? "is-past" : item.state === "today" ? "is-today" : "is-upcoming";
+      return `
+      <article class="timeline-slide-card ${stateClass}" data-state="${esc(item.state || "upcoming")}">
+        <div class="timeline-card-top">
+          <span class="timeline-badge">${esc(item.badge)}</span>
+        </div>
+        <h4>${esc(item.title)}</h4>
+        <div class="timeline-when">${esc(item.when || "")}</div>
+        <p class="timeline-summary">${esc(item.summary || "")}</p>
+        <div class="timeline-card-actions">
+          ${
+            item.zoomUrl
+              ? `<a href="${esc(item.zoomUrl)}" target="_blank" rel="noopener" class="chip-action chip-action-primary">Join Zoom ↗</a>`
+              : item.ctaAction
+              ? `<button type="button" class="chip-action chip-action-primary timeline-cta-btn" data-action="${esc(item.ctaAction)}">${esc(item.ctaLabel || "Explore ↗")}</button>`
+              : ""
+          }
+          <button type="button" class="chip-action timeline-ai-btn" data-title="${esc(item.title)}">✦ Ask AI</button>
+        </div>
+      </article>
+    `;
+    })
     .join("");
 
-  qsa(".copy-zoom-btn", grid).forEach((b) => {
-    b.addEventListener("click", () => copyText(b.dataset.copy, "Copied"));
+  qsa(".timeline-cta-btn", grid).forEach((btn) => {
+    btn.addEventListener("click", () => handleFeedAction(btn.dataset.action));
+  });
+
+  qsa(".timeline-ai-btn", grid).forEach((btn) => {
+    btn.addEventListener("click", () => openChatAndAsk(`Tell me more about "${btn.dataset.title}" at Mission Church.`));
+  });
+
+  const updateSliderStatus = () => {
+    if (!statusPill) return;
+    const pastCards = qsa(".timeline-slide-card.is-past", grid);
+    const pastWidth = pastCards.reduce((sum, el) => sum + el.offsetWidth + 16, 0);
+    if (grid.scrollLeft < Math.max(40, pastWidth - 140)) {
+      statusPill.textContent = "← Last Week & Past";
+    } else if (grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 24) {
+      statusPill.textContent = "Dec Upcoming Events";
+    } else {
+      statusPill.textContent = "Today & Upcoming →";
+    }
+  };
+
+  if (prevBtn) {
+    prevBtn.onclick = () => grid.scrollBy({ left: -348, behavior: "smooth" });
+  }
+  if (nextBtn) {
+    nextBtn.onclick = () => grid.scrollBy({ left: 348, behavior: "smooth" });
+  }
+  grid.onscroll = updateSliderStatus;
+
+  requestAnimationFrame(() => {
+    const firstActive = qs(".timeline-slide-card.is-today", grid) || qs(".timeline-slide-card.is-upcoming", grid);
+    if (firstActive && firstActive.offsetLeft > 90) {
+      // Keep the rightmost portion of last week's event peeking on the left so upcoming flow leftwards cleanly
+      grid.scrollLeft = Math.max(0, firstActive.offsetLeft - 88);
+    }
+    updateSliderStatus();
   });
 }
 
@@ -553,10 +608,10 @@ function renderMinistryWorkspace() {
           <img src="${esc(ministry.imageUrl)}" alt="Mission Church Counseling and Prayer Ministry" class="mw-flyer" />
           <div class="zoom-creds">
             <strong>Last Friday Monthly · 8:00 PM (Next: Nov 20, 2026)</strong><br/>
-            Zoom ID: ${esc(ministry.zoomId)} · Passcode: ${esc(ministry.zoomPasscode)}
+            Virtual Gathering on Zoom — one tap below to join live.
           </div>
           <div class="hero-actions" style="margin-top: 12px; margin-bottom: 0;">
-            <a href="${esc(ministry.zoomUrl)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Join Counseling Zoom ↗</a>
+            <a href="${esc(ministry.zoomUrl)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Join Zoom ↗</a>
             <a href="${esc(ministry.intakeFormUrl)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Official Google Intake Form ↗</a>
           </div>
         </div>
@@ -858,7 +913,6 @@ async function submitChatMessage(text) {
     const json = await res.json();
     if (!res.ok) throw new Error(json.error || "Chat unavailable");
 
-    qs("#chat-model-badge").textContent = `Powered by ${json.modelUsed}`;
     state.chatHistory.push({ role: "user", text: trimmed }, { role: "model", text: json.reply });
 
     const actionsHtml = (json.suggestedActions || [])
@@ -1103,10 +1157,6 @@ async function init() {
 
   const res = await fetch("/api/bootstrap");
   state.data = await res.json();
-
-  if (state.data.geminiConfigured) {
-    qs("#chat-model-badge").textContent = "Gemini AI Connected · Grounded on live church data";
-  }
 
   if (state.data.isAdmin) {
     qs("#open-admin-btn")?.classList.remove("hidden");
