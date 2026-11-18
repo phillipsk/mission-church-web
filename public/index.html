@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission Church COOLJC · Somerville, MA</title>
+  <meta name="description" content="Mission Church of Our Lord Jesus Christ in Somerville, MA — Moving In Obedience: Possessing Our Blessings (Joshua 1:11). Worship shorts, live feed, interactive ministries, and AI church concierge." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <!-- Device Preview Shell (hidden inside ?preview=... iframes) -->
+  <div id="preview-bar" class="preview-bar">
+    <div class="preview-bar-inner">
+      <div class="preview-brand">
+        <span class="dot-live"></span>
+        <span>Mission Church Interactive MVP</span>
+        <span class="badge-muted">Somerville, MA</span>
+      </div>
+      <div class="viewport-switcher" role="group" aria-label="Form factor preview">
+        <button class="vp-btn active" data-vp="desktop" type="button">Desktop</button>
+        <button class="vp-btn" data-vp="tablet" type="button">Tablet · 768px</button>
+        <button class="vp-btn" data-vp="mobile" type="button">Mobile · 390px</button>
+      </div>
+      <div class="preview-actions">
+        <button id="open-admin-btn" class="pill-btn pill-btn-ghost" type="button">Admin &amp; AI Sync</button>
+        <button id="header-ai-btn" class="pill-btn pill-btn-gold" type="button">✦ Ask Mission AI</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Device Frame Container (used when Tablet or Mobile preview is toggled) -->
+  <div id="device-stage" class="device-stage hidden" aria-hidden="true">
+    <div id="device-bezel" class="device-bezel">
+      <div class="device-bezel-header">
+        <span id="device-label">Mobile Preview (390 × 844)</span>
+        <button id="exit-preview-btn" class="pill-btn pill-btn-sm" type="button">Return to Desktop ✕</button>
+      </div>
+      <iframe id="device-iframe" title="Responsive Church Preview"></iframe>
+    </div>
+  </div>
+
+  <!-- Main Continuous-Scroll Application -->
+  <div id="app-shell" class="app-shell">
+    <!-- Sticky Glass Navigation -->
+    <header class="site-header" id="top">
+      <div class="container header-inner">
+        <a href="#hero-section" class="brand-lockup">
+          <img src="/assets/photos/church_logo.png" alt="Mission Church COOLJC Logo" class="brand-logo" />
+          <div class="brand-text">
+            <span class="brand-title">MISSION CHURCH</span>
+            <span class="brand-sub">COOLJC · SOMERVILLE, MA</span>
+          </div>
+        </a>
+        <nav class="main-nav" aria-label="Primary scroll navigation">
+          <a href="#hero-section" class="nav-link active">Home</a>
+          <a href="#shorts-section" class="nav-link">Shorts</a>
+          <a href="#feed-section" class="nav-link">News &amp; Events</a>
+          <a href="#ministries-section" class="nav-link">Ministries</a>
+          <a href="#visit-section" class="nav-link">I'm New</a>
+          <a href="#gallery-section" class="nav-link">Gallery</a>
+          <a href="#give-section" class="nav-link">Give</a>
+        </nav>
+        <div class="header-cta-group">
+          <button id="mobile-menu-toggle" class="mobile-menu-btn" type="button" aria-label="Toggle menu">Menu ☰</button>
+          <a href="#visit-section" class="btn btn-primary btn-sm hide-mobile">Plan a Visit ↗</a>
+        </div>
+      </div>
+      <div id="mobile-drawer" class="mobile-drawer hidden">
+        <a href="#hero-section" class="mobile-nav-link">Home &amp; Schedule</a>
+        <a href="#shorts-section" class="mobile-nav-link">Worship Shorts &amp; Nuggets</a>
+        <a href="#feed-section" class="mobile-nav-link">News &amp; Events Feed</a>
+        <a href="#ministries-section" class="mobile-nav-link">Interactive Ministries</a>
+        <a href="#visit-section" class="mobile-nav-link">I'm New &amp; Visit Planner</a>
+        <a href="#gallery-section" class="mobile-nav-link">Photo Mosaic</a>
+        <a href="#give-section" class="mobile-nav-link">Give &amp; Building Fund</a>
+        <button id="mobile-admin-btn" class="btn btn-outline btn-sm" type="button">Admin &amp; AI Sync</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- SECTION 1: HERO & LIVE NEXT GATHERING -->
+      <section id="hero-section" class="hero-section">
+        <div class="hero-bg" style="background-image: url('/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg');"></div>
+        <div class="hero-scrim"></div>
+        <div class="container hero-content">
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <a href="https://ref.ly/Josh%201.11;kjv1900?t=biblia" target="_blank" rel="noopener" class="theme-badge">
+                <span class="badge-gold-dot"></span>
+                2026 THEME · JOSHUA 1:11 · MOVING IN OBEDIENCE
+              </a>
+              <h1 class="hero-title">Moving In Obedience.<br /><em>Possessing Our Blessings.</em></h1>
+              <p class="hero-lead">
+                Welcome to <strong>Mission Church of Our Lord Jesus Christ</strong> at 130 Highland Avenue in Somerville, MA —
+                a friendly, Spirit-filled church family led by <strong>Bishop Malcolm D. Mitchell</strong>. Scroll down like a live feed or chat with our AI concierge anytime.
+              </p>
+              <div class="hero-actions">
+                <a href="#visit-section" class="btn btn-gold">Plan Your Sunday Visit</a>
+                <button id="hero-ai-btn" class="btn btn-glass" type="button">✦ Ask Mission AI Anything</button>
+                <a href="#shorts-section" class="btn btn-outline-light">▶ Watch Worship Shorts</a>
+              </div>
+              <div class="sunday-strip">
+                <div class="sunday-pill"><strong>10:00 AM</strong> Morning Prayer</div>
+                <div class="sunday-pill"><strong>10:30 AM</strong> Sunday School &amp; Next Steps</div>
+                <div class="sunday-pill"><strong>12:00 PM</strong> Worship Service</div>
+              </div>
+            </div>
+
+            <aside class="next-gathering-card">
+              <div class="ng-header">
+                <span class="eyebrow-gold">LIVE CHURCH PULSE</span>
+                <span class="ng-status" id="ng-countdown">UPCOMING</span>
+              </div>
+              <h2 id="ng-title" class="ng-title">Loading next gathering...</h2>
+              <p id="ng-meta" class="ng-meta"></p>
+              <p id="ng-desc" class="ng-desc"></p>
+              <div id="ng-actions" class="ng-actions"></div>
+              <div class="quick-4-cards">
+                <a href="#visit-section" class="q4-item"><span>📍</span><div><strong>Plan Visit</strong><small>Times &amp; Parking</small></div></a>
+                <button type="button" class="q4-item" data-open-ministry="tabithas-closet"><span>🧥</span><div><strong>Tabitha's Closet</strong><small>Clothing Care</small></div></button>
+                <button type="button" class="q4-item" data-open-ministry="shepherds-kitchen"><span>🥗</span><div><strong>Shepherd's Kitchen</strong><small>1st Sat Pantry</small></div></button>
+                <button type="button" class="q4-item" data-open-ministry="counseling-ministry"><span>🕊️</span><div><strong>Counseling</strong><small>Confidential Care</small></div></button>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: WORSHIP SHORTS & MESSAGE NUGGETS STUDIO -->
+      <section id="shorts-section" class="shorts-section">
+        <div class="container">
+          <div class="section-head-dark">
+            <div>
+              <span class="eyebrow-gold">MESSAGE NUGGETS REIMAGINED · FACEBOOK REELS</span>
+              <h2 class="section-title-light">Worship Shorts &amp; Word Highlights</h2>
+              <p class="section-sub-light">
+                Recent 15-second to 2-minute moments straight from our Facebook sanctuary feed (Oct–Nov 2026), replacing static links with instant interactive video.
+              </p>
+            </div>
+            <div class="shorts-tabs" role="tablist">
+              <button class="tab-pill active" data-shorts-tab="facebook" type="button">Recent Facebook Shorts (8)</button>
+              <button class="tab-pill" data-shorts-tab="youtube" type="button">Classic YouTube Nuggets (3)</button>
+            </div>
+          </div>
+
+          <div id="shorts-carousel" class="shorts-carousel" aria-label="Worship shorts reel strip"></div>
+          <div id="youtube-nuggets-grid" class="youtube-grid hidden"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: CONTINUOUS NEWS & CALENDAR FEED + ZOOM HUB -->
+      <section id="feed-section" class="feed-section">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">CONTINUOUS COMMUNITY STREAM</span>
+              <h2 class="section-title">What's Happening at Mission</h2>
+              <p class="section-sub">
+                Swipe or scroll continuously through upcoming services, ministry flyers, BAND updates, and outreach events. Add any item to your phone calendar in one tap.
+              </p>
+            </div>
+            <div class="feed-search-wrap">
+              <input id="feed-search" type="search" class="search-input" placeholder="Search events, Zoom, flyers..." aria-label="Search church news and events" />
+            </div>
+          </div>
+
+          <div class="filter-row" id="feed-filters" role="group" aria-label="Filter community feed">
+            <button class="filter-chip active" data-category="All" type="button">All Updates</button>
+            <button class="filter-chip" data-category="Upcoming Events" type="button">Upcoming Events</button>
+            <button class="filter-chip" data-category="Outreach & Pantry" type="button">Outreach &amp; Pantry</button>
+            <button class="filter-chip" data-category="Zoom Gatherings" type="button">Zoom Gatherings</button>
+            <button class="filter-chip" data-category="Youth & Fellowship" type="button">Youth &amp; Fellowship</button>
+          </div>
+
+          <div id="feed-grid" class="feed-grid"></div>
+
+          <!-- Weekly Virtual Zoom Rooms Hub -->
+          <div id="zoom-hub" class="zoom-hub">
+            <div class="zoom-hub-head">
+              <div>
+                <span class="eyebrow">MIDWEEK &amp; ABUNDANT LIFE GROUPS</span>
+                <h3>Weekly Virtual Gathering Rooms (Zoom)</h3>
+                <p>Click any passcode to copy, or launch the Zoom room directly. Abundant Life Groups meet Tuesdays &amp; Thursdays at 7:30 PM.</p>
+              </div>
+              <a href="https://forms.gle/JNwxSeQJh31TjbRw7" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Submit ALG Discussion Question ↗</a>
+            </div>
+            <div id="zoom-cards-grid" class="zoom-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: INTERACTIVE PUBLIC MINISTRIES HUB + PRAYER WALL -->
+      <section id="ministries-section" class="ministries-section">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">SERVING SOMERVILLE &amp; BEYOND</span>
+              <h2 class="section-title">Interactive Public Ministries</h2>
+              <p class="section-sub">
+                Connect directly with <strong>Tabitha's Closet</strong>, <strong>Shepherd's Kitchen</strong>, and our <strong>Counseling Ministry</strong>—request care, volunteer, or reserve a pantry reminder right here.
+              </p>
+            </div>
+          </div>
+
+          <div id="interactive-ministries-grid" class="ministry-spotlight-grid"></div>
+
+          <!-- Inline Interactive Ministry Workspace -->
+          <div id="ministry-workspace" class="ministry-workspace">
+            <div class="mw-tabs" role="tablist">
+              <button class="mw-tab active" data-mw="shepherds-kitchen" type="button">🥗 Shepherd's Kitchen (Dec 5)</button>
+              <button class="mw-tab" data-mw="tabithas-closet" type="button">🧥 Tabitha's Closet</button>
+              <button class="mw-tab" data-mw="counseling-ministry" type="button">🕊️ Counseling Ministry</button>
+            </div>
+            <div id="ministry-workspace-body" class="mw-body"></div>
+          </div>
+
+          <!-- Live Interactive Prayer Wall -->
+          <div class="prayer-wall-panel">
+            <div class="pw-grid">
+              <div class="pw-form-col">
+                <span class="eyebrow-gold">1 JOHN 5:14 · PRAYER MINISTRY</span>
+                <h3>Mission Church Prayer Wall</h3>
+                <p>
+                  "And this is the confidence that we have in him, that, if we ask any thing according to his will, he heareth us."
+                  Share a request so our congregation and Prayer Ministry can lift you up—or tap <strong>🙏 Pray for This</strong> on someone else's need.
+                </p>
+                <form id="prayer-form" class="stacked-form">
+                  <div class="form-row-2">
+                    <label class="field">
+                      <span>Your Name (or First Name)</span>
+                      <input type="text" name="name" required minlength="2" maxlength="60" placeholder="e.g., Sister Denise" />
+                    </label>
+                    <label class="field">
+                      <span>Focus</span>
+                      <select name="category">
+                        <option value="Prayer & Peace">Prayer &amp; Peace</option>
+                        <option value="Healing & Health">Healing &amp; Health</option>
+                        <option value="Family & Provision">Family &amp; Provision</option>
+                        <option value="Praise Report">Praise Report</option>
+                      </select>
+                    </label>
+                  </div>
+                  <label class="field">
+                    <span>How can we pray with you?</span>
+                    <textarea name="details" rows="3" required minlength="5" maxlength="500" placeholder="Share your prayer request or praise report..."></textarea>
+                  </label>
+                  <button type="submit" class="btn btn-gold">Post to Prayer Wall</button>
+                  <p id="prayer-form-status" class="form-status" aria-live="polite"></p>
+                </form>
+              </div>
+              <div class="pw-feed-col">
+                <div class="pw-feed-header">
+                  <h4>Recent Requests</h4>
+                  <span class="badge-soft">Sunday 10 AM · Mon 6:30 AM · Tue–Thu 7 AM</span>
+                </div>
+                <div id="prayer-wall-list" class="prayer-wall-list"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- All 11 Church Ministries Directory -->
+          <div class="all-ministries-wrap">
+            <h3 class="sub-section-heading">All 11 Mission Church Ministries &amp; Departments</h3>
+            <div id="all-ministries-grid" class="dept-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5: I'M NEW — PASTOR MITCHELL, SUNDAY TIMELINE, VISIT PLANNER & 8 FAQS -->
+      <section id="visit-section" class="visit-section">
+        <div class="container">
+          <div class="pastor-welcome-card">
+            <div class="pastor-photo-wrap">
+              <img src="/assets/photos/pastor_mitchell.jpg" alt="Bishop / Pastor Malcolm D. Mitchell" class="pastor-photo" />
+            </div>
+            <div class="pastor-copy">
+              <span class="eyebrow">A WELCOME FROM PASTOR MALCOLM D. MITCHELL</span>
+              <h2 class="section-title">We Would Love to Meet You!</h2>
+              <blockquote class="pastor-quote">
+                "We are excited that you are considering visiting Mission Church. We want to dispel any reservations you might have before you come by informing you as much as we can, so that you can come and worship Jesus."
+              </blockquote>
+              <p>
+                We all had a 'first day' at church—you'll find we are a friendly congregation. Pastor Mitchell is available after every worship service to personally greet guests, and our ushers and greeters are ready to welcome you at <strong>130 Highland Avenue, Somerville, MA 02143</strong>.
+              </p>
+              <div class="pastor-cta-row">
+                <a href="https://goo.gl/maps/NGivzYmXp2YyWqzs9" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Get Google Maps Directions ↗</a>
+                <a href="tel:+16178636614" class="btn btn-outline btn-sm">Call 617-863-6614</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="visit-grid">
+            <div class="visit-planner-card">
+              <span class="eyebrow">YOUR FIRST SUNDAY</span>
+              <h3>Plan Your Visit</h3>
+              <p class="muted">Let our ushers and Pastor Mitchell know you're coming—or save a personal note for your Sunday morning.</p>
+              <form id="visit-form" class="stacked-form">
+                <label class="field">
+                  <span>Your Name *</span>
+                  <input type="text" name="name" required minlength="2" maxlength="80" placeholder="Full name or family name" />
+                </label>
+                <div class="form-row-2">
+                  <label class="field">
+                    <span>Number of Guests</span>
+                    <input type="number" name="partySize" min="1" max="25" value="2" />
+                  </label>
+                  <label class="field">
+                    <span>Target Sunday</span>
+                    <input type="date" name="visitDate" />
+                  </label>
+                </div>
+                <label class="field">
+                  <span>Email or Phone (optional, if you'd like a greeter to meet you)</span>
+                  <input type="text" name="contact" maxlength="120" placeholder="you@example.com or 617-555-0199" />
+                </label>
+                <label class="field">
+                  <span>Questions, Parking, or Accessibility Notes</span>
+                  <textarea name="note" rows="3" maxlength="500" placeholder="e.g., Visiting with 2 kids for 10:30 AM Sunday School, or need lift access..."></textarea>
+                </label>
+                <button type="submit" class="btn btn-primary">Confirm My Visit Plan</button>
+                <p id="visit-form-status" class="form-status" aria-live="polite"></p>
+              </form>
+            </div>
+
+            <div class="faq-col">
+              <span class="eyebrow">EVERYTHING YOU NEED TO KNOW</span>
+              <h3>First-Time Visitor FAQs</h3>
+              <input id="faq-search" type="search" class="search-input" placeholder="Search FAQs (parking, dress, Bible, accessibility...)" aria-label="Search visitor FAQs" />
+              <div id="faq-list" class="faq-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: CURATED COMMUNITY PHOTO MOSAIC -->
+      <section id="gallery-section" class="gallery-section">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">SYNCED FROM OUR BAND APP ALBUMS</span>
+              <h2 class="section-title">Life Together at Mission</h2>
+              <p class="section-sub">Real moments of worship, community outreach, family fellowship, and next-generation joy.</p>
+            </div>
+            <a href="https://www.band.us/n/ada0bcJfJ1f9z" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Open Full Church BAND ↗</a>
+          </div>
+          <div class="filter-row" id="gallery-filters">
+            <button class="filter-chip active" data-gallery="All" type="button">All Moments</button>
+            <button class="filter-chip" data-gallery="Unity" type="button">Unity &amp; Worship</button>
+            <button class="filter-chip" data-gallery="Compassion" type="button">Compassion &amp; Outreach</button>
+            <button class="filter-chip" data-gallery="Fellowship" type="button">Fellowship &amp; Family</button>
+            <button class="filter-chip" data-gallery="Joy" type="button">Joy, Choir &amp; Youth</button>
+          </div>
+          <div id="gallery-grid" class="gallery-grid"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 7: GENEROSITY & 2026 BUILDING FUND -->
+      <section id="give-section" class="give-section">
+        <div class="container">
+          <div class="give-shell">
+            <div class="give-intro">
+              <span class="eyebrow-gold">LUKE 6:38 (KJV) · GENEROSITY WITH PURPOSE</span>
+              <h2 class="section-title-light">Give, Tithe &amp; Support the 2026 Building Fund</h2>
+              <p class="section-sub-light">
+                "Give, and it shall be given unto you; good measure, pressed down, and shaken together, and running over..."
+                Offerings and Bishop Pastor Mitchell tithes use the same secure church accounts—just add a memo (e.g., <em>tithe</em>, <em>offering</em>, or <em>building fund</em>).
+              </p>
+            </div>
+            <div class="give-cards">
+              <div class="give-card">
+                <span class="give-tag">CASH APP</span>
+                <h3>$missionchurch238</h3>
+                <p>Church offerings, Sunday worship gifts, and Bishop Pastor Mitchell tithes (include memo).</p>
+                <a href="https://cash.app/$missionchurch238" target="_blank" rel="noopener" class="btn btn-gold btn-sm">Open Cash App ↗</a>
+              </div>
+              <div class="give-card">
+                <span class="give-tag">VENMO</span>
+                <h3>@Mission-ChurchofChrist</h3>
+                <p>Quick mobile giving for tithes, missions, Shepherd's Kitchen, and community care.</p>
+                <a href="https://account.venmo.com/u/Mission-ChurchofChrist" target="_blank" rel="noopener" class="btn btn-gold btn-sm">Open Venmo ↗</a>
+              </div>
+              <div class="give-card">
+                <span class="give-tag">2026 INITIATIVE</span>
+                <h3>Building Fund Pledge</h3>
+                <p>Supports painting, facility upgrades, handicap ramps, and sanctuary sound equipment.</p>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSemoHVA0noqAJ74iNJIcZ-tqP_A0BRWd4g0Qv9D-BbWytbqPg/viewform" target="_blank" rel="noopener" class="btn btn-glass btn-sm">Complete Pledge Form ↗</a>
+              </div>
+            </div>
+            <div class="give-footer-note">
+              <span><strong>Non-Cash &amp; In-Person Offerings:</strong> Cash/check welcome during Sunday worship, or contact Church Administrator <strong>Marshina Mitchell</strong> at <a href="mailto:missionchurch1@gmail.com">missionchurch1@gmail.com</a> / <a href="tel:+16178636614">617-863-6614</a>.</span>
+              <span><strong>Apostle Forehand Honorarium:</strong> Cash App <code>$BishopDarylForehand</code> · Venmo <a href="https://venmo.com/Daryl-Forehand" target="_blank" rel="noopener">@Daryl-Forehand ↗</a></span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand-lockup footer-brand">
+            <img src="/assets/photos/church_logo.png" alt="Mission Church Logo" class="brand-logo" />
+            <div>
+              <strong class="brand-title-light">Mission Church Of Our Lord Jesus Christ</strong>
+              <p class="footer-addr">130 Highland Avenue · Somerville, MA 02143</p>
+            </div>
+          </div>
+          <p class="footer-note">Wheelchair accessible building with accessible restrooms, elevators, and lifts. Lots on both sides and across the street.</p>
+        </div>
+        <div>
+          <h4>Connect &amp; Office</h4>
+          <ul class="footer-links">
+            <li><a href="mailto:missionchurch1@gmail.com">missionchurch1@gmail.com</a></li>
+            <li><a href="tel:+16178636614">617-863-6614</a></li>
+            <li><a href="https://goo.gl/maps/NGivzYmXp2YyWqzs9" target="_blank" rel="noopener">Google Maps Directions ↗</a></li>
+            <li><a href="https://missionchurchcooljc.com/" target="_blank" rel="noopener">Official Site Archive ↗</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Social &amp; Channels</h4>
+          <ul class="footer-links">
+            <li><a href="https://www.facebook.com/missionchurchsomervillema" target="_blank" rel="noopener">Facebook (@missionchurchsomervillema) ↗</a></li>
+            <li><a href="https://www.instagram.com/missionchurchofchrist/" target="_blank" rel="noopener">Instagram (@missionchurchofchrist) ↗</a></li>
+            <li><a href="https://www.youtube.com/channel/UC-WFNdLaIzvjKeXmXTfOf3A" target="_blank" rel="noopener">YouTube Channel ↗</a></li>
+            <li><a href="https://www.band.us/n/ada0bcJfJ1f9z" target="_blank" rel="noopener">Church BAND App ↗</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span>Mission Church COOLJC · Somerville, MA · 2026 Redesign Prototype</span>
+        <span>Powered by Google Cloud Run &amp; Gemini AI</span>
+      </div>
+    </footer>
+
+    <!-- Mobile Bottom App Bar (visible on small screens) -->
+    <nav class="mobile-bottom-bar" aria-label="Mobile quick bar">
+      <a href="#hero-section" class="mbb-item"><span>⛪</span><small>Home</small></a>
+      <a href="#shorts-section" class="mbb-item"><span>▶</span><small>Shorts</small></a>
+      <a href="#feed-section" class="mbb-item"><span>📅</span><small>Feed</small></a>
+      <a href="#ministries-section" class="mbb-item"><span>🤝</span><small>Serve</small></a>
+      <button id="mbb-ai-btn" class="mbb-item mbb-ai" type="button"><span>✦</span><small>Ask AI</small></button>
+    </nav>
+  </div>
+
+  <!-- FLOATING AI CONCIERGE DRAWER -->
+  <button id="chat-fab" class="chat-fab" type="button" aria-label="Ask Mission Church AI Concierge">
+    <span class="chat-fab-spark">✦</span>
+    <span>Ask Mission AI</span>
+  </button>
+
+  <aside id="chat-drawer" class="chat-drawer hidden" aria-label="Mission Church AI Concierge">
+    <div class="chat-header">
+      <div>
+        <strong>✦ Mission Church AI Concierge</strong>
+        <small id="chat-model-badge">Grounded on live church info</small>
+      </div>
+      <button id="close-chat-btn" class="icon-close" type="button" aria-label="Close AI chat">✕</button>
+    </div>
+    <div id="chat-messages" class="chat-messages">
+      <div class="chat-msg chat-msg-bot">
+        <p>Welcome to <strong>Mission Church of Our Lord Jesus Christ</strong>! Ask me anything about Sunday worship, Zoom Bible Study IDs, Shepherd's Kitchen food pantry, Tabitha's Closet, Counseling Ministry, or visiting 130 Highland Ave.</p>
+      </div>
+    </div>
+    <div class="chat-prompts">
+      <button class="prompt-chip" type="button" data-prompt="When is Shepherd's Kitchen food pantry and what should I bring?">Shepherd's Kitchen?</button>
+      <button class="prompt-chip" type="button" data-prompt="What are the Zoom IDs and passcodes for Bible Study and Abundant Life Groups?">Zoom Bible Study?</button>
+      <button class="prompt-chip" type="button" data-prompt="How can I connect with Tabitha's Closet or Counseling Ministry?">Tabitha's &amp; Counseling</button>
+      <button class="prompt-chip" type="button" data-prompt="I'm visiting this Sunday — where do I park and what should I wear?">First Visit FAQ</button>
+    </div>
+    <form id="chat-form" class="chat-input-row">
+      <input id="chat-input" type="text" placeholder="Ask about service times, ministries, events..." maxlength="500" required />
+      <button type="submit" class="btn btn-primary btn-sm">Send</button>
+    </form>
+  </aside>
+
+  <!-- ADMIN & CLOUD SYNC DRAWER -->
+  <aside id="admin-drawer" class="admin-drawer hidden" aria-label="Admin and AI Ingestion Sync">
+    <div class="admin-header">
+      <div>
+        <strong>Admin &amp; AI Sync Pipeline</strong>
+        <small>Gmail (missionchurch1@gmail.com → philipskevin386@gmail.com) · BAND App · Flyers</small>
+      </div>
+      <button id="close-admin-btn" class="icon-close" type="button" aria-label="Close admin panel">✕</button>
+    </div>
+    <div class="admin-body">
+      <div class="sync-status-grid" id="admin-sync-cards"></div>
+      <div class="admin-actions-row">
+        <button id="trigger-sync-btn" class="btn btn-primary btn-sm" type="button">↻ Run Gmail &amp; BAND Sync</button>
+        <button id="scan-flyers-btn" class="btn btn-gold btn-sm" type="button">✦ Scan Local Flyers with Gemini Vision</button>
+      </div>
+      <div id="admin-sync-output" class="admin-output hidden"></div>
+      <div class="admin-submissions">
+        <h4>Recent Ministry &amp; Visit Submissions</h4>
+        <div id="admin-submissions-list" class="submissions-list"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- PHOTO LIGHTBOX MODAL -->
+  <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="Photo preview">
+    <button id="close-lightbox" class="lightbox-close" type="button" aria-label="Close photo">✕</button>
+    <div class="lightbox-content">
+      <img id="lightbox-img" src="" alt="" />
+      <div class="lightbox-caption">
+        <strong id="lightbox-title"></strong>
+        <span id="lightbox-album"></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js" type="module"></script>
+</body>
+</html>
