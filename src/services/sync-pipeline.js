@@ -130,7 +130,7 @@ async function fetchGmailTokenIfConfigured() {
   return data.access_token || "";
 }
 
-export async function runGmailSync({ targetInbox = "philipskevin386@gmail.com", senderFilter = "missionchurch1@gmail.com" } = {}) {
+export async function runGmailSync({ targetInbox = "phillipskevin386@gmail.com", senderFilter = "missionchurch1@gmail.com" } = {}) {
   const token = await fetchGmailTokenIfConfigured();
   if (!token) {
     return {
@@ -138,7 +138,7 @@ export async function runGmailSync({ targetInbox = "philipskevin386@gmail.com", 
       targetInbox,
       senderFilter,
       messagesFound: 0,
-      note: "Set GMAIL_ACCESS_TOKEN or GMAIL_CLIENT_ID + GMAIL_CLIENT_SECRET + GMAIL_REFRESH_TOKEN to pull live emails from missionchurch1@gmail.com into philipskevin386@gmail.com. Local Downloads flyer scanning remains active.",
+      note: "Set GMAIL_ACCESS_TOKEN or GMAIL_CLIENT_ID + GMAIL_CLIENT_SECRET + GMAIL_REFRESH_TOKEN to pull live emails from missionchurch1@gmail.com into phillipskevin386@gmail.com. Local Downloads flyer scanning remains active.",
     };
   }
 
@@ -153,7 +153,7 @@ export async function runGmailSync({ targetInbox = "philipskevin386@gmail.com", 
       targetInbox,
       senderFilter,
       messagesFound: 0,
-      note: "Gmail API returned a non-200 status; verify OAuth scope gmail.readonly for philipskevin386@gmail.com.",
+      note: "Gmail API returned a non-200 status; verify OAuth scope gmail.readonly for phillipskevin386@gmail.com.",
     };
   }
   const listData = await listRes.json();

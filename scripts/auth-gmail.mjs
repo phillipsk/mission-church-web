@@ -68,9 +68,9 @@ async function main() {
   authUrl.searchParams.set("scope", "https://www.googleapis.com/auth/gmail.readonly");
   authUrl.searchParams.set("access_type", "offline");
   authUrl.searchParams.set("prompt", "consent");
-  authUrl.searchParams.set("login_hint", "philipskevin386@gmail.com");
+  authUrl.searchParams.set("login_hint", "phillipskevin386@gmail.com");
 
-  console.log("=== Gmail Read-Only OAuth Setup (philipskevin386@gmail.com) ===");
+  console.log("=== Gmail Read-Only OAuth Setup (phillipskevin386@gmail.com) ===");
   console.log(`Listening for OAuth callback on ${REDIRECT_URI}`);
   console.log("AUTHORIZATION_URL=" + authUrl.toString());
 

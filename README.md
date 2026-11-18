@@ -20,7 +20,7 @@ npm start
 
 - **Refresh Facebook Shorts (Reels) locally:** `npm run sync:shorts`
 - **Run Gmail + BAND + Flyer Vision sync:** `npm run sync:pipeline`
-- **Authorize Gmail API (`philipskevin386@gmail.com` reading `from:missionchurch1@gmail.com`):** `npm run auth:gmail`
+- **Authorize Gmail API (`phillipskevin386@gmail.com` reading `from:missionchurch1@gmail.com`):** `npm run auth:gmail`
 
 ## Deploying to Google Cloud Run
 
