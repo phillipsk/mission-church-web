@@ -54,6 +54,18 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --role="roles/secretmanager.secretAccessor" \
   --quiet >/dev/null
 
+SECRETS_ARG="GEMINI_API_KEY=MISSION_CHURCH_GEMINI_API_KEY:latest"
+for pair in \
+  "GMAIL_CLIENT_ID=MISSION_GMAIL_CLIENT_ID" \
+  "GMAIL_CLIENT_SECRET=MISSION_GMAIL_CLIENT_SECRET" \
+  "GMAIL_REFRESH_TOKEN=MISSION_GMAIL_REFRESH_TOKEN"; do
+  env_key="${pair%%=*}"
+  sec_name="${pair#*=}"
+  if gcloud secrets describe "$sec_name" >/dev/null 2>&1; then
+    SECRETS_ARG="${SECRETS_ARG},${env_key}=${sec_name}:latest"
+  fi
+done
+
 echo "==> Deploying $SERVICE_NAME to Cloud Run..."
 gcloud run deploy "$SERVICE_NAME" \
   --source "$PROJECT_DIR" \
@@ -64,7 +76,7 @@ gcloud run deploy "$SERVICE_NAME" \
   --memory=512Mi \
   --cpu=1 \
   --set-env-vars="GEMINI_MODEL=gemini-2.5-flash" \
-  --set-secrets="GEMINI_API_KEY=MISSION_CHURCH_GEMINI_API_KEY:latest"
+  --set-secrets="$SECRETS_ARG"
 
 SERVICE_URL="$(gcloud run services describe "$SERVICE_NAME" --region "$REGION" --format='value(status.url)')"
 echo "Deployed Mission Church Web & AI Concierge at: $SERVICE_URL"
