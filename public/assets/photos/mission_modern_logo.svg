@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 112" width="260" height="112" role="img" aria-label="Mission Church Modern Logo - Lord Faith Baptism">
+  <defs>
+    <radialGradient id="mglow" cx="30%" cy="48%" r="36%">
+      <stop offset="0%" stop-color="#f5e67c" stop-opacity="0.65" />
+      <stop offset="55%" stop-color="#a8c97f" stop-opacity="0.28" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="oneGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b49a2b" />
+      <stop offset="100%" stop-color="#6b7f2b" />
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="256" height="108" rx="18" fill="#ffffff" />
+  <circle cx="62" cy="52" r="44" fill="url(#mglow)" />
+  <text x="34" y="66" font-family="Georgia, 'Times New Roman', serif" font-size="38" font-weight="700" letter-spacing="3.5" fill="#1e1720">MISSION</text>
+  <text x="30" y="72" font-family="Georgia, 'Times New Roman', serif" font-size="60" font-weight="700" fill="url(#oneGrad)" opacity="0.92">1</text>
+  <line x1="34" y1="78" x2="226" y2="78" stroke="#7e151c" stroke-width="1.4" opacity="0.7" />
+  <text x="130" y="95" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="11.5" font-weight="700" letter-spacing="3.2" fill="#4a0d13">LORD | FAITH | BAPTISM</text>
+</svg>

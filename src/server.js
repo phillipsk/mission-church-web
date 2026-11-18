@@ -26,6 +26,14 @@ import {
   verifyApprovalToken,
   watchAndPrepareDrafts,
 } from "./services/sync-pipeline.js";
+import {
+  buildWpAdminAutoPublishScript,
+  getGeneratedMediaFile,
+  isWordPressConfigured,
+  parseMonthlyCalendarOrEmail,
+  prepareDualEventImages,
+  publishDraftToWordPress,
+} from "./services/wordpress-publisher.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, "..");
@@ -110,9 +118,22 @@ async function readJsonBody(req, maxBytes = 1_000_000) {
   return raw ? JSON.parse(raw) : {};
 }
 
+const SPA_ROUTES = new Set([
+  "/",
+  "/shorts",
+  "/shepherds-kitchen",
+  "/ministries",
+  "/prayer-wall",
+  "/visit",
+  "/give",
+]);
+
 function serveStaticFile(req, res, urlPath) {
   let cleanPath = decodeURIComponent(urlPath.split("?")[0]);
-  if (cleanPath === "/") cleanPath = "/index.html";
+  if (cleanPath.length > 1 && cleanPath.endsWith("/")) {
+    cleanPath = cleanPath.slice(0, -1);
+  }
+  if (SPA_ROUTES.has(cleanPath)) cleanPath = "/index.html";
   if (cleanPath === "/login") cleanPath = "/login.html";
 
   const resolvedPath = path.resolve(PUBLIC_DIR, "." + cleanPath);
@@ -157,6 +178,7 @@ function serveStaticFile(req, res, urlPath) {
     "Content-Type": contentType,
     "Content-Length": stat.size,
     "Accept-Ranges": "bytes",
+    ...(ext.match(/^\.(png|jpe?g|webp|svg)$/) ? { "Access-Control-Allow-Origin": "https://missionchurchcooljc.com" } : {}),
   });
   fs.createReadStream(targetPath).pipe(res);
 }
@@ -297,7 +319,25 @@ export function createAppServer() {
           persistenceBackend: store._persistence,
           curatedPhotos,
           geminiConfigured: Boolean(resolveGeminiApiKey()),
+          wordpressConfigured: isWordPressConfigured(),
         });
+      }
+
+      if (pathname.startsWith("/api/media/generated/") && method === "GET") {
+        const fileName = pathname.slice("/api/media/generated/".length);
+        const filePath = getGeneratedMediaFile(fileName);
+        if (!filePath) {
+          return sendJson(res, 404, { error: "Generated image not found." });
+        }
+        const ext = path.extname(filePath).toLowerCase();
+        const ct = MIME_TYPES[ext] || "image/png";
+        res.writeHead(200, {
+          "Content-Type": ct,
+          "Cache-Control": "public, max-age=3600",
+          "Access-Control-Allow-Origin": "https://missionchurchcooljc.com",
+        });
+        fs.createReadStream(filePath).pipe(res);
+        return;
       }
 
       if (pathname === "/api/chat" && method === "POST") {
@@ -481,6 +521,147 @@ export function createAppServer() {
         }
       }
 
+      if (pathname === "/api/admin/wp-bridge.js" && method === "GET") {
+        const id = url.searchParams.get("id") || "";
+        const img = url.searchParams.get("img") === "ai" ? "ai" : "original";
+        const mode = url.searchParams.get("mode") === "publish" ? "publish" : "draft";
+        const token = url.searchParams.get("token") || "";
+        const authOk =
+          isAuthorizedAdmin(req) ||
+          verifyApprovalToken(id, `wp:${img}:${mode}`, token) ||
+          verifyApprovalToken(id, "wp:bridge", token);
+        if (!authOk) {
+          res.writeHead(403, {
+            "Content-Type": "application/javascript; charset=utf-8",
+            "Access-Control-Allow-Origin": "https://missionchurchcooljc.com",
+          });
+          res.end(`throw new Error("Invalid bridge token");`);
+          return;
+        }
+        const store = await loadStore();
+        const draft = (store.pendingPosts || []).find((p) => p.id === id);
+        if (!draft) {
+          res.writeHead(404, {
+            "Content-Type": "application/javascript; charset=utf-8",
+            "Access-Control-Allow-Origin": "https://missionchurchcooljc.com",
+          });
+          res.end(`throw new Error("Draft not found");`);
+          return;
+        }
+        const js = buildWpAdminAutoPublishScript({
+          draft,
+          imageChoice: img,
+          wpStatus: mode,
+          publicBaseUrl,
+        });
+        res.writeHead(200, {
+          "Content-Type": "application/javascript; charset=utf-8",
+          "Cache-Control": "no-store",
+          "Access-Control-Allow-Origin": "https://missionchurchcooljc.com",
+        });
+        res.end(js);
+        return;
+      }
+
+      if (pathname === "/api/admin/wp-approved-queue" && method === "GET") {
+        const store = await loadStore();
+        const queued = (store.pendingPosts || [])
+          .filter((p) => p.status === "approved_for_wp")
+          .map((d) => {
+            const img = d.preferredImage || "original";
+            const mode = d.preferredWpMode || "draft";
+            const tok = verifyApprovalToken(d.id, "wp:bridge", d.bridgeToken || "")
+              ? d.bridgeToken
+              : null;
+            return {
+              id: d.id,
+              title: d.title,
+              dateDisplay: d.dateDisplay,
+              location: d.location,
+              summary: d.summary,
+              preferredImage: img,
+              preferredWpMode: mode,
+              approvedAt: d.approvedForWpAt || d.createdAt,
+              ...(tok ? {} : {}),
+            };
+          });
+        return sendJson(
+          res,
+          200,
+          { ok: true, count: queued.length, queued },
+          { "Access-Control-Allow-Origin": "https://missionchurchcooljc.com" }
+        );
+      }
+
+      if (pathname === "/api/admin/wp-publish") {
+        const store = await loadStore();
+        if (method === "GET") {
+          const id = url.searchParams.get("id") || "";
+          const img = url.searchParams.get("img") === "ai" ? "ai" : "original";
+          const mode = url.searchParams.get("mode") === "draft" ? "draft" : "publish";
+          const token = url.searchParams.get("token") || "";
+          if (!verifyApprovalToken(id, `wp:${img}:${mode}`, token)) {
+            return sendHtml(res, 403, "Invalid WordPress Link", "WordPress Approval Link Invalid", "Please sign in at /login to publish to missionchurchcooljc.com.", `${publicBaseUrl}/login`);
+          }
+          const draft = (store.pendingPosts || []).find((p) => p.id === id);
+          if (!draft) {
+            return sendHtml(res, 404, "Draft Not Found", "Draft Not Found", "This draft has already been published or removed.", publicBaseUrl);
+          }
+
+          if (!isWordPressConfigured()) {
+            draft.status = "approved_for_wp";
+            draft.preferredImage = img;
+            draft.preferredWpMode = mode;
+            draft.approvedForWpAt = new Date().toISOString();
+            await saveStore(store);
+            const bridgeUrl = `${publicBaseUrl}/api/admin/wp-bridge.js?id=${encodeURIComponent(draft.id)}&img=${encodeURIComponent(img)}&mode=${encodeURIComponent(mode)}&token=${encodeURIComponent(token)}`;
+            return sendHtml(
+              res,
+              200,
+              "Queued for WordPress Sync",
+              "Approved & Queued for WordPress!",
+              `"${draft.title}" (${img === "ai" ? "AI/Blended" : "Original"} image) is approved for '${mode}'. Because Sharefaith hosting disables remote Application Passwords, open missionchurchcooljc.com/wp-admin/ (logged in as brother kevin) or tell Antigravity to sync your approved WordPress queue using bridge: ${bridgeUrl}`,
+              "https://missionchurchcooljc.com/wp-admin/edit.php"
+            );
+          }
+
+          const wpResult = await publishDraftToWordPress({
+            draft,
+            imageChoice: img,
+            wpStatus: mode,
+            publicDir: PUBLIC_DIR,
+          });
+          draft.wpResult = wpResult;
+          draft.status = mode === "publish" ? "published_wp" : "staged_wp_draft";
+          await saveStore(store);
+          const editUrl = wpResult.post?.editUrl || "https://missionchurchcooljc.com/wp-admin/edit.php";
+          return sendHtml(
+            res,
+            200,
+            mode === "publish" ? "Published to WordPress!" : "Staged WP Draft!",
+            mode === "publish" ? "Published to WordPress!" : "WordPress Draft Created!",
+            `"${draft.title}" (${img === "ai" ? "AI/Blended" : "Original"} image) was pushed as '${mode}' on missionchurchcooljc.com (Post #${wpResult.post?.id}${wpResult.event?.id ? `, MEC Event #${wpResult.event.id}` : ""}). Review in wp-admin: ${editUrl}`,
+            editUrl
+          );
+        }
+        if (method === "POST") {
+          if (!isAuthorizedAdmin(req)) return sendJson(res, 401, { error: "Admin login required (/login)." });
+          const body = await readJsonBody(req);
+          const draft = body.draft || (store.pendingPosts || []).find((p) => p.id === body.id);
+          if (!draft) return sendJson(res, 404, { error: "Draft not found." });
+          const wpResult = await publishDraftToWordPress({
+            draft,
+            imageChoice: body.img === "ai" ? "ai" : "original",
+            wpStatus: body.mode === "publish" ? "publish" : "draft",
+            targetTypes: Array.isArray(body.targetTypes) ? body.targetTypes : ["post", "mec-events"],
+            publicDir: PUBLIC_DIR,
+          });
+          draft.wpResult = wpResult;
+          await saveStore(store);
+          return sendJson(res, 200, { ok: true, wpResult, draft });
+        }
+      }
+
       // All remaining /api/admin/* endpoints require admin session or automation secret
       if (pathname.startsWith("/api/admin/")) {
         if (!isAuthorizedAdmin(req)) {
@@ -572,6 +753,89 @@ export function createAppServer() {
         store.syncState.gmail.lastRunAt = new Date().toISOString();
         await saveStore(store);
         return sendJson(res, 200, { ok: true, scanned });
+      }
+
+      if (pathname === "/api/admin/wp-parse-calendar" && method === "POST") {
+        const body = await readJsonBody(req, 6_000_000);
+        const store = await loadStore();
+        let imageBase64 = body.imageBase64 || "";
+        let imageMimeType = body.imageMimeType || "image/jpeg";
+        let origImgUrl = body.imageUrl || "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg";
+
+        if (body.filename && !imageBase64) {
+          const safeName = path.basename(String(body.filename));
+          const fullPath = path.join(PUBLIC_DIR, "assets", "flyers", safeName);
+          if (fs.existsSync(fullPath)) {
+            imageBase64 = fs.readFileSync(fullPath).toString("base64");
+            imageMimeType = safeName.endsWith(".png") ? "image/png" : "image/jpeg";
+            origImgUrl = `/assets/flyers/${safeName}`;
+          }
+        }
+
+        const parsed = await parseMonthlyCalendarOrEmail({
+          subject: body.subject || "Monthly Church Calendar",
+          bodyText: body.bodyText || "",
+          imageBase64,
+          imageMimeType,
+        });
+
+        const stagedDrafts = [];
+        for (let idx = 0; idx < (parsed.netNewEvents || []).length; idx++) {
+          const ev = parsed.netNewEvents[idx];
+          const draftId = `draft-wp-${Date.now().toString(36)}-${idx + 1}`;
+          const dual = await prepareDualEventImages({
+            draftId,
+            title: ev.title,
+            dateDisplay: ev.dateDisplay || `${ev.startDate} ${ev.startTime || ""}`,
+            location: ev.location || "130 Highland Ave, Somerville, MA",
+            badge: ev.badge || "NET-NEW EVENT",
+            originalImageUrl: origImgUrl,
+            originalImageBase64: imageBase64,
+            originalImageMimeType: imageMimeType,
+            publicBaseUrl,
+          });
+          const draft = {
+            id: draftId,
+            sourceId: `wp-manual:${draftId}`,
+            sourceType: "calendar-parser",
+            sourceLabel: parsed.isMonthlyCalendar
+              ? `Monthly Calendar · ${parsed.monthLabel || "Net-New Event"}`
+              : "Church Email / Flyer Parser",
+            badge: ev.badge || "CHURCH EVENT",
+            category: ev.category || "Upcoming Events",
+            title: ev.title,
+            dateDisplay: ev.dateDisplay || `${ev.startDate || ""} ${ev.startTime || ""}`.trim(),
+            location: ev.location || "130 Highland Ave, Somerville, MA",
+            speaker: ev.speaker || "",
+            zoomUrl: ev.zoomUrl || "",
+            startDate: ev.startDate || "",
+            startTime: ev.startTime || "",
+            endDate: ev.endDate || "",
+            endTime: ev.endTime || "",
+            summary: ev.publicSummary || ev.title,
+            imageUrl: dual.originalImageUrl,
+            aiImageUrl: dual.aiImageUrl,
+            aiGenerator: dual.aiGenerator,
+            ctaLabel: "Learn More",
+            status: "pending_approval",
+            createdAt: new Date().toISOString(),
+          };
+          if (body.sendEmails) {
+            const emailRes = await sendApprovalEmail({ draft, publicBaseUrl });
+            draft.emailStatus = emailRes.sent ? "emailed" : emailRes.reason;
+          }
+          store.pendingPosts.unshift(draft);
+          stagedDrafts.push(draft);
+        }
+
+        await saveStore(store);
+        return sendJson(res, 200, {
+          ok: true,
+          isMonthlyCalendar: parsed.isMonthlyCalendar,
+          monthLabel: parsed.monthLabel,
+          recurringSummary: parsed.recurringSummary,
+          stagedDrafts,
+        });
       }
 
       if (method === "GET") {

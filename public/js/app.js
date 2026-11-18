@@ -1,5 +1,50 @@
+const PAGE_META = {
+  home: {
+    route: "/",
+    title: "Mission Church COOLJC · Somerville, MA",
+    sub: "",
+  },
+  shorts: {
+    route: "/shorts",
+    title: "Worship Shorts & Archival Nuggets",
+    sub: "Watch all 8 recent Facebook Sanctuary Reels alongside our classic YouTube Message Nuggets.",
+  },
+  "shepherds-kitchen": {
+    route: "/shepherds-kitchen",
+    title: "Shepherd's Kitchen Food Pantry",
+    sub: "Celebrating our 10th year serving neighbors every 1st Saturday from 9:15 AM – 11:00 AM at 130 Highland Ave.",
+  },
+  ministries: {
+    route: "/ministries",
+    title: "Interactive Ministries & Departments",
+    sub: "Connect with Tabitha's Closet clothing care, Shepherd's Kitchen, Counseling Ministry, and all 11 active church departments.",
+  },
+  "prayer-wall": {
+    route: "/prayer-wall",
+    title: "Mission Church Prayer Wall",
+    sub: "Share a prayer need or praise report and join our congregation in intercession (1 John 5:14).",
+  },
+  visit: {
+    route: "/visit",
+    title: "I'm New · Plan Your Visit",
+    sub: "Read Bishop Malcolm D. Mitchell's welcome, RSVP for Sunday worship, browse visitor FAQs, and explore our BAND photo mosaic.",
+  },
+  give: {
+    route: "/give",
+    title: "Give, Tithe & 2026 Building Fund",
+    sub: "Support sanctuary worship, missions, community outreach, and the 2026 Building Fund initiative.",
+  },
+};
+
+function routeToPageName(pathname) {
+  const clean = (pathname || "/").replace(/\/+$/, "") || "/";
+  const match = Object.entries(PAGE_META).find(([, meta]) => meta.route === clean);
+  return match ? match[0] : "home";
+}
+
 const state = {
   data: null,
+  currentPage: routeToPageName(window.location.pathname),
   activeFeedCategory: "All",
   feedQuery: "",
   activeGalleryCategory: "All",
@@ -9,6 +54,47 @@ const state = {
   chatHistory: [],
   activeVideoEl: null,
 };
+
+function applyActivePage() {
+  const page = state.currentPage || "home";
+  const meta = PAGE_META[page] || PAGE_META.home;
+
+  qsa("section[data-pages]").forEach((sec) => {
+    const allowed = sec.dataset.pages.split(",").map((s) => s.trim());
+    sec.classList.toggle("hidden", !allowed.includes(page));
+  });
+
+  if (page !== "home") {
+    qs("#subpage-title").textContent = meta.title;
+    qs("#subpage-sub").textContent = meta.sub;
+    document.title = `${meta.title} · Mission Church COOLJC`;
+  } else {
+    document.title = meta.title;
+  }
+
+  qsa(".main-nav .nav-link[data-route]").forEach((link) => {
+    link.classList.toggle("active", link.dataset.route === meta.route);
+  });
+
+  if (state.data) {
+    renderShorts();
+  }
+}
+
+function navigateToPage(routeOrPage, { scrollTop = true } = {}) {
+  const page = PAGE_META[routeOrPage] ? routeOrPage : routeToPageName(routeOrPage);
+  const meta = PAGE_META[page] || PAGE_META.home;
+  state.currentPage = page;
+
+  const targetUrl = `${meta.route}${window.location.search || ""}`;
+  if (window.location.pathname !== meta.route) {
+    window.history.pushState({ page }, "", targetUrl);
+  }
+  applyActivePage();
+  if (scrollTop) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
 
 const qs = (sel, root = document) => root.querySelector(sel);
 const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -209,7 +295,7 @@ function renderNextGathering() {
   } else {
     actionsEl.innerHTML = `
       <a href="${esc(state.data.church.directionsUrl)}" target="_blank" rel="noopener" class="btn btn-gold btn-sm">Get Directions ↗</a>
-      <a href="#visit-section" class="btn btn-glass btn-sm">Plan Your Visit</a>
+      <a href="/visit" data-route="/visit" class="btn btn-glass btn-sm">Plan Your Visit</a>
     `;
   }
 }
@@ -217,8 +303,14 @@ function renderNextGathering() {
 function renderShorts() {
   const carousel = qs("#shorts-carousel");
   const ytGrid = qs("#youtube-nuggets-grid");
-  const isYt = state.activeShortsTab === "youtube";
+  const tabsEl = qs("#shorts-archive-tabs");
+  const homeCtaEl = qs("#home-shorts-archive-cta");
+  const isHome = state.currentPage === "home";
+  const isYt = !isHome && state.activeShortsTab === "youtube";
 
+  tabsEl?.classList.toggle("hidden", isHome);
+  homeCtaEl?.classList.toggle("hidden", !isHome);
+  carousel.classList.toggle("is-archive-grid", !isHome);
   carousel.classList.toggle("hidden", isYt);
   ytGrid.classList.toggle("hidden", !isYt);
 
@@ -242,7 +334,8 @@ function renderShorts() {
     return;
   }
 
-  carousel.innerHTML = state.data.shorts
+  const visibleShorts = isHome ? state.data.shorts.slice(0, 3) : state.data.shorts;
+  carousel.innerHTML = visibleShorts
     .map(
       (s) => `
     <article class="short-card" id="short-card-${esc(s.id)}">
@@ -329,6 +422,7 @@ function renderFeed() {
   }
 
   grid.innerHTML = filtered
+    .slice(0, 5)
     .map(
       (item) => `
     <article class="feed-card">
@@ -380,18 +474,33 @@ function renderFeed() {
 function handleFeedAction(action) {
   if (!action) return;
   if (action.startsWith("open-ministry:")) {
-    const id = action.split(":")[1] === "counseling" ? "counseling-ministry" : action.split(":")[1];
+    const target = action.split(":")[1];
+    if (target === "shepherds-kitchen") {
+      navigateToPage("shepherds-kitchen");
+      return;
+    }
+    const id = target === "counseling" ? "counseling-ministry" : target;
+    navigateToPage("ministries", { scrollTop: false });
     selectMinistryWorkspace(id);
     qs("#ministry-workspace")?.scrollIntoView({ behavior: "smooth", block: "center" });
   } else if (action === "scroll-visit") {
-    qs("#visit-section")?.scrollIntoView({ behavior: "smooth" });
+    navigateToPage("visit");
   } else if (action === "scroll-ministries") {
-    qs("#ministries-section")?.scrollIntoView({ behavior: "smooth" });
+    navigateToPage("ministries");
   } else if (action.startsWith("play-short:")) {
     const shortId = action.split(":")[1];
-    const card = qs(`#short-card-${shortId}`);
-    card?.scrollIntoView({ behavior: "smooth", block: "center" });
-    qs("video", card)?.play().catch(() => {});
+    const onHomeCard = qs(`#short-card-${shortId}`);
+    if (!onHomeCard) {
+      navigateToPage("shorts");
+      setTimeout(() => {
+        const card = qs(`#short-card-${shortId}`);
+        card?.scrollIntoView({ behavior: "smooth", block: "center" });
+        qs("video", card)?.play().catch(() => {});
+      }, 150);
+    } else {
+      onHomeCard.scrollIntoView({ behavior: "smooth", block: "center" });
+      qs("video", onHomeCard)?.play().catch(() => {});
+    }
   }
 }
 
@@ -401,7 +510,7 @@ function renderZoomHub() {
   const prevBtn = qs("#slider-prev-btn");
   const nextBtn = qs("#slider-next-btn");
 
-  const items =
+  const rawItems =
     state.data.timelineEvents && state.data.timelineEvents.length
       ? state.data.timelineEvents
       : state.data.weeklyVirtualSchedule.map((z) => ({
@@ -414,9 +523,12 @@ function renderZoomHub() {
           zoomUrl: z.zoomUrl,
         }));
 
+  // Exclude past events per Board of Technology feedback
+  const items = rawItems.filter((item) => item.state !== "past");
+
   grid.innerHTML = items
     .map((item) => {
-      const stateClass = item.state === "past" ? "is-past" : item.state === "today" ? "is-today" : "is-upcoming";
+      const stateClass = item.state === "today" ? "is-today" : "is-upcoming";
       return `
       <article class="timeline-slide-card ${stateClass}" data-state="${esc(item.state || "upcoming")}">
         <div class="timeline-card-top">
@@ -450,14 +562,12 @@ function renderZoomHub() {
 
   const updateSliderStatus = () => {
     if (!statusPill) return;
-    const pastCards = qsa(".timeline-slide-card.is-past", grid);
-    const pastWidth = pastCards.reduce((sum, el) => sum + el.offsetWidth + 16, 0);
-    if (grid.scrollLeft < Math.max(40, pastWidth - 140)) {
-      statusPill.textContent = "← Last Week & Past";
+    if (grid.scrollLeft <= 12) {
+      statusPill.textContent = "This Week & Upcoming →";
     } else if (grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 24) {
       statusPill.textContent = "Dec Upcoming Events";
     } else {
-      statusPill.textContent = "Today & Upcoming →";
+      statusPill.textContent = "← Upcoming Schedule →";
     }
   };
 
@@ -468,14 +578,79 @@ function renderZoomHub() {
     nextBtn.onclick = () => grid.scrollBy({ left: 348, behavior: "smooth" });
   }
   grid.onscroll = updateSliderStatus;
+  grid.scrollLeft = 0;
+  updateSliderStatus();
+}
 
-  requestAnimationFrame(() => {
-    const firstActive = qs(".timeline-slide-card.is-today", grid) || qs(".timeline-slide-card.is-upcoming", grid);
-    if (firstActive && firstActive.offsetLeft > 90) {
-      // Keep the rightmost portion of last week's event peeking on the left so upcoming flow leftwards cleanly
-      grid.scrollLeft = Math.max(0, firstActive.offsetLeft - 88);
+function buildShepherdsKitchenHtml(ministry, formId = "mw-interact-form", statusId = "mw-form-status") {
+  return `
+      <div class="mw-grid">
+        <div>
+          <span class="eyebrow">SHEPHERD'S KITCHEN · 10TH YEAR FOOD PANTRY</span>
+          <h3>${esc(ministry.nextDistribution)}</h3>
+          <p class="muted">${esc(ministry.description)}</p>
+          <img src="${esc(ministry.flyerUrl)}" alt="Shepherd's Kitchen December Food Pantry Flyer" class="mw-flyer" />
+          <div class="tag-cloud">${ministry.items.map((i) => `<span class="tag-item">✓ ${esc(i)}</span>`).join("")}</div>
+        </div>
+        <form id="${esc(formId)}" class="stacked-form">
+          <h4>Connect with Shepherd's Kitchen</h4>
+          <label class="field">
+            <span>How would you like to engage?</span>
+            <select name="mode">${ministry.modes.map((m) => `<option value="${esc(m)}">${esc(m)}</option>`).join("")}</select>
+          </label>
+          <div class="form-row-2">
+            <label class="field"><span>Your Name *</span><input name="name" required minlength="2" placeholder="Full name" /></label>
+            <label class="field"><span>Phone or Email *</span><input name="contact" required placeholder="617-555-0199 or email" /></label>
+          </div>
+          <label class="field">
+            <span>Household Size, Dietary Note, or Volunteer Role</span>
+            <textarea name="details" rows="3" placeholder="e.g., Family of 4 requesting Dec 5 reminder, or signing up for 8:15 AM setup..."></textarea>
+          </label>
+          <div class="hero-actions">
+            <button type="submit" class="btn btn-primary btn-sm">Submit Shepherd's Kitchen Request</button>
+            <a href="${esc(ministry.externalUrl)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Visit Pantry Facebook ↗</a>
+          </div>
+          <p id="${esc(statusId)}" class="form-status" aria-live="polite"></p>
+        </form>
+      </div>
+    `;
+}
+
+function renderShepherdsKitchenPage() {
+  const container = qs("#sk-dedicated-body");
+  if (!container) return;
+  const sk = state.data.ministries.interactiveThree.find((m) => m.id === "shepherds-kitchen");
+  if (!sk) return;
+
+  container.innerHTML = `<div class="ministry-workspace"><div class="mw-body">${buildShepherdsKitchenHtml(sk, "sk-page-form", "sk-page-status")}</div></div>`;
+  const form = qs("#sk-page-form", container);
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const status = qs("#sk-page-status", container);
+    const fd = new FormData(form);
+    status.textContent = "Submitting...";
+    try {
+      const res = await fetch("/api/ministries/interact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ministry: sk.id,
+          mode: fd.get("mode"),
+          name: fd.get("name"),
+          contact: fd.get("contact"),
+          details: fd.get("details"),
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Unable to submit");
+      status.style.color = "#1f6f4a";
+      status.textContent = json.message;
+      form.reset();
+      await refreshBootstrapSilently();
+    } catch (err) {
+      status.style.color = "#a11a26";
+      status.textContent = err.message;
     }
-    updateSliderStatus();
   });
 }
 
@@ -541,37 +716,7 @@ function renderMinistryWorkspace() {
   const ministry = state.data.ministries.interactiveThree.find((m) => m.id === state.activeMinistry) || state.data.ministries.interactiveThree[1];
 
   if (ministry.id === "shepherds-kitchen") {
-    container.innerHTML = `
-      <div class="mw-grid">
-        <div>
-          <span class="eyebrow">SHEPHERD'S KITCHEN · 10TH YEAR FOOD PANTRY</span>
-          <h3>${esc(ministry.nextDistribution)}</h3>
-          <p class="muted">${esc(ministry.description)}</p>
-          <img src="${esc(ministry.flyerUrl)}" alt="Shepherd's Kitchen December Food Pantry Flyer" class="mw-flyer" />
-          <div class="tag-cloud">${ministry.items.map((i) => `<span class="tag-item">✓ ${esc(i)}</span>`).join("")}</div>
-        </div>
-        <form id="mw-interact-form" class="stacked-form">
-          <h4>Connect with Shepherd's Kitchen</h4>
-          <label class="field">
-            <span>How would you like to engage?</span>
-            <select name="mode">${ministry.modes.map((m) => `<option value="${esc(m)}">${esc(m)}</option>`).join("")}</select>
-          </label>
-          <div class="form-row-2">
-            <label class="field"><span>Your Name *</span><input name="name" required minlength="2" placeholder="Full name" /></label>
-            <label class="field"><span>Phone or Email *</span><input name="contact" required placeholder="617-555-0199 or email" /></label>
-          </div>
-          <label class="field">
-            <span>Household Size, Dietary Note, or Volunteer Role</span>
-            <textarea name="details" rows="3" placeholder="e.g., Family of 4 requesting Dec 5 reminder, or signing up for 8:15 AM setup..."></textarea>
-          </label>
-          <div class="hero-actions">
-            <button type="submit" class="btn btn-primary btn-sm">Submit Shepherd's Kitchen Request</button>
-            <a href="${esc(ministry.externalUrl)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Visit Pantry Facebook ↗</a>
-          </div>
-          <p id="mw-form-status" class="form-status" aria-live="polite"></p>
-        </form>
-      </div>
-    `;
+    container.innerHTML = buildShepherdsKitchenHtml(ministry, "mw-interact-form", "mw-form-status");
   } else if (ministry.id === "tabithas-closet") {
     container.innerHTML = `
       <div class="mw-grid">
@@ -779,7 +924,14 @@ function renderGallery() {
 }
 
 function renderAdminDrawer() {
-  const { syncState, ministrySubmissions, visitPlans, pendingPosts = [], persistenceBackend = "local-json" } = state.data;
+  const {
+    syncState,
+    ministrySubmissions,
+    visitPlans,
+    pendingPosts = [],
+    persistenceBackend = "local-json",
+    wordpressConfigured = false,
+  } = state.data;
   qs("#admin-sync-cards").innerHTML = `
     <div class="sync-card">
       <strong>Gmail Watch</strong>
@@ -787,12 +939,12 @@ function renderAdminDrawer() {
       <p>${esc(syncState.gmail.status)}</p>
     </div>
     <div class="sync-card">
-      <strong>BAND App (${esc(syncState.bandApp.bandId)})</strong>
-      <span>${esc(syncState.bandApp.status)}</span>
+      <strong>WordPress Sync (missionchurchcooljc.com)</strong>
+      <span>${wordpressConfigured ? "REST + Application Password Ready" : "Connect WP App Password"}</span>
     </div>
     <div class="sync-card">
-      <strong>Cloud Persistence</strong>
-      <span>${esc(persistenceBackend)} · ${esc(syncState.facebookReels.status)}</span>
+      <strong>BAND App (${esc(syncState.bandApp.bandId)}) · Cloud</strong>
+      <span>${esc(persistenceBackend)} · ${esc(syncState.bandApp.status)}</span>
     </div>
   `;
 
@@ -808,8 +960,12 @@ function renderAdminDrawer() {
           <div><strong>${esc(d.title)}</strong></div>
           <div class="muted">${esc(d.dateDisplay)}</div>
           <p style="margin:6px 0 0;">${esc(d.summary)}</p>
+          ${d.aiImageUrl ? `<div class="muted" style="margin-top:4px;">Dual images ready: Original + <a href="${esc(d.aiImageUrl)}" target="_blank" rel="noopener">Option B (AI Graphic ↗)</a></div>` : ""}
+          ${d.wpResult?.post ? `<div class="muted" style="margin-top:4px;">WordPress Post #${esc(d.wpResult.post.id)} (${esc(d.wpResult.post.status)})</div>` : ""}
           <div class="pending-actions">
-            <button type="button" class="chip-action chip-action-primary approve-draft-btn" data-id="${esc(d.id)}">✓ Approve &amp; Publish</button>
+            <button type="button" class="chip-action chip-action-primary wp-draft-btn" data-id="${esc(d.id)}" data-img="original" data-mode="draft">Stage WP Draft</button>
+            <button type="button" class="chip-action wp-draft-btn" data-id="${esc(d.id)}" data-img="ai" data-mode="draft">Stage WP (AI Image)</button>
+            <button type="button" class="chip-action approve-draft-btn" data-id="${esc(d.id)}">✓ MVP Feed</button>
             <button type="button" class="chip-action resend-draft-btn" data-id="${esc(d.id)}">Email Approval</button>
             <button type="button" class="chip-action reject-draft-btn" data-id="${esc(d.id)}">Reject</button>
           </div>
@@ -818,6 +974,24 @@ function renderAdminDrawer() {
         )
         .join("")
     : `<div class="submission-row">No pending post drafts right now. Click <strong>✦ Watch Gmail &amp; BAND for Drafts</strong> to scan for new emails or BAND highlights.</div>`;
+
+  qsa(".wp-draft-btn", pendingEl).forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      showToast("Staging draft on missionchurchcooljc.com...");
+      const res = await fetch("/api/admin/wp-publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: btn.dataset.id, img: btn.dataset.img, mode: btn.dataset.mode }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        renderAdminDrawer();
+        showToast(`WordPress ${btn.dataset.mode} created (#${json.wpResult?.post?.id || "ok"})!`);
+      } else {
+        showToast(json.error || "WordPress publish failed");
+      }
+    });
+  });
 
   qsa(".approve-draft-btn", pendingEl).forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -939,10 +1113,30 @@ async function submitChatMessage(text) {
     qsa(".chat-suggested-action", thinkingBubble).forEach((btn) => {
       btn.addEventListener("click", () => {
         if (btn.dataset.action === "open-ministry") {
-          selectMinistryWorkspace(btn.dataset.target);
-          qs("#ministry-workspace")?.scrollIntoView({ behavior: "smooth", block: "center" });
+          if (btn.dataset.target === "shepherds-kitchen") {
+            navigateToPage("shepherds-kitchen");
+          } else {
+            navigateToPage("ministries", { scrollTop: false });
+            selectMinistryWorkspace(btn.dataset.target);
+            qs("#ministry-workspace")?.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
         } else if (btn.dataset.action === "scroll") {
-          qs(btn.dataset.target)?.scrollIntoView({ behavior: "smooth" });
+          const targetMap = {
+            "#visit-section": "visit",
+            "#ministries-section": "ministries",
+            "#give-section": "give",
+            "#shorts-section": "shorts",
+            "#zoom-hub": "home",
+          };
+          const mapped = targetMap[btn.dataset.target];
+          if (mapped) {
+            navigateToPage(mapped, { scrollTop: mapped !== "home" });
+            if (mapped === "home") {
+              setTimeout(() => qs(btn.dataset.target)?.scrollIntoView({ behavior: "smooth" }), 80);
+            }
+          } else {
+            qs(btn.dataset.target)?.scrollIntoView({ behavior: "smooth" });
+          }
         }
       });
     });
@@ -953,6 +1147,19 @@ async function submitChatMessage(text) {
 }
 
 function wireStaticListeners() {
+  document.addEventListener("click", (e) => {
+    const routeEl = e.target.closest("a[data-route]");
+    if (!routeEl || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    qs("#mobile-drawer")?.classList.add("hidden");
+    navigateToPage(routeEl.dataset.route);
+  });
+
+  window.addEventListener("popstate", () => {
+    state.currentPage = routeToPageName(window.location.pathname);
+    applyActivePage();
+  });
+
   qs("#mobile-menu-toggle")?.addEventListener("click", () => {
     qs("#mobile-drawer")?.classList.toggle("hidden");
   });
@@ -1184,13 +1391,14 @@ async function init() {
   }
 
   renderNextGathering();
-  renderShorts();
   renderFeed();
   renderZoomHub();
+  renderShepherdsKitchenPage();
   renderMinistries();
   renderPrayerWall();
   renderFaqs();
   renderGallery();
+  applyActivePage();
 }
 
 init().catch((err) => {

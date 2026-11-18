@@ -1,147 +1,161 @@
 {
-  "weeklyVirtualSchedule": [
+  "updatedAt": "2026-11-18T20:07:47.350Z",
+  "church": {
+    "pastor": "Bishop / Pastor Malcolm D. Mitchell",
+    "email": "missionchurch1@gmail.com",
+    "social": {
+      "instagram": "https://www.instagram.com/missionchurchofchrist/",
+      "youtube": "https://www.youtube.com/channel/UC-WFNdLaIzvjKeXmXTfOf3A",
+      "shepherdsKitchenFb": "https://www.facebook.com/MCShepherdskitchen/",
+      "bandApp": "https://www.band.us/n/ada0bcJfJ1f9z",
+      "facebook": "https://www.facebook.com/missionchurchsomervillema",
+      "tabithasClosetFb": "https://www.facebook.com/profile.php?id=100093219860986"
+    },
+    "directionsUrl": "https://goo.gl/maps/NGivzYmXp2YyWqzs9",
+    "officialSiteUrl": "https://missionchurchcooljc.com/",
+    "pastorQuote": "We are excited that you are considering visiting Mission Church. We want to dispel any reservations you might have before you come by informing you as much as we can, so that you can come and worship Jesus.",
+    "phoneHref": "tel:+16178636614",
+    "themeYear": "2026",
+    "denomination": "COOLJC",
+    "administrator": "Marshina Mitchell",
+    "themeScriptureUrl": "https://ref.ly/Josh%201.11;kjv1900?t=biblia",
+    "themeScripture": "Joshua 1:11",
+    "phone": "617-863-6614",
+    "welcomeBody": "We all had a 'first day' at church—you'll find we are a friendly congregation. If you don't understand something, please simply ask. Come worship, grow, and serve with us in Somerville.",
+    "themeTitle": "Moving In Obedience: Possessing Our Blessings",
+    "shortName": "Mission Church",
+    "giving": {
+      "scripture": "Give, and it shall be given unto you; good measure, pressed down, and shaken together, and running over... — Luke 6:38 (KJV)",
+      "venmo": {
+        "handle": "@Mission-ChurchofChrist",
+        "url": "https://account.venmo.com/u/Mission-ChurchofChrist"
+      },
+      "buildingFundUrl": "https://docs.google.com/forms/d/e/1FAIpQLSemoHVA0noqAJ74iNJIcZ-tqP_A0BRWd4g0Qv9D-BbWytbqPg/viewform",
+      "note": "Offerings and tithes for Bishop Pastor Mitchell use the same church accounts—include a memo/designation (e.g. 'tithe', 'offering', or 'building fund'). For non-cash donations, contact Church Administrator Marshina Mitchell at missionchurch1@gmail.com or 617-863-6614.",
+      "apostleForehand": {
+        "url": "https://venmo.com/Daryl-Forehand",
+        "venmo": "@Daryl-Forehand",
+        "cashApp": "$BishopDarylForehand"
+      },
+      "cashApp": {
+        "url": "https://cash.app/$missionchurch238",
+        "handle": "$missionchurch238"
+      }
+    },
+    "address": "130 Highland Avenue, Somerville, MA 02143",
+    "name": "Mission Church of Our Lord Jesus Christ"
+  },
+  "prayerWall": [
     {
-      "id": "monday-prayer",
-      "title": "Monday Morning Prayer with Pastor",
-      "cadence": "Every Monday",
-      "dayOfWeek": 1,
-      "hour": 6,
-      "minute": 30,
-      "timeLabel": "6:00 AM – 6:30 AM",
-      "location": "Virtual on Zoom",
-      "zoomUrl": "https://us02web.zoom.us/j/82022507181?pwd=KzZGTEpVbno0Rnh3ZklCVUtNbS9BZz09",
-      "category": "Prayer",
-      "description": "Begin the week in corporate intercession and scripture encouragement led by Bishop Malcolm D. Mitchell."
+      "id": "prayer-seed-1",
+      "name": "Mission Prayer Team",
+      "category": "2026 Church Vision",
+      "request": "Praying for every family in Somerville and Greater Boston to experience peace, provision, and obedience in 2026 (Joshua 1:11).",
+      "amens": 18,
+      "createdAt": "2026-11-16T10:00:00Z"
     },
     {
-      "id": "weekly-prayer-line",
-      "title": "Weekly Morning Prayer Line",
-      "cadence": "Tue · Wed · Thu",
-      "dayOfWeek": 2,
-      "hour": 7,
-      "minute": 0,
-      "timeLabel": "7:00 AM – 7:10 AM",
-      "location": "Virtual on Zoom",
-      "zoomUrl": "https://us02web.zoom.us/j/82022507181?pwd=KzZGTEpVbno0Rnh3ZklCVUtNbS9BZz09",
-      "category": "Prayer",
-      "description": "Ten focused minutes of morning prayer, scripture, and spiritual covering before your workday begins."
+      "id": "prayer-seed-2",
+      "name": "Shepherd's Kitchen Team",
+      "category": "Community Outreach",
+      "request": "Praying for abundant food supplies, warm fellowship, and volunteers for our December 5th 10th-Year Food Pantry.",
+      "amens": 14,
+      "createdAt": "2026-11-17T08:30:00Z"
     },
     {
-      "id": "tuesday-bible-study",
-      "title": "Tuesday Night Bible Study",
-      "cadence": "Every Tuesday",
-      "dayOfWeek": 2,
-      "hour": 19,
-      "minute": 30,
-      "timeLabel": "7:30 PM",
-      "location": "Virtual on Zoom",
-      "zoomUrl": "https://us02web.zoom.us/j/81903345217",
-      "category": "Study",
-      "description": "Interactive midweek King James Version Scripture study and teaching with Bishop Malcolm D. Mitchell."
-    },
-    {
-      "id": "counseling-friday",
-      "title": "Counseling Ministry Virtual Service",
-      "cadence": "Last Friday Monthly (Nov 20)",
-      "dayOfWeek": 5,
-      "hour": 20,
-      "minute": 0,
-      "timeLabel": "8:00 PM",
-      "location": "Virtual on Zoom",
-      "zoomUrl": "https://us02web.zoom.us/j/83250473693?pwd=N0JWUFQvdDFXUGZiNkJYN29xdHM1QT09",
-      "category": "Care",
-      "description": "Prayerful, compassionate, confidential spiritual care and encouragement hosted by the Counseling Ministry."
-    },
-    {
-      "id": "friday-virtual-prayer",
-      "title": "Friday Virtual Prayer & Study ('The Bait of Satan')",
-      "cadence": "Fridays · 8:00 PM",
-      "dayOfWeek": 5,
-      "hour": 20,
-      "minute": 0,
-      "timeLabel": "8:00 PM",
-      "location": "Virtual on Zoom",
-      "zoomUrl": "https://us02web.zoom.us/j/83250473693?pwd=N0JWUFQvdDFXUGZiNkJYN29xdHM1QT09",
-      "category": "Prayer",
-      "description": "Friday night virtual prayer and interactive book study ('The Bait of Satan' by John Bevere) with Elder Joseph C. Black Jr."
+      "id": "prayer-seed-3",
+      "name": "Sister Angela",
+      "category": "Healing & Strength",
+      "request": "Grateful for Pastor Mitchell's message on 'The Value In Our Vulnerability.' Asking for strength and wisdom for my family this week.",
+      "amens": 11,
+      "createdAt": "2026-11-17T12:15:00Z"
     }
   ],
+  "faqs": [
+    {
+      "q": "Where Can I Find Mission Church?",
+      "a": "130 Highland Avenue, Somerville, MA 02143. The main Sunday worship service begins at 12:00 PM and normally includes singing, prayers, announcements, and testimonies. We suggest arriving at least 15 minutes early."
+    },
+    {
+      "q": "Where Do I Park?",
+      "a": "We have parking lots on both sides of the building and across the street. Our church deacons are happy to direct you to overflow parking, and we also use space graciously donated by our neighbors."
+    },
+    {
+      "q": "I Won't Know Anyone, Where Will I Sit?",
+      "a": "As soon as you walk through the doors, someone will greet you and welcome you. Our friendly ushers and greeters will help with any special needs and help you find a comfortable seat. You can also connect with us ahead of time so someone meets you at the door."
+    },
+    {
+      "q": "What Should I Wear?",
+      "a": "You are welcome in whatever feels comfortable! Most of our congregation wears 'Sunday Best' (ties, jackets, and slacks for men; dresses and head coverings for women), but what matters most is that you feel at home."
+    },
+    {
+      "q": "What Do I Need To Bring?",
+      "a": "A Bible will help you follow along in worship and Bible Study—we use the King James Version (KJV). Bishop Mitchell refers to Scripture often during his messages. If you don't have one or forget yours, ushers have Bibles available."
+    },
+    {
+      "q": "Can I Meet The Pastor?",
+      "a": "Yes! Bishop Malcolm D. Mitchell loves to meet guests and is available at the conclusion of any worship service to personally greet visitors."
+    },
+    {
+      "q": "I Have Physical Disabilities. Can You Accommodate Me?",
+      "a": "Yes—we aim to be an all-inclusive church. Our building is wheelchair accessible with handicapped-accessible restrooms, elevators, and lifts. Contact the church office at 617-863-6614 for any specific arrangements."
+    },
+    {
+      "q": "What Else Happens On Sunday?",
+      "a": "Morning Prayer begins at 10:00 AM, followed by Sunday School (and Next Steps Class) at 10:30 AM. At 11:30 AM light refreshments are served in the Fellowship Hall. On the 1st Sunday we celebrate Communion; on other Sundays stay after 12 PM worship for Sunday dinner or refreshments."
+    }
+  ],
+  "youtubeNuggets": [
+    {
+      "id": "O_3tm0bDi8M",
+      "title": "I Still Believe",
+      "duration": "3:06",
+      "url": "https://youtu.be/O_3tm0bDi8M",
+      "embedUrl": "https://www.youtube.com/embed/O_3tm0bDi8M"
+    },
+    {
+      "id": "QD45OGjkj9o",
+      "title": "Unstoppable Faith",
+      "duration": "4:06",
+      "url": "https://youtu.be/QD45OGjkj9o",
+      "embedUrl": "https://www.youtube.com/embed/QD45OGjkj9o"
+    },
+    {
+      "id": "fAaAX61ybUM",
+      "title": "Be A True Worshipper",
+      "duration": "3:56",
+      "url": "https://youtu.be/fAaAX61ybUM",
+      "embedUrl": "https://www.youtube.com/embed/fAaAX61ybUM"
+    }
+  ],
+  "syncState": {
+    "gmail": {
+      "lastRunAt": "2026-11-18T20:00:22.611Z",
+      "targetInbox": "phillipskevin386@gmail.com",
+      "senderFilter": "missionchurch1@gmail.com",
+      "scannedFlyersCount": 6,
+      "watch": {
+        "status": "watching",
+        "historyId": "6961739",
+        "topicName": "projects/concessionstand-420708/topics/mission-church-gmail-watch",
+        "expiration": "1795582210975",
+        "ok": true
+      },
+      "status": "4 draft(s) awaiting approval"
+    },
+    "bandApp": {
+      "status": "24 curated photos across 19 albums",
+      "lastRunAt": "2026-11-18T03:52:35.355Z",
+      "bandId": "74073849",
+      "bandUrl": "https://www.band.us/n/ada0bcJfJ1f9z"
+    },
+    "facebookReels": {
+      "pageUrl": "https://www.facebook.com/missionchurchsomervillema",
+      "lastRunAt": "2026-11-17T15:25:00-05:00",
+      "status": "8 Recent Oct–Nov 2026 Shorts Downloaded Locally"
+    }
+  },
   "ministrySubmissions": [],
-  "pendingPosts": [
-    {
-      "id": "draft-band-81028122207",
-      "sourceId": "band-album:95924055:81028122207",
-      "sourceType": "band",
-      "sourceLabel": "BAND Album · Founder's Day Wknd 2026- Sunday",
-      "badge": "BAND ALBUM",
-      "category": "Youth & Fellowship",
-      "title": "Founder's Day Wknd 2026- Sunday Highlight",
-      "dateDisplay": "Mission Church BAND Album",
-      "location": "Mission Church Sanctuary",
-      "summary": "New moments shared from Founder's Day Wknd 2026- Sunday by Shayna Wright on the Mission Church BAND community.",
-      "imageUrl": "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
-      "ctaLabel": "View on BAND ↗",
-      "externalUrl": "https://www.band.us/band/74073849/album/95924055/photo/81028122207",
-      "status": "pending_approval",
-      "createdAt": "2026-11-18T04:47:30.730Z",
-      "emailStatus": "awaiting-gmail-send-scope"
-    },
-    {
-      "id": "draft-gmail-1a1e8bc63fb82f41",
-      "sourceId": "gmail:1a1e8bc63fb82f41",
-      "sourceType": "gmail",
-      "sourceLabel": "Gmail Watch · Mission Church",
-      "badge": "EMAIL UPDATE",
-      "category": "Upcoming Events",
-      "title": "PLEASE EMAIL YOUR STAFF MEETING AGENDA ITEMS TO MISSIONCHURCH1@GMAIL.C",
-      "dateDisplay": "Tue, 17 Nov 2026 04:00:22 -0500 (EST)",
-      "location": "Mission Church · 130 Highland Ave, Somerville, MA",
-      "summary": "﻿Please email your staff meeting agenda items to missionchurch1@gmail.com no later than 12noon TUESDAY. Mission Church of Christ | 130 Highland Avenue | Somerville, MA 02143 US Unsubscribe | Update",
-      "imageUrl": "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
-      "ctaLabel": "Plan to Attend",
-      "ctaAction": "scroll-visit",
-      "status": "pending_approval",
-      "createdAt": "2026-11-18T04:47:27.133Z",
-      "emailStatus": "awaiting-gmail-send-scope"
-    },
-    {
-      "id": "draft-gmail-1a1e8bc6c719a689",
-      "sourceId": "gmail:1a1e8bc6c719a689",
-      "sourceType": "gmail",
-      "sourceLabel": "Gmail Watch · Mission Church",
-      "badge": "EMAIL UPDATE",
-      "category": "Upcoming Events",
-      "title": "STAFF MEETING LINK FOR TONIGHT AT 6:15PM",
-      "dateDisplay": "Tue, 17 Nov 2026 04:00:24 -0500 (EST)",
-      "location": "Mission Church · 130 Highland Ave, Somerville, MA",
-      "summary": "DEPARTMENT/TEAM/MINISTRY COORDINATORS &amp; REPRESENTATIVES: PLEASE JOIN THE STAFF MEETING AT 6:15PM Join Zoom Meeting Topic: TUESDAY LEADERSHIP STAFF MEETING Time: 6:15PM https://us02web.zoom.us/j/",
-      "imageUrl": "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
-      "ctaLabel": "Plan to Attend",
-      "ctaAction": "scroll-visit",
-      "status": "pending_approval",
-      "createdAt": "2026-11-18T04:47:24.043Z",
-      "emailStatus": "awaiting-gmail-send-scope"
-    },
-    {
-      "id": "draft-gmail-1a1ec0e97aa2eaff",
-      "sourceId": "gmail:1a1ec0e97aa2eaff",
-      "sourceType": "gmail",
-      "sourceLabel": "Gmail Watch · Mission Church",
-      "badge": "EMAIL UPDATE",
-      "category": "Upcoming Events",
-      "title": "BIBLE STUDY TONIGHT AT 7:30 PM",
-      "dateDisplay": "Tue, 17 Nov 2026 19:29:01 -0500 (EST)",
-      "location": "Mission Church · 130 Highland Ave, Somerville, MA",
-      "summary": "MC Zoom is inviting you to a scheduled Zoom meeting. Topic: TUESDAY BIBLE STUDY Time: 7:30PM Join Zoom Meeting https://us02web.zoom.us/j/81903345217 ﻿ PASSCODE 823028 Meeting ID: 819 0334 5217 Mission",
-      "imageUrl": "https://files.constantcontact.com/7295eed6701/64b4d7a8-ce02-4596-acd3-a102b1065b57.jpg?rdr=true",
-      "ctaLabel": "Plan to Attend",
-      "ctaAction": "scroll-visit",
-      "status": "pending_approval",
-      "createdAt": "2026-11-18T04:47:20.258Z",
-      "emailStatus": "emailed"
-    }
-  ],
-  "visitPlans": [],
   "ministries": {
     "allDepartments": [
       {
@@ -255,93 +269,6 @@
       }
     ]
   },
-  "syncState": {
-    "bandApp": {
-      "bandId": "74073849",
-      "bandUrl": "https://www.band.us/n/ada0bcJfJ1f9z",
-      "lastRunAt": "2026-11-18T03:52:35.355Z",
-      "status": "24 curated photos across 19 albums"
-    },
-    "gmail": {
-      "targetInbox": "phillipskevin386@gmail.com",
-      "watch": {
-        "status": "watching",
-        "expiration": "1795582210975",
-        "ok": true,
-        "topicName": "projects/concessionstand-420708/topics/mission-church-gmail-watch",
-        "historyId": "6961739"
-      },
-      "status": "4 draft(s) awaiting approval",
-      "senderFilter": "missionchurch1@gmail.com",
-      "scannedFlyersCount": 6,
-      "lastRunAt": "2026-11-18T05:30:06.495Z"
-    },
-    "facebookReels": {
-      "pageUrl": "https://www.facebook.com/missionchurchsomervillema",
-      "status": "8 Recent Oct–Nov 2026 Shorts Downloaded Locally",
-      "lastRunAt": "2026-11-17T15:25:00-05:00"
-    }
-  },
-  "prayerWall": [
-    {
-      "id": "prayer-seed-1",
-      "name": "Mission Prayer Team",
-      "category": "2026 Church Vision",
-      "request": "Praying for every family in Somerville and Greater Boston to experience peace, provision, and obedience in 2026 (Joshua 1:11).",
-      "amens": 18,
-      "createdAt": "2026-11-16T10:00:00Z"
-    },
-    {
-      "id": "prayer-seed-2",
-      "name": "Shepherd's Kitchen Team",
-      "category": "Community Outreach",
-      "request": "Praying for abundant food supplies, warm fellowship, and volunteers for our December 5th 10th-Year Food Pantry.",
-      "amens": 14,
-      "createdAt": "2026-11-17T08:30:00Z"
-    },
-    {
-      "id": "prayer-seed-3",
-      "name": "Sister Angela",
-      "category": "Healing & Strength",
-      "request": "Grateful for Pastor Mitchell's message on 'The Value In Our Vulnerability.' Asking for strength and wisdom for my family this week.",
-      "amens": 11,
-      "createdAt": "2026-11-17T12:15:00Z"
-    }
-  ],
-  "faqs": [
-    {
-      "q": "Where Can I Find Mission Church?",
-      "a": "130 Highland Avenue, Somerville, MA 02143. The main Sunday worship service begins at 12:00 PM and normally includes singing, prayers, announcements, and testimonies. We suggest arriving at least 15 minutes early."
-    },
-    {
-      "q": "Where Do I Park?",
-      "a": "We have parking lots on both sides of the building and across the street. Our church deacons are happy to direct you to overflow parking, and we also use space graciously donated by our neighbors."
-    },
-    {
-      "q": "I Won't Know Anyone, Where Will I Sit?",
-      "a": "As soon as you walk through the doors, someone will greet you and welcome you. Our friendly ushers and greeters will help with any special needs and help you find a comfortable seat. You can also connect with us ahead of time so someone meets you at the door."
-    },
-    {
-      "q": "What Should I Wear?",
-      "a": "You are welcome in whatever feels comfortable! Most of our congregation wears 'Sunday Best' (ties, jackets, and slacks for men; dresses and head coverings for women), but what matters most is that you feel at home."
-    },
-    {
-      "q": "What Do I Need To Bring?",
-      "a": "A Bible will help you follow along in worship and Bible Study—we use the King James Version (KJV). Bishop Mitchell refers to Scripture often during his messages. If you don't have one or forget yours, ushers have Bibles available."
-    },
-    {
-      "q": "Can I Meet The Pastor?",
-      "a": "Yes! Bishop Malcolm D. Mitchell loves to meet guests and is available at the conclusion of any worship service to personally greet visitors."
-    },
-    {
-      "q": "I Have Physical Disabilities. Can You Accommodate Me?",
-      "a": "Yes—we aim to be an all-inclusive church. Our building is wheelchair accessible with handicapped-accessible restrooms, elevators, and lifts. Contact the church office at 617-863-6614 for any specific arrangements."
-    },
-    {
-      "q": "What Else Happens On Sunday?",
-      "a": "Morning Prayer begins at 10:00 AM, followed by Sunday School (and Next Steps Class) at 10:30 AM. At 11:30 AM light refreshments are served in the Fellowship Hall. On the 1st Sunday we celebrate Communion; on other Sundays stay after 12 PM worship for Sunday dinner or refreshments."
-    }
-  ],
   "processedSourceIds": [
     "gmail:1a1ec0e97aa2eaff",
     "gmail:1a1e8bc6c719a689",
@@ -349,52 +276,6 @@
     "band-album:95924055:81028122207",
     "band-post:verify-band-text-desc-1"
   ],
-  "updatedAt": "2026-11-18T05:40:21.106Z",
-  "church": {
-    "denomination": "COOLJC",
-    "pastor": "Bishop / Pastor Malcolm D. Mitchell",
-    "shortName": "Mission Church",
-    "directionsUrl": "https://goo.gl/maps/NGivzYmXp2YyWqzs9",
-    "themeScriptureUrl": "https://ref.ly/Josh%201.11;kjv1900?t=biblia",
-    "administrator": "Marshina Mitchell",
-    "email": "missionchurch1@gmail.com",
-    "address": "130 Highland Avenue, Somerville, MA 02143",
-    "social": {
-      "youtube": "https://www.youtube.com/channel/UC-WFNdLaIzvjKeXmXTfOf3A",
-      "bandApp": "https://www.band.us/n/ada0bcJfJ1f9z",
-      "facebook": "https://www.facebook.com/missionchurchsomervillema",
-      "shepherdsKitchenFb": "https://www.facebook.com/MCShepherdskitchen/",
-      "tabithasClosetFb": "https://www.facebook.com/profile.php?id=100093219860986",
-      "instagram": "https://www.instagram.com/missionchurchofchrist/"
-    },
-    "name": "Mission Church of Our Lord Jesus Christ",
-    "themeYear": "2026",
-    "welcomeBody": "We all had a 'first day' at church—you'll find we are a friendly congregation. If you don't understand something, please simply ask. Come worship, grow, and serve with us in Somerville.",
-    "themeTitle": "Moving In Obedience: Possessing Our Blessings",
-    "phoneHref": "tel:+16178636614",
-    "officialSiteUrl": "https://missionchurchcooljc.com/",
-    "pastorQuote": "We are excited that you are considering visiting Mission Church. We want to dispel any reservations you might have before you come by informing you as much as we can, so that you can come and worship Jesus.",
-    "phone": "617-863-6614",
-    "giving": {
-      "venmo": {
-        "handle": "@Mission-ChurchofChrist",
-        "url": "https://account.venmo.com/u/Mission-ChurchofChrist"
-      },
-      "note": "Offerings and tithes for Bishop Pastor Mitchell use the same church accounts—include a memo/designation (e.g. 'tithe', 'offering', or 'building fund'). For non-cash donations, contact Church Administrator Marshina Mitchell at missionchurch1@gmail.com or 617-863-6614.",
-      "apostleForehand": {
-        "cashApp": "$BishopDarylForehand",
-        "url": "https://venmo.com/Daryl-Forehand",
-        "venmo": "@Daryl-Forehand"
-      },
-      "buildingFundUrl": "https://docs.google.com/forms/d/e/1FAIpQLSemoHVA0noqAJ74iNJIcZ-tqP_A0BRWd4g0Qv9D-BbWytbqPg/viewform",
-      "scripture": "Give, and it shall be given unto you; good measure, pressed down, and shaken together, and running over... — Luke 6:38 (KJV)",
-      "cashApp": {
-        "handle": "$missionchurch238",
-        "url": "https://cash.app/$missionchurch238"
-      }
-    },
-    "themeScripture": "Joshua 1:11"
-  },
   "sundaySchedule": [
     {
       "time": "10:00 AM",
@@ -421,27 +302,146 @@
       "description": "Vibrant praise, testimonies, announcements, and the preached Word. Arrive 15 minutes early; greeters and ushers will welcome you."
     }
   ],
-  "youtubeNuggets": [
+  "visitPlans": [],
+  "pendingPosts": [
     {
-      "id": "O_3tm0bDi8M",
-      "title": "I Still Believe",
-      "duration": "3:06",
-      "url": "https://youtu.be/O_3tm0bDi8M",
-      "embedUrl": "https://www.youtube.com/embed/O_3tm0bDi8M"
+      "id": "draft-band-81028122207",
+      "sourceId": "band-album:95924055:81028122207",
+      "sourceType": "band",
+      "sourceLabel": "BAND Album · Founder's Day Wknd 2026- Sunday",
+      "badge": "BAND ALBUM",
+      "category": "Youth & Fellowship",
+      "title": "Founder's Day Wknd 2026- Sunday Highlight",
+      "dateDisplay": "Mission Church BAND Album",
+      "location": "Mission Church Sanctuary",
+      "summary": "New moments shared from Founder's Day Wknd 2026- Sunday by Shayna Wright on the Mission Church BAND community.",
+      "imageUrl": "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
+      "ctaLabel": "View on BAND ↗",
+      "externalUrl": "https://www.band.us/band/74073849/album/95924055/photo/81028122207",
+      "status": "pending_approval",
+      "createdAt": "2026-11-18T04:47:30.730Z",
+      "emailStatus": "awaiting-gmail-send-scope"
     },
     {
-      "id": "QD45OGjkj9o",
-      "title": "Unstoppable Faith",
-      "duration": "4:06",
-      "url": "https://youtu.be/QD45OGjkj9o",
-      "embedUrl": "https://www.youtube.com/embed/QD45OGjkj9o"
+      "id": "draft-gmail-1a1e8bc63fb82f41",
+      "sourceId": "gmail:1a1e8bc63fb82f41",
+      "sourceType": "gmail",
+      "sourceLabel": "Gmail Watch · Mission Church",
+      "badge": "EMAIL UPDATE",
+      "category": "Upcoming Events",
+      "title": "PLEASE EMAIL YOUR STAFF MEETING AGENDA ITEMS TO MISSIONCHURCH1@GMAIL.C",
+      "dateDisplay": "Tue, 17 Nov 2026 04:00:22 -0500 (EST)",
+      "location": "Mission Church · 130 Highland Ave, Somerville, MA",
+      "summary": "﻿Please email your staff meeting agenda items to missionchurch1@gmail.com no later than 12noon TUESDAY. Mission Church of Christ | 130 Highland Avenue | Somerville, MA 02143 US Unsubscribe | Update",
+      "imageUrl": "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
+      "ctaLabel": "Plan to Attend",
+      "ctaAction": "scroll-visit",
+      "status": "pending_approval",
+      "createdAt": "2026-11-18T04:47:27.133Z",
+      "emailStatus": "awaiting-gmail-send-scope"
     },
     {
-      "id": "fAaAX61ybUM",
-      "title": "Be A True Worshipper",
-      "duration": "3:56",
-      "url": "https://youtu.be/fAaAX61ybUM",
-      "embedUrl": "https://www.youtube.com/embed/fAaAX61ybUM"
+      "id": "draft-gmail-1a1e8bc6c719a689",
+      "sourceId": "gmail:1a1e8bc6c719a689",
+      "sourceType": "gmail",
+      "sourceLabel": "Gmail Watch · Mission Church",
+      "badge": "EMAIL UPDATE",
+      "category": "Upcoming Events",
+      "title": "STAFF MEETING LINK FOR TONIGHT AT 6:15PM",
+      "dateDisplay": "Tue, 17 Nov 2026 04:00:24 -0500 (EST)",
+      "location": "Mission Church · 130 Highland Ave, Somerville, MA",
+      "summary": "DEPARTMENT/TEAM/MINISTRY COORDINATORS &amp; REPRESENTATIVES: PLEASE JOIN THE STAFF MEETING AT 6:15PM Join Zoom Meeting Topic: TUESDAY LEADERSHIP STAFF MEETING Time: 6:15PM https://us02web.zoom.us/j/",
+      "imageUrl": "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
+      "ctaLabel": "Plan to Attend",
+      "ctaAction": "scroll-visit",
+      "status": "pending_approval",
+      "createdAt": "2026-11-18T04:47:24.043Z",
+      "emailStatus": "awaiting-gmail-send-scope"
+    },
+    {
+      "id": "draft-gmail-1a1ec0e97aa2eaff",
+      "sourceId": "gmail:1a1ec0e97aa2eaff",
+      "sourceType": "gmail",
+      "sourceLabel": "Gmail Watch · Mission Church",
+      "badge": "EMAIL UPDATE",
+      "category": "Upcoming Events",
+      "title": "BIBLE STUDY TONIGHT AT 7:30 PM",
+      "dateDisplay": "Tue, 17 Nov 2026 19:29:01 -0500 (EST)",
+      "location": "Mission Church · 130 Highland Ave, Somerville, MA",
+      "summary": "MC Zoom is inviting you to a scheduled Zoom meeting. Topic: TUESDAY BIBLE STUDY Time: 7:30PM Join Zoom Meeting https://us02web.zoom.us/j/81903345217 ﻿ PASSCODE 823028 Meeting ID: 819 0334 5217 Mission",
+      "imageUrl": "https://files.constantcontact.com/7295eed6701/64b4d7a8-ce02-4596-acd3-a102b1065b57.jpg?rdr=true",
+      "ctaLabel": "Plan to Attend",
+      "ctaAction": "scroll-visit",
+      "status": "pending_approval",
+      "createdAt": "2026-11-18T04:47:20.258Z",
+      "emailStatus": "emailed"
+    }
+  ],
+  "weeklyVirtualSchedule": [
+    {
+      "id": "monday-prayer",
+      "title": "Monday Morning Prayer with Pastor",
+      "cadence": "Every Monday",
+      "dayOfWeek": 1,
+      "hour": 6,
+      "minute": 30,
+      "timeLabel": "6:00 AM – 6:30 AM",
+      "location": "Virtual on Zoom",
+      "zoomUrl": "https://us02web.zoom.us/j/82022507181?pwd=KzZGTEpVbno0Rnh3ZklCVUtNbS9BZz09",
+      "category": "Prayer",
+      "description": "Begin the week in corporate intercession and scripture encouragement led by Bishop Malcolm D. Mitchell."
+    },
+    {
+      "id": "weekly-prayer-line",
+      "title": "Weekly Morning Prayer Line",
+      "cadence": "Tue · Wed · Thu",
+      "dayOfWeek": 2,
+      "hour": 7,
+      "minute": 0,
+      "timeLabel": "7:00 AM – 7:10 AM",
+      "location": "Virtual on Zoom",
+      "zoomUrl": "https://us02web.zoom.us/j/82022507181?pwd=KzZGTEpVbno0Rnh3ZklCVUtNbS9BZz09",
+      "category": "Prayer",
+      "description": "Ten focused minutes of morning prayer, scripture, and spiritual covering before your workday begins."
+    },
+    {
+      "id": "tuesday-bible-study",
+      "title": "Tuesday Night Bible Study",
+      "cadence": "Every Tuesday",
+      "dayOfWeek": 2,
+      "hour": 19,
+      "minute": 30,
+      "timeLabel": "7:30 PM",
+      "location": "Virtual on Zoom",
+      "zoomUrl": "https://us02web.zoom.us/j/81903345217",
+      "category": "Study",
+      "description": "Interactive midweek King James Version Scripture study and teaching with Bishop Malcolm D. Mitchell."
+    },
+    {
+      "id": "counseling-friday",
+      "title": "Counseling Ministry Virtual Service",
+      "cadence": "Last Friday Monthly (Nov 20)",
+      "dayOfWeek": 5,
+      "hour": 20,
+      "minute": 0,
+      "timeLabel": "8:00 PM",
+      "location": "Virtual on Zoom",
+      "zoomUrl": "https://us02web.zoom.us/j/83250473693?pwd=N0JWUFQvdDFXUGZiNkJYN29xdHM1QT09",
+      "category": "Care",
+      "description": "Prayerful, compassionate, confidential spiritual care and encouragement hosted by the Counseling Ministry."
+    },
+    {
+      "id": "friday-virtual-prayer",
+      "title": "Friday Virtual Prayer & Study ('The Bait of Satan')",
+      "cadence": "Fridays · 8:00 PM",
+      "dayOfWeek": 5,
+      "hour": 20,
+      "minute": 0,
+      "timeLabel": "8:00 PM",
+      "location": "Virtual on Zoom",
+      "zoomUrl": "https://us02web.zoom.us/j/83250473693?pwd=N0JWUFQvdDFXUGZiNkJYN29xdHM1QT09",
+      "category": "Prayer",
+      "description": "Friday night virtual prayer and interactive book study ('The Bait of Satan' by John Bevere) with Elder Joseph C. Black Jr."
     }
   ],
   "feed": [
@@ -582,6 +582,83 @@
       "ctaAction": "scroll-ministries"
     }
   ],
+  "timelineEvents": [
+    {
+      "id": "slide-tuesday-bible-study",
+      "state": "today",
+      "badge": "TUESDAYS · 7:30 PM",
+      "title": "Tuesday Night Bible Study",
+      "when": "Every Tuesday at 7:30 PM · Virtual on Zoom",
+      "summary": "Dive into God's Word midweek with Bishop Malcolm D. Mitchell for interactive KJV Scripture teaching and Q&A.",
+      "zoomUrl": "https://us02web.zoom.us/j/81903345217"
+    },
+    {
+      "id": "slide-morning-prayer-line",
+      "state": "upcoming",
+      "badge": "TUE · WED · THU · 7:00 AM",
+      "title": "Weekly Morning Prayer Line",
+      "when": "Tuesdays, Wednesdays & Thursdays · 7:00 AM – 7:10 AM",
+      "summary": "Ten focused minutes of morning prayer and scripture encouragement to cover your day before work or school.",
+      "zoomUrl": "https://us02web.zoom.us/j/82022507181?pwd=KzZGTEpVbno0Rnh3ZklCVUtNbS9BZz09"
+    },
+    {
+      "id": "slide-counseling-nov-20",
+      "state": "upcoming",
+      "badge": "THIS FRIDAY · NOV 20 · 8:00 PM",
+      "title": "Counseling Ministry Virtual Service",
+      "when": "Friday, November 20 · 8:00 PM (Last Friday Monthly)",
+      "summary": "Pray on it, Pray over it, Pray through it—join our monthly virtual care session for compassionate encouragement and prayer.",
+      "zoomUrl": "https://us02web.zoom.us/j/83250473693?pwd=N0JWUFQvdDFXUGZiNkJYN29xdHM1QT09"
+    },
+    {
+      "id": "slide-sunday-worship",
+      "state": "upcoming",
+      "badge": "THIS SUNDAY · NOV 22",
+      "title": "Sunday Prayer, Sunday School & Noon Worship",
+      "when": "Sundays · 10:00 AM Prayer · 10:30 AM School · 12:00 PM Worship",
+      "summary": "Join us in person at 130 Highland Ave, Somerville for Morning Prayer, Sunday School & Next Steps Class, and 12:00 PM Sanctuary Worship.",
+      "ctaLabel": "Plan Your Visit",
+      "ctaAction": "scroll-visit"
+    },
+    {
+      "id": "slide-monday-prayer",
+      "state": "upcoming",
+      "badge": "MONDAYS · 6:00–6:30 AM",
+      "title": "Monday Morning Prayer with Pastor",
+      "when": "Every Monday · 6:00 AM – 6:30 AM · Virtual on Zoom",
+      "summary": "Start your Monday morning in corporate prayer and spiritual alignment with Bishop Malcolm D. Mitchell.",
+      "zoomUrl": "https://us02web.zoom.us/j/82022507181?pwd=KzZGTEpVbno0Rnh3ZklCVUtNbS9BZz09"
+    },
+    {
+      "id": "slide-fall-fellowship",
+      "state": "upcoming",
+      "badge": "5TH SUNDAY · NOV 29",
+      "title": "Family & Friends Fall Fellowship",
+      "when": "Sunday, November 29 · Immediately After 12:00 PM Worship",
+      "summary": "Stay after Noon Worship in the Fellowship Hall for 5th Sunday food, snacks, board & group games, and warm church family fellowship.",
+      "ctaLabel": "Plan to Attend",
+      "ctaAction": "scroll-visit"
+    },
+    {
+      "id": "slide-friday-prayer-study",
+      "state": "upcoming",
+      "badge": "FRIDAYS · 8:00 PM",
+      "title": "Friday Virtual Prayer & Study ('The Bait of Satan')",
+      "when": "Fridays at 8:00 PM · Virtual on Zoom",
+      "summary": "Interactive Friday night prayer and book study on overcoming offense with Elder Joseph C. Black Jr.",
+      "zoomUrl": "https://us02web.zoom.us/j/83250473693?pwd=N0JWUFQvdDFXUGZiNkJYN29xdHM1QT09"
+    },
+    {
+      "id": "slide-shepherds-kitchen-dec-5",
+      "state": "upcoming",
+      "badge": "1ST SATURDAY · DEC 5",
+      "title": "Shepherd's Kitchen 10th-Year Food Pantry",
+      "when": "Saturday, December 5 · 9:15 AM – 11:00 AM",
+      "summary": "Free monthly community food distribution with milk, eggs, fresh produce, meat, juice, and canned goods. Volunteers arrive at 8:15 AM.",
+      "ctaLabel": "Open Pantry Portal",
+      "ctaAction": "open-ministry:shepherds-kitchen"
+    }
+  ],
   "shorts": [
     {
       "id": "1174440914928847",
@@ -702,103 +779,6 @@
       "posterUrl": "/assets/shorts/reel_1885402276284840.jpg",
       "permalink": "https://www.facebook.com/reel/1885402276284840/",
       "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1885402276284840%2F&show_text=false"
-    }
-  ],
-  "timelineEvents": [
-    {
-      "id": "past-regional-conf",
-      "state": "past",
-      "badge": "LAST WEEK · NOV 13–14",
-      "title": "21st Regional Conference — Value Investing",
-      "when": "Fri–Sat, Nov 13–14 · Enfield, CT",
-      "summary": "Our church family gathered with Apostle Dr. Daryl Forehand & Apostle Dr. Henry Davenport IV for 'Invest Today, Impact Tomorrow.'",
-      "ctaLabel": "Watch Praise Reel",
-      "ctaAction": "play-short:1650803123756413"
-    },
-    {
-      "id": "past-sunday-nov-15",
-      "state": "past",
-      "badge": "LAST SUNDAY · NOV 15",
-      "title": "Special Sisters Sunday School & Overflow Worship",
-      "when": "Sunday, Nov 15 · 10:30 AM & 12:00 PM",
-      "summary": "Special Sunday School session for all sisters followed by an anointed afternoon worship service with guest speaker Apostle Henry Davenport.",
-      "ctaLabel": "Watch Highlights",
-      "ctaAction": "play-short:852026580596412"
-    },
-    {
-      "id": "slide-tuesday-bible-study",
-      "state": "today",
-      "badge": "TUESDAYS · 7:30 PM",
-      "title": "Tuesday Night Bible Study",
-      "when": "Every Tuesday at 7:30 PM · Virtual on Zoom",
-      "summary": "Dive into God's Word midweek with Bishop Malcolm D. Mitchell for interactive KJV Scripture teaching and Q&A.",
-      "zoomUrl": "https://us02web.zoom.us/j/81903345217"
-    },
-    {
-      "id": "slide-morning-prayer-line",
-      "state": "upcoming",
-      "badge": "TUE · WED · THU · 7:00 AM",
-      "title": "Weekly Morning Prayer Line",
-      "when": "Tuesdays, Wednesdays & Thursdays · 7:00 AM – 7:10 AM",
-      "summary": "Ten focused minutes of morning prayer and scripture encouragement to cover your day before work or school.",
-      "zoomUrl": "https://us02web.zoom.us/j/82022507181?pwd=KzZGTEpVbno0Rnh3ZklCVUtNbS9BZz09"
-    },
-    {
-      "id": "slide-counseling-nov-20",
-      "state": "upcoming",
-      "badge": "THIS FRIDAY · NOV 20 · 8:00 PM",
-      "title": "Counseling Ministry Virtual Service",
-      "when": "Friday, November 20 · 8:00 PM (Last Friday Monthly)",
-      "summary": "Pray on it, Pray over it, Pray through it—join our monthly virtual care session for compassionate encouragement and prayer.",
-      "zoomUrl": "https://us02web.zoom.us/j/83250473693?pwd=N0JWUFQvdDFXUGZiNkJYN29xdHM1QT09"
-    },
-    {
-      "id": "slide-sunday-worship",
-      "state": "upcoming",
-      "badge": "THIS SUNDAY · NOV 22",
-      "title": "Sunday Prayer, Sunday School & Noon Worship",
-      "when": "Sundays · 10:00 AM Prayer · 10:30 AM School · 12:00 PM Worship",
-      "summary": "Join us in person at 130 Highland Ave, Somerville for Morning Prayer, Sunday School & Next Steps Class, and 12:00 PM Sanctuary Worship.",
-      "ctaLabel": "Plan Your Visit",
-      "ctaAction": "scroll-visit"
-    },
-    {
-      "id": "slide-monday-prayer",
-      "state": "upcoming",
-      "badge": "MONDAYS · 6:00–6:30 AM",
-      "title": "Monday Morning Prayer with Pastor",
-      "when": "Every Monday · 6:00 AM – 6:30 AM · Virtual on Zoom",
-      "summary": "Start your Monday morning in corporate prayer and spiritual alignment with Bishop Malcolm D. Mitchell.",
-      "zoomUrl": "https://us02web.zoom.us/j/82022507181?pwd=KzZGTEpVbno0Rnh3ZklCVUtNbS9BZz09"
-    },
-    {
-      "id": "slide-fall-fellowship",
-      "state": "upcoming",
-      "badge": "5TH SUNDAY · NOV 29",
-      "title": "Family & Friends Fall Fellowship",
-      "when": "Sunday, November 29 · Immediately After 12:00 PM Worship",
-      "summary": "Stay after Noon Worship in the Fellowship Hall for 5th Sunday food, snacks, board & group games, and warm church family fellowship.",
-      "ctaLabel": "Plan to Attend",
-      "ctaAction": "scroll-visit"
-    },
-    {
-      "id": "slide-friday-prayer-study",
-      "state": "upcoming",
-      "badge": "FRIDAYS · 8:00 PM",
-      "title": "Friday Virtual Prayer & Study ('The Bait of Satan')",
-      "when": "Fridays at 8:00 PM · Virtual on Zoom",
-      "summary": "Interactive Friday night prayer and book study on overcoming offense with Elder Joseph C. Black Jr.",
-      "zoomUrl": "https://us02web.zoom.us/j/83250473693?pwd=N0JWUFQvdDFXUGZiNkJYN29xdHM1QT09"
-    },
-    {
-      "id": "slide-shepherds-kitchen-dec-5",
-      "state": "upcoming",
-      "badge": "1ST SATURDAY · DEC 5",
-      "title": "Shepherd's Kitchen 10th-Year Food Pantry",
-      "when": "Saturday, December 5 · 9:15 AM – 11:00 AM",
-      "summary": "Free monthly community food distribution with milk, eggs, fresh produce, meat, juice, and canned goods. Volunteers arrive at 8:15 AM.",
-      "ctaLabel": "Open Pantry Portal",
-      "ctaAction": "open-ministry:shepherds-kitchen"
     }
   ]
 }

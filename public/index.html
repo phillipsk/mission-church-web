@@ -47,42 +47,54 @@
     <!-- Sticky Glass Navigation -->
     <header class="site-header" id="top">
       <div class="container header-inner">
-        <a href="#hero-section" class="brand-lockup">
-          <img src="/assets/photos/church_logo.png" alt="Mission Church COOLJC Logo" class="brand-logo" />
+        <a href="/" data-route="/" class="brand-lockup">
+          <img src="/assets/photos/mission_modern_logo.svg" alt="Mission Church Modern Logo" class="brand-logo" />
           <div class="brand-text">
             <span class="brand-title">MISSION CHURCH</span>
             <span class="brand-sub">COOLJC · SOMERVILLE, MA</span>
           </div>
         </a>
-        <nav class="main-nav" aria-label="Primary scroll navigation">
-          <a href="#hero-section" class="nav-link active">Home</a>
-          <a href="#shorts-section" class="nav-link">Shorts</a>
-          <a href="#feed-section" class="nav-link">News &amp; Events</a>
-          <a href="#ministries-section" class="nav-link">Ministries</a>
-          <a href="#visit-section" class="nav-link">I'm New</a>
-          <a href="#gallery-section" class="nav-link">Gallery</a>
-          <a href="#give-section" class="nav-link">Give</a>
+        <nav class="main-nav" aria-label="Primary site navigation">
+          <a href="/" data-route="/" class="nav-link active">Home</a>
+          <a href="/shorts" data-route="/shorts" class="nav-link">Shorts</a>
+          <a href="/shepherds-kitchen" data-route="/shepherds-kitchen" class="nav-link">Shepherd's Kitchen</a>
+          <a href="/ministries" data-route="/ministries" class="nav-link">Ministries</a>
+          <a href="/prayer-wall" data-route="/prayer-wall" class="nav-link">Prayer Wall</a>
+          <a href="/visit" data-route="/visit" class="nav-link">I'm New</a>
+          <a href="/give" data-route="/give" class="nav-link">Give</a>
         </nav>
         <div class="header-cta-group">
           <button id="mobile-menu-toggle" class="mobile-menu-btn" type="button" aria-label="Toggle menu">Menu ☰</button>
-          <a href="#visit-section" class="btn btn-primary btn-sm hide-mobile">Plan a Visit ↗</a>
+          <a href="/visit" data-route="/visit" class="btn btn-primary btn-sm hide-mobile">Plan a Visit ↗</a>
         </div>
       </div>
       <div id="mobile-drawer" class="mobile-drawer hidden">
-        <a href="#hero-section" class="mobile-nav-link">Home &amp; Schedule</a>
-        <a href="#shorts-section" class="mobile-nav-link">Worship Shorts &amp; Nuggets</a>
-        <a href="#feed-section" class="mobile-nav-link">News &amp; Events Feed</a>
-        <a href="#ministries-section" class="mobile-nav-link">Interactive Ministries</a>
-        <a href="#visit-section" class="mobile-nav-link">I'm New &amp; Visit Planner</a>
-        <a href="#gallery-section" class="mobile-nav-link">Photo Mosaic</a>
-        <a href="#give-section" class="mobile-nav-link">Give &amp; Building Fund</a>
+        <a href="/" data-route="/" class="mobile-nav-link">Home &amp; Upcoming Schedule</a>
+        <a href="/shorts" data-route="/shorts" class="mobile-nav-link">Worship Shorts &amp; Archive</a>
+        <a href="/shepherds-kitchen" data-route="/shepherds-kitchen" class="mobile-nav-link">Shepherd's Kitchen Pantry</a>
+        <a href="/ministries" data-route="/ministries" class="mobile-nav-link">Ministries &amp; Care</a>
+        <a href="/prayer-wall" data-route="/prayer-wall" class="mobile-nav-link">Prayer Wall</a>
+        <a href="/visit" data-route="/visit" class="mobile-nav-link">I'm New &amp; Visit Planner</a>
+        <a href="/give" data-route="/give" class="mobile-nav-link">Give &amp; Building Fund</a>
         <button id="mobile-admin-btn" class="btn btn-outline btn-sm hidden" type="button">Admin Studio</button>
       </div>
     </header>
 
     <main>
-      <!-- SECTION 1: HERO & LIVE NEXT GATHERING -->
-      <section id="hero-section" class="hero-section">
+      <!-- SUBPAGE HEADER BANNER (Visible on dedicated subpages) -->
+      <section id="subpage-banner" class="subpage-banner hidden" data-pages="shorts,shepherds-kitchen,ministries,prayer-wall,visit,give">
+        <div class="container subpage-banner-inner">
+          <div>
+            <span class="eyebrow">MISSION CHURCH · SOMERVILLE, MA</span>
+            <h1 id="subpage-title">Mission Church</h1>
+            <p id="subpage-sub"></p>
+          </div>
+          <a href="/" data-route="/" class="btn btn-outline btn-sm">← Back to Homepage</a>
+        </div>
+      </section>
+
+      <!-- SECTION 1: HERO & LIVE NEXT GATHERING (HOMEPAGE ONLY) -->
+      <section id="hero-section" class="hero-section" data-pages="home">
         <div class="hero-bg" style="background-image: url('/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg');"></div>
         <div class="hero-scrim"></div>
         <div class="container hero-content">
@@ -95,12 +107,12 @@
               <h1 class="hero-title">Moving In Obedience.<br /><em>Possessing Our Blessings.</em></h1>
               <p class="hero-lead">
                 Welcome to <strong>Mission Church of Our Lord Jesus Christ</strong> at 130 Highland Avenue in Somerville, MA —
-                a friendly, Spirit-filled church family led by <strong>Bishop Malcolm D. Mitchell</strong>. Scroll down like a live feed or chat with our AI concierge anytime.
+                led by <strong>Bishop Malcolm D. Mitchell</strong>. Essential upcoming events, worship shorts, and our AI church concierge right at your fingertips.
               </p>
               <div class="hero-actions">
-                <a href="#visit-section" class="btn btn-gold">Plan Your Sunday Visit</a>
-                <button id="hero-ai-btn" class="btn btn-glass" type="button">✦ Ask Mission AI Anything</button>
-                <a href="#shorts-section" class="btn btn-outline-light">▶ Watch Worship Shorts</a>
+                <a href="/visit" data-route="/visit" class="btn btn-gold">Plan Your Sunday Visit</a>
+                <button id="hero-ai-btn" class="btn btn-glass" type="button">✦ Ask Mission AI</button>
+                <a href="/shorts" data-route="/shorts" class="btn btn-outline-light">▶ Worship Shorts</a>
               </div>
               <div class="sunday-strip">
                 <div class="sunday-pill"><strong>10:00 AM</strong> Morning Prayer</div>
@@ -119,85 +131,135 @@
               <p id="ng-desc" class="ng-desc"></p>
               <div id="ng-actions" class="ng-actions"></div>
               <div class="quick-4-cards">
-                <a href="#visit-section" class="q4-item"><span>📍</span><div><strong>Plan Visit</strong><small>Times &amp; Parking</small></div></a>
-                <button type="button" class="q4-item" data-open-ministry="tabithas-closet"><span>🧥</span><div><strong>Tabitha's Closet</strong><small>Clothing Care</small></div></button>
-                <button type="button" class="q4-item" data-open-ministry="shepherds-kitchen"><span>🥗</span><div><strong>Shepherd's Kitchen</strong><small>1st Sat Pantry</small></div></button>
-                <button type="button" class="q4-item" data-open-ministry="counseling-ministry"><span>🕊️</span><div><strong>Counseling</strong><small>Confidential Care</small></div></button>
+                <a href="/visit" data-route="/visit" class="q4-item"><span>📍</span><div><strong>Plan Visit</strong><small>Times &amp; Parking</small></div></a>
+                <a href="/shepherds-kitchen" data-route="/shepherds-kitchen" class="q4-item"><span>🥗</span><div><strong>Shepherd's Kitchen</strong><small>1st Sat Pantry</small></div></a>
+                <a href="/ministries" data-route="/ministries" class="q4-item"><span>🤝</span><div><strong>Ministries</strong><small>Tabitha &amp; Care</small></div></a>
+                <a href="/prayer-wall" data-route="/prayer-wall" class="q4-item"><span>🙏</span><div><strong>Prayer Wall</strong><small>Submit &amp; Pray</small></div></a>
               </div>
             </aside>
           </div>
         </div>
       </section>
 
-      <!-- SECTION 2: WORSHIP SHORTS & MESSAGE NUGGETS STUDIO -->
-      <section id="shorts-section" class="shorts-section">
+      <!-- SECTION 2: UPCOMING EVENTS SLIDER + 4-5 FEATURED POSTS (HOMEPAGE ONLY) -->
+      <section id="feed-section" class="feed-section" data-pages="home">
         <div class="container">
-          <div class="section-head-dark">
-            <div>
-              <span class="eyebrow-gold">MESSAGE NUGGETS REIMAGINED · FACEBOOK REELS</span>
-              <h2 class="section-title-light">Worship Shorts &amp; Word Highlights</h2>
-              <p class="section-sub-light">
-                Recent 15-second to 2-minute moments straight from our Facebook sanctuary feed (Oct–Nov 2026), replacing static links with instant interactive video.
-              </p>
+          <!-- Upcoming Events Timeline Slider (No Past Events) -->
+          <div id="zoom-hub" class="zoom-hub" style="margin-top:0;margin-bottom:44px;">
+            <div class="zoom-hub-head">
+              <div>
+                <span class="eyebrow">STAY CONNECTED, STAY PROTECTED</span>
+                <h3>Upcoming Events &amp; Gatherings Slider</h3>
+                <p>Browse upcoming services, fellowships, and 1-click Zoom gatherings ahead.</p>
+              </div>
+              <div class="slider-controls" aria-label="Upcoming event navigation">
+                <button id="slider-prev-btn" class="slider-nav-btn" type="button" aria-label="Previous upcoming event">← Prev</button>
+                <span id="slider-status-pill" class="slider-status-pill">Upcoming →</span>
+                <button id="slider-next-btn" class="slider-nav-btn" type="button" aria-label="Next upcoming event">Next →</button>
+              </div>
             </div>
-            <div class="shorts-tabs" role="tablist">
-              <button class="tab-pill active" data-shorts-tab="facebook" type="button">Recent Facebook Shorts (8)</button>
-              <button class="tab-pill" data-shorts-tab="youtube" type="button">Classic YouTube Nuggets (3)</button>
-            </div>
+            <div id="zoom-cards-grid" class="events-slider-track" role="region" aria-label="Upcoming events timeline slider"></div>
           </div>
 
-          <div id="shorts-carousel" class="shorts-carousel" aria-label="Worship shorts reel strip"></div>
-          <div id="youtube-nuggets-grid" class="youtube-grid hidden"></div>
-        </div>
-      </section>
-
-      <!-- SECTION 3: CONTINUOUS NEWS & CALENDAR FEED + ZOOM HUB -->
-      <section id="feed-section" class="feed-section">
-        <div class="container">
           <div class="section-head">
             <div>
               <span class="eyebrow">STAY CONNECTED, STAY PROTECTED</span>
               <h2 class="section-title">What's Happening at Mission</h2>
               <p class="section-sub">
-                Swipe or scroll continuously through upcoming services, ministry flyers, BAND updates, and outreach events. Add any item to your phone calendar in one tap.
+                Featured soon-upcoming services, outreach, and evergreen announcements from our church family.
               </p>
             </div>
-            <div class="feed-search-wrap">
-              <input id="feed-search" type="search" class="search-input" placeholder="Search events, Zoom, flyers..." aria-label="Search church news and events" />
-            </div>
-          </div>
-
-          <div class="filter-row" id="feed-filters" role="group" aria-label="Filter community feed">
-            <button class="filter-chip active" data-category="All" type="button">All Updates</button>
-            <button class="filter-chip" data-category="Upcoming Events" type="button">Upcoming Events</button>
-            <button class="filter-chip" data-category="Outreach & Pantry" type="button">Outreach &amp; Pantry</button>
-            <button class="filter-chip" data-category="Zoom Gatherings" type="button">Zoom Gatherings</button>
-            <button class="filter-chip" data-category="Youth & Fellowship" type="button">Youth &amp; Fellowship</button>
           </div>
 
           <div id="feed-grid" class="feed-grid"></div>
+        </div>
+      </section>
 
-          <!-- Interactive Event & Zoom Schedule Slider -->
-          <div id="zoom-hub" class="zoom-hub">
-            <div class="zoom-hub-head">
-              <div>
-                <span class="eyebrow">PAST, TODAY &amp; UPCOMING SCHEDULE</span>
-                <h3>Recent &amp; Upcoming Events Slider</h3>
-                <p>Swipe or use the arrows to browse from last week's highlights on the left into today's and upcoming services and 1-click Zoom gatherings on the right.</p>
-              </div>
-              <div class="slider-controls" aria-label="Event timeline navigation">
-                <button id="slider-prev-btn" class="slider-nav-btn" type="button" aria-label="Scroll left to recent past events">← Past Events</button>
-                <span id="slider-status-pill" class="slider-status-pill">Today &amp; Upcoming →</span>
-                <button id="slider-next-btn" class="slider-nav-btn" type="button" aria-label="Scroll right to upcoming events">Upcoming →</button>
-              </div>
+      <!-- SECTION 3: WORSHIP SHORTS (3 ON HOMEPAGE, ALL + ARCHIVAL ON /shorts) -->
+      <section id="shorts-section" class="shorts-section" data-pages="home,shorts">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">MESSAGE NUGGETS REIMAGINED · FACEBOOK REELS</span>
+              <h2 class="section-title">Worship Shorts &amp; Word Highlights</h2>
+              <p id="shorts-section-sub" class="section-sub">
+                Recent sanctuary moments straight from our Facebook worship feed.
+              </p>
             </div>
-            <div id="zoom-cards-grid" class="events-slider-track" role="region" aria-label="Church events timeline slider"></div>
+            <div id="shorts-archive-tabs" class="shorts-tabs hidden" role="tablist">
+              <button class="tab-pill active" data-shorts-tab="facebook" type="button">Recent Facebook Shorts (8)</button>
+              <button class="tab-pill" data-shorts-tab="youtube" type="button">Classic YouTube Nuggets (3)</button>
+            </div>
+          </div>
+
+          <div id="shorts-carousel" class="shorts-carousel" aria-label="Worship shorts gallery"></div>
+          <div id="youtube-nuggets-grid" class="youtube-grid hidden"></div>
+          <div id="home-shorts-archive-cta" class="shorts-footer-cta">
+            <a href="/shorts" data-route="/shorts" class="btn btn-outline">View All Worship Shorts &amp; Archival Nuggets (11 Videos) →</a>
           </div>
         </div>
       </section>
 
-      <!-- SECTION 4: INTERACTIVE PUBLIC MINISTRIES HUB + PRAYER WALL -->
-      <section id="ministries-section" class="ministries-section">
+      <!-- SECTION 4: DEDICATED PAGES DIRECTORY (HOMEPAGE ONLY) -->
+      <section id="explore-pages-section" class="explore-pages-section" data-pages="home">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">DEDICATED CHURCH PAGES</span>
+              <h2 class="section-title">Explore Ministries, Outreach &amp; Visitor Info</h2>
+              <p class="section-sub">Keeping our homepage clean and simple—visit any dedicated page below for full interactive forms and archives.</p>
+            </div>
+          </div>
+          <div class="explore-pages-grid">
+            <a href="/shepherds-kitchen" data-route="/shepherds-kitchen" class="explore-card">
+              <span class="explore-icon">🥗</span>
+              <h3>Shepherd's Kitchen</h3>
+              <p>10th-Year Monthly Food Pantry (1st Saturday, 9:15–11:00 AM). View the Dec 5 flyer, reserve a reminder, or sign up to volunteer at 8:15 AM.</p>
+              <span class="explore-cta">Open Shepherd's Kitchen →</span>
+            </a>
+            <a href="/prayer-wall" data-route="/prayer-wall" class="explore-card">
+              <span class="explore-icon">🙏</span>
+              <h3>Prayer Wall</h3>
+              <p>Share a confidential or public prayer request or praise report, and stand with our church family in prayer anytime.</p>
+              <span class="explore-cta">Visit Prayer Wall →</span>
+            </a>
+            <a href="/ministries" data-route="/ministries" class="explore-card">
+              <span class="explore-icon">🤝</span>
+              <h3>Church Ministries</h3>
+              <p>Connect with Tabitha's Closet clothing ministry, Counseling Ministry (1-click intake), and all 11 active church departments.</p>
+              <span class="explore-cta">Explore Ministries →</span>
+            </a>
+            <a href="/visit" data-route="/visit" class="explore-card">
+              <span class="explore-icon">⛪</span>
+              <h3>I'm New · Plan a Visit</h3>
+              <p>Read Bishop Malcolm D. Mitchell's welcome, RSVP for Sunday worship at 130 Highland Ave, browse 8 visitor FAQs, and view our BAND photo mosaic.</p>
+              <span class="explore-cta">Plan Your Visit →</span>
+            </a>
+            <a href="/shorts" data-route="/shorts" class="explore-card">
+              <span class="explore-icon">▶</span>
+              <h3>Worship Shorts Archive</h3>
+              <p>Watch all 8 recent Facebook Sanctuary Reels plus classic YouTube Message Nuggets in our full video library.</p>
+              <span class="explore-cta">Open Shorts Library →</span>
+            </a>
+            <a href="/give" data-route="/give" class="explore-card">
+              <span class="explore-icon">💛</span>
+              <h3>Give &amp; Building Fund</h3>
+              <p>Support church offerings, tithes, and the 2026 Building Fund Pledge via Cash App, Venmo, or in-person giving.</p>
+              <span class="explore-cta">Open Giving Options →</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- DEDICATED PAGE: SHEPHERD'S KITCHEN -->
+      <section id="shepherds-kitchen-section" class="sk-standalone-section hidden" data-pages="shepherds-kitchen">
+        <div class="container">
+          <div id="sk-dedicated-body"></div>
+        </div>
+      </section>
+
+      <!-- DEDICATED PAGE: MINISTRIES -->
+      <section id="ministries-section" class="ministries-section hidden" data-pages="ministries">
         <div class="container">
           <div class="section-head">
             <div>
@@ -211,7 +273,6 @@
 
           <div id="interactive-ministries-grid" class="ministry-spotlight-grid"></div>
 
-          <!-- Inline Interactive Ministry Workspace -->
           <div id="ministry-workspace" class="ministry-workspace">
             <div class="mw-tabs" role="tablist">
               <button class="mw-tab active" data-mw="shepherds-kitchen" type="button">🥗 Shepherd's Kitchen (Dec 5)</button>
@@ -221,7 +282,16 @@
             <div id="ministry-workspace-body" class="mw-body"></div>
           </div>
 
-          <!-- Live Interactive Prayer Wall -->
+          <div class="all-ministries-wrap">
+            <h3 class="sub-section-heading">All 11 Mission Church Ministries &amp; Departments</h3>
+            <div id="all-ministries-grid" class="dept-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DEDICATED PAGE: PRAYER WALL -->
+      <section id="prayer-section" class="prayer-standalone-section hidden" data-pages="prayer-wall">
+        <div class="container">
           <div class="prayer-wall-panel">
             <div class="pw-grid">
               <div class="pw-form-col">
@@ -264,17 +334,11 @@
               </div>
             </div>
           </div>
-
-          <!-- All 11 Church Ministries Directory -->
-          <div class="all-ministries-wrap">
-            <h3 class="sub-section-heading">All 11 Mission Church Ministries &amp; Departments</h3>
-            <div id="all-ministries-grid" class="dept-grid"></div>
-          </div>
         </div>
       </section>
 
-      <!-- SECTION 5: I'M NEW — PASTOR MITCHELL, SUNDAY TIMELINE, VISIT PLANNER & 8 FAQS -->
-      <section id="visit-section" class="visit-section">
+      <!-- DEDICATED PAGE: I'M NEW — PASTOR MITCHELL, VISIT PLANNER & 8 FAQS -->
+      <section id="visit-section" class="visit-section hidden" data-pages="visit">
         <div class="container">
           <div class="pastor-welcome-card">
             <div class="pastor-photo-wrap">
@@ -339,8 +403,8 @@
         </div>
       </section>
 
-      <!-- SECTION 6: CURATED COMMUNITY PHOTO MOSAIC -->
-      <section id="gallery-section" class="gallery-section">
+      <!-- DEDICATED PAGE: CURATED COMMUNITY PHOTO MOSAIC (ON /visit) -->
+      <section id="gallery-section" class="gallery-section hidden" data-pages="visit">
         <div class="container">
           <div class="section-head">
             <div>
@@ -361,8 +425,8 @@
         </div>
       </section>
 
-      <!-- SECTION 7: GENEROSITY & 2026 BUILDING FUND -->
-      <section id="give-section" class="give-section">
+      <!-- DEDICATED PAGE: GENEROSITY & 2026 BUILDING FUND -->
+      <section id="give-section" class="give-section hidden" data-pages="give">
         <div class="container">
           <div class="give-shell">
             <div class="give-intro">
@@ -407,7 +471,7 @@
       <div class="container footer-grid">
         <div>
           <div class="brand-lockup footer-brand">
-            <img src="/assets/photos/church_logo.png" alt="Mission Church Logo" class="brand-logo" />
+            <img src="/assets/photos/mission_modern_logo.svg" alt="Mission Church Modern Logo" class="brand-logo" />
             <div>
               <strong class="brand-title-light">Mission Church Of Our Lord Jesus Christ</strong>
               <p class="footer-addr">130 Highland Avenue · Somerville, MA 02143</p>
@@ -443,10 +507,10 @@
 
     <!-- Mobile Bottom App Bar (visible on small screens) -->
     <nav class="mobile-bottom-bar" aria-label="Mobile quick bar">
-      <a href="#hero-section" class="mbb-item"><span>⛪</span><small>Home</small></a>
-      <a href="#shorts-section" class="mbb-item"><span>▶</span><small>Shorts</small></a>
-      <a href="#feed-section" class="mbb-item"><span>📅</span><small>Feed</small></a>
-      <a href="#ministries-section" class="mbb-item"><span>🤝</span><small>Serve</small></a>
+      <a href="/" data-route="/" class="mbb-item"><span>⛪</span><small>Home</small></a>
+      <a href="/shorts" data-route="/shorts" class="mbb-item"><span>▶</span><small>Shorts</small></a>
+      <a href="/shepherds-kitchen" data-route="/shepherds-kitchen" class="mbb-item"><span>🥗</span><small>Pantry</small></a>
+      <a href="/ministries" data-route="/ministries" class="mbb-item"><span>🤝</span><small>Serve</small></a>
       <button id="mbb-ai-btn" class="mbb-item mbb-ai" type="button"><span>✦</span><small>Ask AI</small></button>
     </nav>
   </div>

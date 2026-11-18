@@ -2,6 +2,11 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { resolveGeminiApiKey } from "./gemini-concierge.js";
+import {
+  parseMonthlyCalendarOrEmail,
+  prepareDualEventImages,
+  sanitizePublicCopy,
+} from "./wordpress-publisher.js";
 
 const DEFAULT_PUBLIC_BASE_URL =
   process.env.PUBLIC_BASE_URL || "https://mission-church-web-5jdy3d7zua-uc.a.run.app";
@@ -78,14 +83,18 @@ async function extractStructuredPostWithGemini({
   if (!apiKey) return fallback;
 
   const prompt = `You are drafting a warm, clear announcement card for Mission Church of Our Lord Jesus Christ (130 Highland Ave, Somerville, MA).
-Given the source text and optional flyer/event image, return ONLY valid JSON (no markdown fences) with keys:
+Given the source text and optional flyer/event image:
+- PRIVACY & SPEAKER RULE: In "summary" and "title", STRIP regular church participant / lay member names (e.g., Sister X, Brother Y organizing snacks/logistics or personal contact info) while KEEPING clergy members and billed speakers (Bishop, Pastor, Apostle, Elder, First Lady, Evangelist, Minister, featured speakers).
+Return ONLY valid JSON (no markdown fences) with keys:
 {
   "title": "concise, engaging post title (max 70 chars)",
-  "badge": "short uppercase pill like UPCOMING · NOV 2026 or SUNDAY WORSHIP or BAND HIGHLIGHT",
+  "badge": "short uppercase pill like UPCOMING · DEC 2026 or SUNDAY WORSHIP or BAND HIGHLIGHT",
   "category": "one of: Upcoming Events, Outreach & Pantry, Youth & Fellowship, Zoom Gatherings",
   "dateDisplay": "human readable date & time",
   "location": "address or Zoom/BAND link info",
-  "summary": "2-sentence welcoming write-up summarizing the event, speaker, or call to action",
+  "speaker": "clergy or platform speaker names if any, else empty string",
+  "zoomUrl": "direct zoom URL if explicitly present, else empty string",
+  "summary": "2-sentence welcoming write-up summarizing the event, speaker, or call to action with lay participant names removed",
   "ctaLabel": "short CTA label like View Details or Join Worship"
 }
 
@@ -124,13 +133,18 @@ ${String(textContext).slice(0, 3500)}`;
       if (!raw) continue;
       const cleaned = raw.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
       const parsed = JSON.parse(cleaned);
+      const cleanSummary = sanitizePublicCopy(parsed.summary || fallback.summary, {
+        preserveSpeakers: parsed.speaker ? parsed.speaker.split(/[,;&]+/) : [],
+      });
       return {
         title: parsed.title || fallback.title,
         badge: parsed.badge || fallback.badge || "CHURCH UPDATE",
         category: parsed.category || fallback.category || "Upcoming Events",
         dateDisplay: parsed.dateDisplay || fallback.dateDisplay || "Check Church Calendar",
         location: parsed.location || fallback.location || "Mission Church · 130 Highland Ave, Somerville, MA",
-        summary: parsed.summary || fallback.summary,
+        speaker: parsed.speaker || "",
+        zoomUrl: parsed.zoomUrl || "",
+        summary: cleanSummary,
         ctaLabel: parsed.ctaLabel || fallback.ctaLabel || "Learn More",
         source: `gemini:${model}`,
       };
@@ -396,29 +410,61 @@ export async function sendApprovalEmail({
 
   const approveTok = signApprovalToken(draft.id, "approve");
   const rejectTok = signApprovalToken(draft.id, "reject");
+  const wpOrigPubTok = signApprovalToken(draft.id, "wp:original:publish");
+  const wpAiPubTok = signApprovalToken(draft.id, "wp:ai:publish");
+  const wpOrigDraftTok = signApprovalToken(draft.id, "wp:original:draft");
+
   const approveUrl = `${publicBaseUrl}/api/admin/approve-post?id=${encodeURIComponent(draft.id)}&token=${encodeURIComponent(approveTok)}`;
   const rejectUrl = `${publicBaseUrl}/api/admin/reject-post?id=${encodeURIComponent(draft.id)}&token=${encodeURIComponent(rejectTok)}`;
-  const previewImageUrl = draft.imageUrl?.startsWith("http")
+  const wpOrigPubUrl = `${publicBaseUrl}/api/admin/wp-publish?id=${encodeURIComponent(draft.id)}&img=original&mode=publish&token=${encodeURIComponent(wpOrigPubTok)}`;
+  const wpAiPubUrl = `${publicBaseUrl}/api/admin/wp-publish?id=${encodeURIComponent(draft.id)}&img=ai&mode=publish&token=${encodeURIComponent(wpAiPubTok)}`;
+  const wpOrigDraftUrl = `${publicBaseUrl}/api/admin/wp-publish?id=${encodeURIComponent(draft.id)}&img=original&mode=draft&token=${encodeURIComponent(wpOrigDraftTok)}`;
+
+  const previewOriginalUrl = draft.imageUrl?.startsWith("http")
     ? draft.imageUrl
     : `${publicBaseUrl}${draft.imageUrl || "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg"}`;
+  const previewAiUrl = draft.aiImageUrl
+    ? draft.aiImageUrl.startsWith("http")
+      ? draft.aiImageUrl
+      : `${publicBaseUrl}${draft.aiImageUrl}`
+    : "";
 
   const subject = `[Mission Church Approval Needed] ${draft.title}`;
   const html = `
-  <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: #faf7f2; border: 1px solid #e5d8dc; border-radius: 16px; overflow: hidden;">
+  <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 660px; margin: 0 auto; background: #ffffff; border: 1px solid #e6e2e8; border-radius: 16px; overflow: hidden;">
     <div style="background: #7e151c; color: #fff; padding: 20px 24px;">
-      <div style="font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #ecd363; font-weight: 700;">${escapeHtmlBasic(draft.sourceLabel)} · AI Draft Review</div>
+      <div style="font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #ecd363; font-weight: 700;">${escapeHtmlBasic(draft.sourceLabel)} · AI Public Draft &amp; Dual Image Options</div>
       <h2 style="margin: 6px 0 0; font-size: 22px;">${escapeHtmlBasic(draft.title)}</h2>
     </div>
-    <img src="${escapeHtmlBasic(previewImageUrl)}" alt="Event preview" style="width: 100%; max-height: 320px; object-fit: cover; display: block;" />
+    <div style="padding: 18px 24px 0;">
+      <div style="font-size: 12px; font-weight: 700; color: #4a0d13; margin-bottom: 8px;">Option A: Original Flyer / Source Image</div>
+      <img src="${escapeHtmlBasic(previewOriginalUrl)}" alt="Original event preview" style="width: 100%; max-height: 280px; object-fit: cover; border-radius: 10px; border: 1px solid #e6e2e8; display: block;" />
+      ${
+        previewAiUrl
+          ? `<div style="font-size: 12px; font-weight: 700; color: #4a0d13; margin: 16px 0 8px;">Option B: Gemini AI / Blended Graphic</div>
+             <img src="${escapeHtmlBasic(previewAiUrl)}" alt="AI blended event preview" style="width: 100%; max-height: 280px; object-fit: cover; border-radius: 10px; border: 1px solid #e6e2e8; display: block;" />`
+          : ""
+      }
+    </div>
     <div style="padding: 22px 24px; color: #1e1720;">
       <p style="margin: 0 0 8px; font-weight: 700; color: #7e151c;">${escapeHtmlBasic(draft.dateDisplay)}</p>
-      <p style="margin: 0 0 14px; font-size: 13px; color: #5d525f;">${escapeHtmlBasic(draft.location)}</p>
+      <p style="margin: 0 0 10px; font-size: 13px; color: #5d525f;">${escapeHtmlBasic(draft.location)}</p>
+      ${draft.speaker ? `<p style="margin: 0 0 10px; font-size: 13px; color: #4a0d13;"><strong>Speaker / Leadership:</strong> ${escapeHtmlBasic(draft.speaker)}</p>` : ""}
       <p style="margin: 0 0 22px; font-size: 15px; line-height: 1.55;">${escapeHtmlBasic(draft.summary)}</p>
-      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-        <a href="${approveUrl}" style="display: inline-block; background: #7e151c; color: #ffffff; text-decoration: none; font-weight: 700; padding: 12px 20px; border-radius: 999px; margin-right: 10px;">Approve &amp; Publish to Website</a>
-        <a href="${rejectUrl}" style="display: inline-block; background: #ffffff; color: #5d525f; border: 1px solid #d7c8cd; text-decoration: none; font-weight: 700; padding: 12px 18px; border-radius: 999px;">Skip / Reject</a>
+      <div style="margin-bottom: 14px;">
+        <a href="${wpOrigPubUrl}" style="display: inline-block; background: #7e151c; color: #ffffff; text-decoration: none; font-weight: 700; padding: 11px 18px; border-radius: 999px; margin: 0 8px 8px 0;">Publish to WordPress (Option A)</a>
+        ${
+          previewAiUrl
+            ? `<a href="${wpAiPubUrl}" style="display: inline-block; background: #4a0d13; color: #ecd363; text-decoration: none; font-weight: 700; padding: 11px 18px; border-radius: 999px; margin: 0 8px 8px 0;">Publish to WordPress (Option B AI)</a>`
+            : ""
+        }
+        <a href="${wpOrigDraftUrl}" style="display: inline-block; background: #f7f7f9; color: #1e1720; border: 1px solid #d7c8cd; text-decoration: none; font-weight: 700; padding: 11px 16px; border-radius: 999px; margin: 0 8px 8px 0;">Stage WP Draft</a>
       </div>
-      <p style="margin: 20px 0 0; font-size: 12px; color: #7c6f7d;">You can also review or edit all pending drafts inside the website's <strong>Admin &amp; AI Sync</strong> drawer at ${escapeHtmlBasic(publicBaseUrl)}.</p>
+      <div>
+        <a href="${approveUrl}" style="display: inline-block; background: #ffffff; color: #7e151c; border: 1px solid #7e151c; text-decoration: none; font-weight: 700; padding: 9px 16px; border-radius: 999px; margin-right: 8px;">Publish to Cloud MVP Feed</a>
+        <a href="${rejectUrl}" style="display: inline-block; background: #ffffff; color: #5d525f; border: 1px solid #d7c8cd; text-decoration: none; font-weight: 700; padding: 9px 16px; border-radius: 999px;">Skip / Reject</a>
+      </div>
+      <p style="margin: 20px 0 0; font-size: 12px; color: #7c6f7d;">Personal member names have been stripped for public safety while preserving clergy and featured speakers. Manage all drafts at ${escapeHtmlBasic(publicBaseUrl)}/login.</p>
     </div>
   </div>`;
 
@@ -500,50 +546,115 @@ export async function watchAndPrepareDrafts({
         const remoteImageData = await fetchRemoteImageAsBase64(remoteImageUrl);
         const subject = headers.subject || "Mission Church Announcement";
 
-        const structured = await extractStructuredPostWithGemini({
-          apiKey,
-          textContext: `Email Subject: ${subject}\nFrom: ${headers.from || ""}\nDate: ${headers.date || ""}\nBody:\n${plain || msg.snippet || ""}`,
-          imageBase64: remoteImageData?.base64 || "",
-          imageMimeType: remoteImageData?.mimeType || "image/jpeg",
-          fallback: {
-            title: subject.slice(0, 70),
-            badge: "EMAIL UPDATE",
-            category: "Upcoming Events",
-            dateDisplay: headers.date || "Recent Church Email",
-            location: "Mission Church · 130 Highland Ave, Somerville, MA",
-            summary: (msg.snippet || plain || subject).slice(0, 220),
-            ctaLabel: "Plan to Attend",
-          },
-        });
-
-        const draft = {
-          id: `draft-gmail-${ref.id}`,
-          sourceId,
-          sourceType: "gmail",
-          sourceLabel: "Gmail Watch · Mission Church",
-          badge: structured.badge,
-          category: structured.category,
-          title: structured.title,
-          dateDisplay: structured.dateDisplay,
-          location: structured.location,
-          summary: structured.summary,
-          imageUrl: remoteImageUrl || "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
-          ctaLabel: structured.ctaLabel,
-          ctaAction: "scroll-visit",
-          status: "pending_approval",
-          createdAt: new Date().toISOString(),
-        };
-
-        if (sendEmails) {
-          const emailRes = await sendApprovalEmail({ draft, publicBaseUrl });
-          draft.emailStatus = emailRes.sent ? "emailed" : emailRes.reason;
-          emailResults.push({ draftId: draft.id, ...emailRes });
+        // Check Gmail image attachments if email embeds a flyer/monthly calendar as attachment
+        let attachmentImg = null;
+        if (!remoteImageData) {
+          const imgPart = parts.find(
+            (p) => p.mimeType?.startsWith("image/") && p.body?.attachmentId
+          );
+          if (imgPart) {
+            try {
+              const attRes = await fetch(
+                `https://gmail.googleapis.com/gmail/v1/users/me/messages/${ref.id}/attachments/${imgPart.body.attachmentId}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              if (attRes.ok) {
+                const attJson = await attRes.json();
+                const b64 = String(attJson.data || "").replace(/-/g, "+").replace(/_/g, "/");
+                if (b64) attachmentImg = { base64: b64, mimeType: imgPart.mimeType };
+              }
+            } catch {
+              // Ignore failed attachment fetch
+            }
+          }
         }
 
-        store.pendingPosts.unshift(draft);
+        const effectiveImageData = remoteImageData || attachmentImg;
+        const calendarCheck = await parseMonthlyCalendarOrEmail({
+          subject,
+          bodyText: `${plain || msg.snippet || ""}\nFrom: ${headers.from || ""}\nDate: ${headers.date || ""}`,
+          imageBase64: effectiveImageData?.base64 || "",
+          imageMimeType: effectiveImageData?.mimeType || "image/jpeg",
+        });
+
+        const parsedItems =
+          calendarCheck.isMonthlyCalendar && calendarCheck.netNewEvents?.length
+            ? calendarCheck.netNewEvents
+            : [
+                await extractStructuredPostWithGemini({
+                  apiKey,
+                  textContext: `Email Subject: ${subject}\nFrom: ${headers.from || ""}\nDate: ${headers.date || ""}\nBody:\n${plain || msg.snippet || ""}`,
+                  imageBase64: effectiveImageData?.base64 || "",
+                  imageMimeType: effectiveImageData?.mimeType || "image/jpeg",
+                  fallback: {
+                    title: sanitizePublicCopy(subject).slice(0, 70),
+                    badge: "EMAIL UPDATE",
+                    category: "Upcoming Events",
+                    dateDisplay: headers.date || "Recent Church Email",
+                    location: "Mission Church · 130 Highland Ave, Somerville, MA",
+                    summary: sanitizePublicCopy(msg.snippet || plain || subject).slice(0, 220),
+                    ctaLabel: "Plan to Attend",
+                  },
+                }),
+              ];
+
+        for (let idx = 0; idx < parsedItems.length; idx++) {
+          const item = parsedItems[idx];
+          const suffix = parsedItems.length > 1 ? `-${idx + 1}` : "";
+          const draftId = `draft-gmail-${ref.id}${suffix}`;
+          const origImgUrl = remoteImageUrl || "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg";
+          const dualImages = await prepareDualEventImages({
+            draftId,
+            title: item.title,
+            dateDisplay: item.dateDisplay || headers.date || "Upcoming Event",
+            location: item.location || "130 Highland Ave, Somerville, MA",
+            badge: item.badge || (calendarCheck.isMonthlyCalendar ? "CALENDAR EVENT" : "EMAIL UPDATE"),
+            originalImageUrl: origImgUrl,
+            originalImageBase64: effectiveImageData?.base64 || "",
+            originalImageMimeType: effectiveImageData?.mimeType || "image/jpeg",
+            publicBaseUrl,
+          });
+
+          const draft = {
+            id: draftId,
+            sourceId,
+            sourceType: "gmail",
+            sourceLabel: calendarCheck.isMonthlyCalendar
+              ? `Monthly Calendar · ${calendarCheck.monthLabel || "Net-New Event"}`
+              : "Gmail Watch · Mission Church",
+            badge: item.badge || "CHURCH UPDATE",
+            category: item.category || "Upcoming Events",
+            title: item.title,
+            dateDisplay: item.dateDisplay || "Check Church Calendar",
+            location: item.location || "Mission Church · 130 Highland Ave, Somerville, MA",
+            speaker: item.speaker || "",
+            zoomUrl: item.zoomUrl || "",
+            startDate: item.startDate || "",
+            startTime: item.startTime || "",
+            endDate: item.endDate || "",
+            endTime: item.endTime || "",
+            summary: item.publicSummary || item.summary,
+            imageUrl: dualImages.originalImageUrl,
+            aiImageUrl: dualImages.aiImageUrl,
+            aiGenerator: dualImages.aiGenerator,
+            ctaLabel: item.ctaLabel || "Plan to Attend",
+            ctaAction: "scroll-visit",
+            status: "pending_approval",
+            createdAt: new Date().toISOString(),
+          };
+
+          if (sendEmails) {
+            const emailRes = await sendApprovalEmail({ draft, publicBaseUrl });
+            draft.emailStatus = emailRes.sent ? "emailed" : emailRes.reason;
+            emailResults.push({ draftId: draft.id, ...emailRes });
+          }
+
+          store.pendingPosts.unshift(draft);
+          newDrafts.push(draft);
+        }
+
         store.processedSourceIds.push(sourceId);
         processed.add(sourceId);
-        newDrafts.push(draft);
       }
     }
   }
