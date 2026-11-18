@@ -22,16 +22,21 @@ export function getGeneratedMediaFile(filename) {
 }
 
 export function getWordPressConfig() {
+  const approvalSecret =
+    process.env.APPROVAL_HMAC_SECRET ||
+    process.env.MISSION_APPROVAL_SECRET ||
+    "";
   return {
     baseUrl: (process.env.WP_BASE_URL || "https://missionchurchcooljc.com").replace(/\/+$/, ""),
     username: (process.env.WP_USERNAME || "brother kevin").trim(),
     appPassword: (process.env.MISSION_WP_APP_PASSWORD || process.env.WP_APP_PASSWORD || "").trim(),
+    approvalSecret: String(approvalSecret).trim(),
   };
 }
 
 export function isWordPressConfigured() {
   const cfg = getWordPressConfig();
-  return Boolean(cfg.baseUrl && cfg.username && cfg.appPassword);
+  return Boolean(cfg.baseUrl && (cfg.approvalSecret || (cfg.username && cfg.appPassword)));
 }
 
 function getWpAuthHeader() {
@@ -441,13 +446,70 @@ export async function publishDraftToWordPress({
   targetTypes = ["post", "mec-events"],
   publicDir,
 }) {
-  const { baseUrl } = getWordPressConfig();
+  const { baseUrl, approvalSecret, appPassword } = getWordPressConfig();
   if (!isWordPressConfigured()) {
-    throw new Error("WordPress credentials (WP_USERNAME / MISSION_WP_APP_PASSWORD) are not configured.");
+    throw new Error("WordPress credentials or signing secret are not configured.");
   }
 
   const chosenImageUrl =
     imageChoice === "ai" && draft.aiImageUrl ? draft.aiImageUrl : draft.imageUrl;
+
+  const cleanSummary = sanitizePublicCopy(draft.summary, {
+    preserveSpeakers: draft.speaker ? draft.speaker.split(/[,;&]+/) : [],
+  });
+
+  const gutenbergHtml = buildGutenbergPostHtml({
+    summary: cleanSummary,
+    dateDisplay: draft.dateDisplay,
+    location: draft.location,
+    speaker: draft.speaker,
+    zoomUrl: draft.zoomUrl,
+  });
+
+  // 1. Primary path: signed 1-click Mission Church Cloud Sync endpoint (/wp-json/mission/v1/publish)
+  if (approvalSecret) {
+    const resolved = await resolveImageBuffer(chosenImageUrl, publicDir).catch(() => null);
+    const bodyObj = {
+      title: draft.title,
+      content: gutenbergHtml,
+      excerpt: cleanSummary,
+      status: wpStatus,
+      createPost: targetTypes.includes("post"),
+      createMecEvent: targetTypes.includes("mec-events"),
+      startDate: draft.startDate || new Date().toISOString().slice(0, 10),
+      endDate: draft.endDate || draft.startDate || new Date().toISOString().slice(0, 10),
+      startTime: draft.startTime || "12:00",
+      endTime: draft.endTime || "14:00",
+      location: draft.location || "130 Highland Ave, Somerville, MA",
+      ...(resolved && !resolved.contentType.includes("svg")
+        ? {
+            imageBase64: resolved.buffer.toString("base64"),
+            imageMimeType: resolved.contentType,
+            filename: resolved.filename,
+          }
+        : chosenImageUrl?.startsWith("http")
+        ? { imageUrl: chosenImageUrl }
+        : {}),
+    };
+    const rawBody = JSON.stringify(bodyObj);
+    const sig = crypto.createHmac("sha256", approvalSecret).update(rawBody).digest("hex");
+    const syncRes = await fetch(`${baseUrl}/wp-json/mission/v1/publish`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Mission-Signature": sig,
+        "X-Approval-Secret": approvalSecret,
+      },
+      body: rawBody,
+    });
+    if (syncRes.ok) {
+      return await syncRes.json();
+    }
+    if (!appPassword) {
+      const errTxt = await syncRes.text();
+      throw new Error(`Mission Sync REST failed (${syncRes.status}): ${errTxt.slice(0, 220)}`);
+    }
+  }
 
   let media = null;
   try {
@@ -468,18 +530,6 @@ export async function publishDraftToWordPress({
       throw err;
     }
   }
-
-  const cleanSummary = sanitizePublicCopy(draft.summary, {
-    preserveSpeakers: draft.speaker ? draft.speaker.split(/[,;&]+/) : [],
-  });
-
-  const gutenbergHtml = buildGutenbergPostHtml({
-    summary: cleanSummary,
-    dateDisplay: draft.dateDisplay,
-    location: draft.location,
-    speaker: draft.speaker,
-    zoomUrl: draft.zoomUrl,
-  });
 
   const results = { featuredMediaId: media?.id || null, featuredMediaUrl: media?.source_url || null };
 
