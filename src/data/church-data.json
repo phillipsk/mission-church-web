@@ -681,15 +681,15 @@
     "gmail": {
       "targetInbox": "philipskevin386@gmail.com",
       "senderFilter": "missionchurch1@gmail.com",
-      "status": "Set GMAIL_ACCESS_TOKEN or GMAIL_CLIENT_ID + GMAIL_CLIENT_SECRET + GMAIL_REFRESH_TOKEN to pull live emails from missionchurch1@gmail.com into philipskevin386@gmail.com. Local Downloads flyer scanning remains active.",
-      "lastRunAt": "2026-11-17T20:32:08.225Z",
+      "status": "Synced 5 emails",
+      "lastRunAt": "2026-11-18T03:52:35.355Z",
       "scannedFlyersCount": 6
     },
     "bandApp": {
       "bandId": "74073849",
       "bandUrl": "https://www.band.us/n/ada0bcJfJ1f9z",
       "status": "24 curated photos across 19 albums",
-      "lastRunAt": "2026-11-17T20:32:08.225Z"
+      "lastRunAt": "2026-11-18T03:52:35.355Z"
     },
     "facebookReels": {
       "pageUrl": "https://www.facebook.com/missionchurchsomervillema",
