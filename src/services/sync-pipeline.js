@@ -120,8 +120,9 @@ ${String(textContext).slice(0, 3500)}`;
           contents: [{ role: "user", parts }],
           generationConfig: {
             temperature: 0.25,
-            maxOutputTokens: 550,
+            maxOutputTokens: 2048,
             responseMimeType: "application/json",
+            ...(model.includes("2.5") ? { thinkingConfig: { thinkingBudget: 256 } } : {}),
           },
         }),
       });

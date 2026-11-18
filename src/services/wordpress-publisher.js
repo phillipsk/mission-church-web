@@ -278,7 +278,7 @@ Inspect the email text and/or attached flyer or Monthly Church Calendar image.
 
 RULES:
 1. Detect whether this email is a Monthly Church Calendar ("isMonthlyCalendar": true) or a single event/announcement ("isMonthlyCalendar": false).
-2. If it is a Monthly Church Calendar, separate standard recurring weekly items (regular Sunday Worship at 12 PM, regular Tuesday Night Bible Study at 7:30 PM, weekday Morning Prayer Line) into "recurringSummary", and extract ONLY the net-new / special monthly events into "netNewEvents" (such as 1st Sunday Communion, 5th Sunday Family & Friends Fellowship, 1st Saturday Shepherd's Kitchen, guest speakers, Youth Service, Watch Night, concerts, special prayer/fasting, conferences, or time changes).
+2. If it is a Monthly Church Calendar, separate standard recurring weekly items (regular Sunday Worship at 12 PM, regular Tuesday Night Bible Study at 7:30 PM, weekday Morning Prayer Line) into "recurringSummary", and extract ONLY public net-new / special monthly events into "netNewEvents" (e.g. 1st Sunday Communion, 5th Sunday Family & Friends Fellowship, 1st Saturday Shepherd's Kitchen, guest speakers like Elder Joseph C. Black Jr., Youth Service, Candlelight Service, Watch Night, concerts, special prayer/fasting, conferences — omit private internal-only meetings like Staff/Trustees/Deacon meetings unless emphasized). If "isMonthlyCalendar" is false, ALWAYS extract the main event from the flyer/email into "netNewEvents" (at least 1 item).
 3. PRIVACY & SPEAKER RULE: In "publicSummary" and "title", STRIP regular church participant / lay member names (e.g., Sister X, Brother Y organizing snacks/logistics) while KEEPING clergy members and billed speakers (Bishop, Pastor, Apostle, Elder, First Lady, Evangelist, Minister, featured guest speakers).
 4. Return ONLY valid JSON (no markdown fences):
 {
@@ -325,8 +325,9 @@ ${String(bodyText).slice(0, 4500)}`;
           contents: [{ role: "user", parts }],
           generationConfig: {
             temperature: 0.2,
-            maxOutputTokens: 1600,
+            maxOutputTokens: 4096,
             responseMimeType: "application/json",
+            ...(model.includes("2.5") ? { thinkingConfig: { thinkingBudget: 512 } } : {}),
           },
         }),
       });
