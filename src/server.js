@@ -6,6 +6,17 @@ import { fileURLToPath } from "node:url";
 import { askChurchConcierge, resolveGeminiApiKey } from "./services/gemini-concierge.js";
 import { loadStore, saveStore } from "./services/firestore-store.js";
 import {
+  clearSessionCookieHeader,
+  createSessionCookieHeader,
+  getAuthenticatedAdmin,
+  hasAutomationHeader,
+  sendAdminMagicEmail,
+  verifyEmailCodeChallenge,
+  verifyMagicToken,
+  verifyPasscodeLogin,
+} from "./services/admin-auth.js";
+import {
+  ingestExternalBandPosts,
   parseFlyerWithGemini,
   registerGmailWatch,
   runBandSync,
@@ -35,13 +46,23 @@ const MIME_TYPES = {
   ".ico": "image/x-icon",
 };
 
-function sendJson(res, statusCode, payload) {
+function sendJson(res, statusCode, payload, extraHeaders = {}) {
   const body = JSON.stringify(payload);
   res.writeHead(statusCode, {
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store",
+    ...extraHeaders,
   });
   res.end(body);
+}
+
+function sendRedirect(res, location, extraHeaders = {}) {
+  res.writeHead(302, {
+    Location: location,
+    "Cache-Control": "no-store",
+    ...extraHeaders,
+  });
+  res.end();
 }
 
 function sendHtml(res, statusCode, title, heading, message, publicBaseUrl) {
@@ -92,6 +113,7 @@ async function readJsonBody(req, maxBytes = 1_000_000) {
 function serveStaticFile(req, res, urlPath) {
   let cleanPath = decodeURIComponent(urlPath.split("?")[0]);
   if (cleanPath === "/") cleanPath = "/index.html";
+  if (cleanPath === "/login") cleanPath = "/login.html";
 
   const resolvedPath = path.resolve(PUBLIC_DIR, "." + cleanPath);
   if (!resolvedPath.startsWith(PUBLIC_DIR)) {
@@ -165,6 +187,10 @@ async function publishDraftById(store, draftId, overrides = {}) {
   return feedItem;
 }
 
+function isAuthorizedAdmin(req) {
+  return Boolean(getAuthenticatedAdmin(req) || hasAutomationHeader(req));
+}
+
 export function createAppServer() {
   return http.createServer(async (req, res) => {
     const method = req.method || "GET";
@@ -177,8 +203,75 @@ export function createAppServer() {
         return sendJson(res, 200, { ok: true, service: "mission-church-web" });
       }
 
+      if ((pathname === "/admin" || pathname === "/wp-admin" || pathname === "/admin/") && method === "GET") {
+        const admin = getAuthenticatedAdmin(req);
+        return sendRedirect(res, admin ? "/?admin=1" : "/login");
+      }
+
+      if (pathname === "/api/auth/login" && method === "POST") {
+        const body = await readJsonBody(req);
+        const check = verifyPasscodeLogin(body.email, body.passcode);
+        if (!check.ok) {
+          return sendJson(res, 401, { error: check.error });
+        }
+        return sendJson(
+          res,
+          200,
+          { ok: true, email: check.email },
+          { "Set-Cookie": createSessionCookieHeader(check.email, req) }
+        );
+      }
+
+      if (pathname === "/api/auth/send-code" && method === "POST") {
+        const body = await readJsonBody(req);
+        const resMagic = await sendAdminMagicEmail({ email: body.email, publicBaseUrl });
+        if (!resMagic.ok) {
+          return sendJson(res, 400, { error: resMagic.error });
+        }
+        return sendJson(res, 200, { ok: true, codeEnvelope: resMagic.codeEnvelope });
+      }
+
+      if (pathname === "/api/auth/verify-code" && method === "POST") {
+        const body = await readJsonBody(req);
+        const verified = verifyEmailCodeChallenge(body.email, body.code, body.codeEnvelope);
+        if (!verified) {
+          return sendJson(res, 401, { error: "Invalid or expired verification code." });
+        }
+        return sendJson(
+          res,
+          200,
+          { ok: true, email: verified.email },
+          { "Set-Cookie": createSessionCookieHeader(verified.email, req) }
+        );
+      }
+
+      if (pathname === "/api/auth/magic" && method === "GET") {
+        const token = url.searchParams.get("token") || "";
+        const verified = verifyMagicToken(token);
+        if (!verified) {
+          return sendHtml(
+            res,
+            401,
+            "Login Link Expired",
+            "Login Link Invalid or Expired",
+            "Please request a fresh login link on the /login page.",
+            `${publicBaseUrl}/login`
+          );
+        }
+        return sendRedirect(res, "/?admin=1", {
+          "Set-Cookie": createSessionCookieHeader(verified.email, req),
+        });
+      }
+
+      if (pathname === "/api/auth/logout" && method === "POST") {
+        return sendJson(res, 200, { ok: true }, { "Set-Cookie": clearSessionCookieHeader(req) });
+      }
+
       if (pathname === "/api/bootstrap" && method === "GET") {
         const store = await loadStore();
+        const adminUser = getAuthenticatedAdmin(req);
+        const isAdmin = Boolean(adminUser);
+
         const photosManifestPath = path.join(PUBLIC_DIR, "assets", "photos", "curated_photos_manifest.json");
         let curatedPhotos = [];
         if (fs.existsSync(photosManifestPath)) {
@@ -192,8 +285,15 @@ export function createAppServer() {
             height: p.height,
           }));
         }
+
         return sendJson(res, 200, {
           ...store,
+          isAdmin,
+          adminEmail: adminUser?.email || null,
+          pendingPosts: isAdmin ? store.pendingPosts || [] : [],
+          ministrySubmissions: isAdmin ? store.ministrySubmissions || [] : [],
+          visitPlans: isAdmin ? store.visitPlans || [] : [],
+          processedSourceIds: isAdmin ? store.processedSourceIds || [] : [],
           persistenceBackend: store._persistence,
           curatedPhotos,
           geminiConfigured: Boolean(resolveGeminiApiKey()),
@@ -310,6 +410,84 @@ export function createAppServer() {
         });
       }
 
+      if ((pathname === "/api/admin/watch-poll" || pathname === "/api/webhooks/gmail-push") && method === "POST") {
+        const store = await loadStore();
+        const { newDrafts, emailResults } = await watchAndPrepareDrafts({
+          store,
+          publicDir: PUBLIC_DIR,
+          publicBaseUrl,
+          sendEmails: true,
+        });
+        const now = new Date().toISOString();
+        store.syncState.gmail.lastRunAt = now;
+        if (newDrafts.length > 0) {
+          store.syncState.gmail.status = `${store.pendingPosts.length} draft(s) awaiting approval`;
+        }
+        const persist = await saveStore(store);
+        const showDetails = isAuthorizedAdmin(req);
+        return sendJson(res, 200, {
+          ok: true,
+          checkedAt: now,
+          persistenceBackend: persist.backend,
+          newDraftsCount: newDrafts.length,
+          ...(showDetails ? { newDrafts, emailResults, pendingPosts: store.pendingPosts } : {}),
+        });
+      }
+
+      // Signed 1-click email links (GET) work without cookie; POST actions require Admin auth
+      if (pathname === "/api/admin/approve-post") {
+        const store = await loadStore();
+        if (method === "GET") {
+          const id = url.searchParams.get("id") || "";
+          const token = url.searchParams.get("token") || "";
+          if (!verifyApprovalToken(id, "approve", token)) {
+            return sendHtml(res, 403, "Invalid Approval Link", "Approval Link Invalid or Expired", "Please sign in at /login to approve this post.", `${publicBaseUrl}/login`);
+          }
+          const published = await publishDraftById(store, id);
+          if (!published) {
+            return sendHtml(res, 200, "Already Processed", "Already Published or Removed", "This draft has already been processed. Check the live community feed!", publicBaseUrl);
+          }
+          await saveStore(store);
+          return sendHtml(res, 200, "Published!", "Post Approved & Published!", `"${published.title}" is now live in the Mission Church community feed.`, publicBaseUrl);
+        }
+        if (method === "POST") {
+          if (!isAuthorizedAdmin(req)) return sendJson(res, 401, { error: "Admin login required (/login)." });
+          const body = await readJsonBody(req);
+          const published = await publishDraftById(store, body.id, body);
+          if (!published) return sendJson(res, 404, { error: "Pending post not found." });
+          await saveStore(store);
+          return sendJson(res, 200, { ok: true, published, feed: store.feed, pendingPosts: store.pendingPosts });
+        }
+      }
+
+      if (pathname === "/api/admin/reject-post") {
+        const store = await loadStore();
+        if (method === "GET") {
+          const id = url.searchParams.get("id") || "";
+          const token = url.searchParams.get("token") || "";
+          if (!verifyApprovalToken(id, "reject", token)) {
+            return sendHtml(res, 403, "Invalid Link", "Invalid Rejection Link", "Please sign in at /login to manage pending drafts.", `${publicBaseUrl}/login`);
+          }
+          store.pendingPosts = (store.pendingPosts || []).filter((p) => p.id !== id);
+          await saveStore(store);
+          return sendHtml(res, 200, "Skipped", "Draft Skipped", "The draft was removed and will not appear on the public website.", publicBaseUrl);
+        }
+        if (method === "POST") {
+          if (!isAuthorizedAdmin(req)) return sendJson(res, 401, { error: "Admin login required (/login)." });
+          const body = await readJsonBody(req);
+          store.pendingPosts = (store.pendingPosts || []).filter((p) => p.id !== body.id);
+          await saveStore(store);
+          return sendJson(res, 200, { ok: true, pendingPosts: store.pendingPosts });
+        }
+      }
+
+      // All remaining /api/admin/* endpoints require admin session or automation secret
+      if (pathname.startsWith("/api/admin/")) {
+        if (!isAuthorizedAdmin(req)) {
+          return sendJson(res, 401, { error: "Admin sign-in required. Please log in at /login." });
+        }
+      }
+
       if (pathname === "/api/admin/sync" && method === "POST") {
         const store = await loadStore();
         const [gmailResult, bandResult] = await Promise.all([
@@ -334,23 +512,22 @@ export function createAppServer() {
         });
       }
 
-      if ((pathname === "/api/admin/watch-poll" || pathname === "/api/webhooks/gmail-push") && method === "POST") {
-        const store = await loadStore();
-        const { newDrafts, emailResults } = await watchAndPrepareDrafts({
-          store,
-          publicDir: PUBLIC_DIR,
-          publicBaseUrl,
-          sendEmails: true,
-        });
-        const now = new Date().toISOString();
-        store.syncState.gmail.lastRunAt = now;
-        if (newDrafts.length > 0) {
-          store.syncState.gmail.status = `${store.pendingPosts.length} draft(s) awaiting approval`;
+      if (pathname === "/api/admin/ingest-band-posts" && method === "POST") {
+        const body = await readJsonBody(req);
+        const posts = Array.isArray(body.posts) ? body.posts : body.post ? [body.post] : [];
+        if (!posts.length) {
+          return sendJson(res, 400, { error: "Provide a 'posts' array containing post text, overall description, and optional images/schedule." });
         }
+        const store = await loadStore();
+        const { newDrafts, emailResults } = await ingestExternalBandPosts({
+          posts,
+          store,
+          publicBaseUrl,
+          sendEmails: body.sendEmails !== false,
+        });
         const persist = await saveStore(store);
         return sendJson(res, 200, {
           ok: true,
-          checkedAt: now,
           persistenceBackend: persist.backend,
           newDraftsCount: newDrafts.length,
           newDrafts,
@@ -376,50 +553,6 @@ export function createAppServer() {
         draft.emailStatus = emailRes.sent ? "emailed" : emailRes.reason;
         await saveStore(store);
         return sendJson(res, 200, { ok: emailRes.sent, draftId: draft.id, ...emailRes });
-      }
-
-      if (pathname === "/api/admin/approve-post") {
-        const store = await loadStore();
-        if (method === "GET") {
-          const id = url.searchParams.get("id") || "";
-          const token = url.searchParams.get("token") || "";
-          if (!verifyApprovalToken(id, "approve", token)) {
-            return sendHtml(res, 403, "Invalid Approval Link", "Approval Link Invalid or Expired", "Please approve this post from the Admin & AI Sync drawer on the website.", publicBaseUrl);
-          }
-          const published = await publishDraftById(store, id);
-          if (!published) {
-            return sendHtml(res, 200, "Already Processed", "Already Published or Removed", "This draft has already been processed. Check the live community feed!", publicBaseUrl);
-          }
-          await saveStore(store);
-          return sendHtml(res, 200, "Published!", "Post Approved & Published!", `"${published.title}" is now live in the Mission Church community feed.`, publicBaseUrl);
-        }
-        if (method === "POST") {
-          const body = await readJsonBody(req);
-          const published = await publishDraftById(store, body.id, body);
-          if (!published) return sendJson(res, 404, { error: "Pending post not found." });
-          await saveStore(store);
-          return sendJson(res, 200, { ok: true, published, feed: store.feed, pendingPosts: store.pendingPosts });
-        }
-      }
-
-      if (pathname === "/api/admin/reject-post") {
-        const store = await loadStore();
-        if (method === "GET") {
-          const id = url.searchParams.get("id") || "";
-          const token = url.searchParams.get("token") || "";
-          if (!verifyApprovalToken(id, "reject", token)) {
-            return sendHtml(res, 403, "Invalid Link", "Invalid Rejection Link", "Please manage pending drafts from the Admin & AI Sync drawer.", publicBaseUrl);
-          }
-          store.pendingPosts = (store.pendingPosts || []).filter((p) => p.id !== id);
-          await saveStore(store);
-          return sendHtml(res, 200, "Skipped", "Draft Skipped", "The draft was removed and will not appear on the public website.", publicBaseUrl);
-        }
-        if (method === "POST") {
-          const body = await readJsonBody(req);
-          store.pendingPosts = (store.pendingPosts || []).filter((p) => p.id !== body.id);
-          await saveStore(store);
-          return sendJson(res, 200, { ok: true, pendingPosts: store.pendingPosts });
-        }
       }
 
       if (pathname === "/api/admin/parse-flyer" && method === "POST") {

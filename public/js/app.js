@@ -1034,6 +1034,10 @@ function wireStaticListeners() {
     toggleAdmin(true);
   });
   qs("#close-admin-btn")?.addEventListener("click", () => toggleAdmin(false));
+  qs("#admin-logout-btn")?.addEventListener("click", async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.href = "/";
+  });
 
   qs("#watch-poll-btn")?.addEventListener("click", async () => {
     const out = qs("#admin-sync-output");
@@ -1102,6 +1106,18 @@ async function init() {
 
   if (state.data.geminiConfigured) {
     qs("#chat-model-badge").textContent = "Gemini AI Connected · Grounded on live church data";
+  }
+
+  if (state.data.isAdmin) {
+    qs("#open-admin-btn")?.classList.remove("hidden");
+    qs("#mobile-admin-btn")?.classList.remove("hidden");
+    if (state.data.adminEmail) {
+      qs("#admin-email-badge").textContent = `Signed in: ${state.data.adminEmail} · Gmail & BAND Sync`;
+    }
+    if (new URLSearchParams(window.location.search).get("admin") === "1") {
+      qs("#admin-drawer")?.classList.remove("hidden");
+      renderAdminDrawer();
+    }
   }
 
   renderNextGathering();

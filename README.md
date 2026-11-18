@@ -53,16 +53,25 @@ flowchart LR
   - Baseline church photography, flyers, downloaded Facebook Worship Shorts, and the initial seed snapshot (`src/data/church-data.json`).
 - **NOT Tracked in GitHub (Protected Outside Version Control):**
   - `.env`, `.env.local`, and `local.properties` are ignored via `.gitignore` and `.dockerignore`.
-  - Production secrets live in **Google Cloud Secret Manager** (`MISSION_CHURCH_GEMINI_API_KEY`, `MISSION_GMAIL_*`, `MISSION_APPROVAL_SECRET`) and the GitHub Actions deployment credential lives in GitHub Secrets (`GCP_SA_KEY`).
+  - Production secrets live in **Google Cloud Secret Manager** (`MISSION_CHURCH_GEMINI_API_KEY`, `MISSION_GMAIL_*`, `MISSION_APPROVAL_SECRET`, `MISSION_ADMIN_PASSCODE`) and the GitHub Actions deployment credential lives in GitHub Secrets (`GCP_SA_KEY`).
   - Live runtime user submissions, newly approved posts, and Prayer Wall updates live in **Cloud Firestore**, so redeploying code from GitHub never overwrites live church data.
 
 ---
 
-## 4. End-to-End Post Approval Workflow (Gmail + BAND)
+## 4. Admin Portal (`/login`) & BAND + Gmail Post Ingestion Workflow
 
-1. **Detection:** Cloud Pub/Sub (`POST /api/webhooks/gmail-push`) or Cloud Scheduler (`POST /api/admin/watch-poll` every 15 minutes) checks for new emails matching `missionchurch1@gmail.com` / Constant Contact / `band.us` and BAND community updates.
-2. **AI Draft Preparation:** Gemini 2.5 Flash reads the email/post text and extracts any flyer image to draft a clean website card (`title`, `badge`, `category`, `dateDisplay`, `location`, `summary`), saving it in `pendingPosts`.
-3. **Email Review & 1-Click Publish:** The server sends a preview email to `phillipskevin386@gmail.com` containing the flyer image, draft write-up, and HMAC-signed **Approve & Publish** / **Skip / Reject** buttons (and lists the draft inside the website's **Admin & AI Sync** drawer).
+### Admin Authentication (`/login`, `/admin`, `/wp-admin`)
+- Regular visitors see only the public continuous-scroll website; `pendingPosts`, `ministrySubmissions`, and `visitPlans` are redacted from `/api/bootstrap` unless authenticated.
+- Church administrators (`phillipskevin386@gmail.com`, `missionchurch1@gmail.com`, `flips4063@gmail.com`) visit `/login` (or `/admin` / `/wp-admin`, just like WordPress) to sign in via either **Admin Passcode** or a **1-Click Email Login Link / 6-Digit Code** delivered through Gmail.
+- Successful login issues an `HttpOnly`, HMAC-SHA256 signed `mission_admin_session` cookie (valid 7 days) and opens the **Admin Studio** drawer (`/?admin=1`).
+
+### BAND App Text + Overall Description + Image Extraction & Approval Flow
+1. **Detection:** Cloud Pub/Sub (`POST /api/webhooks/gmail-push`) or Cloud Scheduler (`POST /api/admin/watch-poll` every 15 minutes) monitors Mission Church emails (`missionchurch1@gmail.com` / Constant Contact / `band.us`) and BAND community feeds.
+2. **Multimodal BAND & Email Parsing:** Whenever BAND posts are pulled via `BAND_ACCESS_TOKEN`, `npm run sync:band`, or pushed to `POST /api/admin/ingest-band-posts`, `ingestExternalBandPosts()` extracts **all parts** of each BAND post together:
+   - The **written post body text** (`content` / `body`)
+   - The **overall event/post description** and attached **BAND schedule metadata** (`schedule.title`, `start_at`, `location`, `description`)
+   - Any **attached photos or flyers** (`photos[]` / `imageUrl`), converting the flyer image to base64 and feeding **both** text + overall description + image into **Gemini 2.5 Flash**.
+3. **Email Review & 1-Click Publish:** Gemini drafts a clean feed card saved to Firestore (`pendingPosts`), and the server emails `phillipskevin386@gmail.com` with the image preview, AI write-up, and signed **Approve & Publish** / **Skip / Reject** buttons (also manageable inside the Admin Studio drawer after `/login`).
 
 ---
 
@@ -70,10 +79,12 @@ flowchart LR
 
 ```bash
 npm start
-# Open http://localhost:8095
+# Public website: http://localhost:8095
+# Admin login:    http://localhost:8095/login
 ```
 
 - **Refresh Facebook Shorts:** `npm run sync:shorts`
+- **Sync BAND Posts (Text + Description + Images):** `npm run sync:band` (supports `BAND_ACCESS_TOKEN` or `--file=band-posts.json`)
 - **Authorize Gmail Read + Send OAuth:** `npm run auth:gmail`
 - **Manual Deploy to Cloud Run:** `npm run deploy`
 - **Automated CI/CD:** Every push to `main` triggers `.github/workflows/deploy-cloud-run.yml` using GitHub Secret `GCP_SA_KEY` to build and deploy a new Cloud Run revision automatically.

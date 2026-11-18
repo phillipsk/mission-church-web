@@ -548,56 +548,17 @@ export async function watchAndPrepareDrafts({
     }
   }
 
-  // 2. Sync latest BAND App highlight (live API if token configured, else latest curated album highlight)
+  // 2. Sync latest BAND App posts (text + overall description + images + schedules)
   const bandRes = await runBandSync(publicDir);
   if (bandRes.mode === "live-band-openapi" && Array.isArray(bandRes.items)) {
-    for (const post of bandRes.items.slice(0, 3)) {
-      const sourceId = `band-post:${post.post_key}`;
-      if (processed.has(sourceId)) continue;
-      const photoUrl = post.photos?.[0]?.url || "/assets/photos/01_unity_sanctuary_group_portrait.jpg";
-      const photoData = await fetchRemoteImageAsBase64(photoUrl);
-      const structured = await extractStructuredPostWithGemini({
-        apiKey,
-        textContext: `BAND Post by ${post.author?.name || "Mission Church"}:\n${post.content || ""}`,
-        imageBase64: photoData?.base64 || "",
-        imageMimeType: photoData?.mimeType || "image/jpeg",
-        fallback: {
-          title: "Mission Church BAND Update",
-          badge: "BAND APP",
-          category: "Youth & Fellowship",
-          dateDisplay: "Recent BAND Post",
-          location: "Mission Church BAND Community",
-          summary: String(post.content || "").slice(0, 220),
-          ctaLabel: "Join on BAND ↗",
-        },
-      });
-      const draft = {
-        id: `draft-band-${post.post_key}`,
-        sourceId,
-        sourceType: "band",
-        sourceLabel: "BAND App Sync",
-        badge: structured.badge,
-        category: structured.category,
-        title: structured.title,
-        dateDisplay: structured.dateDisplay,
-        location: structured.location,
-        summary: structured.summary,
-        imageUrl: photoUrl,
-        ctaLabel: structured.ctaLabel,
-        externalUrl: "https://www.band.us/n/ada0bcJfJ1f9z",
-        status: "pending_approval",
-        createdAt: new Date().toISOString(),
-      };
-      if (sendEmails) {
-        const emailRes = await sendApprovalEmail({ draft, publicBaseUrl });
-        draft.emailStatus = emailRes.sent ? "emailed" : emailRes.reason;
-        emailResults.push({ draftId: draft.id, ...emailRes });
-      }
-      store.pendingPosts.unshift(draft);
-      store.processedSourceIds.push(sourceId);
-      processed.add(sourceId);
-      newDrafts.push(draft);
-    }
+    const bandIngest = await ingestExternalBandPosts({
+      posts: bandRes.items.slice(0, 5),
+      store,
+      publicBaseUrl,
+      sendEmails,
+    });
+    newDrafts.push(...bandIngest.newDrafts);
+    emailResults.push(...bandIngest.emailResults);
   } else if (Array.isArray(bandRes.manifestPhotos)) {
     const featured = bandRes.manifestPhotos.slice(0, 1);
     for (const photo of featured) {
@@ -647,6 +608,97 @@ export async function watchAndPrepareDrafts({
       processed.add(sourceId);
       newDrafts.push(draft);
     }
+  }
+
+  return { newDrafts, emailResults };
+}
+
+export async function ingestExternalBandPosts({
+  posts = [],
+  store,
+  publicBaseUrl = DEFAULT_PUBLIC_BASE_URL,
+  sendEmails = true,
+}) {
+  const apiKey = resolveGeminiApiKey();
+  const processed = new Set(store.processedSourceIds || []);
+  const newDrafts = [];
+  const emailResults = [];
+
+  for (const post of posts) {
+    const postKey = String(post.post_key || post.id || crypto.randomUUID().slice(0, 10));
+    const sourceId = `band-post:${postKey}`;
+    if (processed.has(sourceId)) continue;
+
+    const writtenText = String(post.content || post.body || post.text || "").trim();
+    const overallDescription = String(post.description || post.overallDescription || "").trim();
+    const schedule = post.schedule || {};
+    const scheduleContext = schedule.title || schedule.start_at || schedule.location || schedule.description
+      ? `\nAttached BAND Event Schedule:\nTitle: ${schedule.title || ""}\nStarts: ${schedule.start_at || ""}\nEnds: ${schedule.end_at || ""}\nLocation: ${schedule.location || ""}\nEvent Description: ${schedule.description || ""}`
+      : "";
+
+    const photoUrl =
+      post.photos?.[0]?.url ||
+      post.imageUrl ||
+      (Array.isArray(post.imageUrls) ? post.imageUrls[0] : "") ||
+      "/assets/photos/01_unity_sanctuary_group_portrait.jpg";
+    const photoData = photoUrl.startsWith("https://") ? await fetchRemoteImageAsBase64(photoUrl) : null;
+
+    const fullContext = [
+      `BAND Post Author: ${post.author?.name || post.author || "Mission Church Family"}`,
+      post.title ? `Post Heading: ${post.title}` : "",
+      writtenText ? `Post Body Text:\n${writtenText}` : "",
+      overallDescription ? `Overall Description:\n${overallDescription}` : "",
+      scheduleContext,
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+
+    const structured = await extractStructuredPostWithGemini({
+      apiKey,
+      textContext: fullContext,
+      imageBase64: photoData?.base64 || "",
+      imageMimeType: photoData?.mimeType || "image/jpeg",
+      fallback: {
+        title: (post.title || schedule.title || "Mission Church BAND Update").slice(0, 70),
+        badge: "BAND POST",
+        category: "Youth & Fellowship",
+        dateDisplay: schedule.start_at || post.createdAt || "Recent BAND Post",
+        location: schedule.location || "Mission Church · 130 Highland Ave, Somerville, MA",
+        summary: (writtenText || overallDescription || schedule.description || "New update from the Mission Church BAND community.").slice(0, 280),
+        ctaLabel: "Open on BAND ↗",
+      },
+    });
+
+    const draft = {
+      id: `draft-band-${postKey}`,
+      sourceId,
+      sourceType: "band",
+      sourceLabel: "BAND Post (Text + Description + Photo)",
+      badge: structured.badge,
+      category: structured.category,
+      title: structured.title,
+      dateDisplay: structured.dateDisplay,
+      location: structured.location,
+      summary: structured.summary,
+      rawPostText: writtenText.slice(0, 1200),
+      rawDescription: (overallDescription || schedule.description || "").slice(0, 1200),
+      imageUrl: photoUrl,
+      ctaLabel: structured.ctaLabel,
+      externalUrl: post.postUrl || "https://www.band.us/n/ada0bcJfJ1f9z",
+      status: "pending_approval",
+      createdAt: new Date().toISOString(),
+    };
+
+    if (sendEmails) {
+      const emailRes = await sendApprovalEmail({ draft, publicBaseUrl });
+      draft.emailStatus = emailRes.sent ? "emailed" : emailRes.reason;
+      emailResults.push({ draftId: draft.id, ...emailRes });
+    }
+
+    store.pendingPosts.unshift(draft);
+    store.processedSourceIds.push(sourceId);
+    processed.add(sourceId);
+    newDrafts.push(draft);
   }
 
   return { newDrafts, emailResults };

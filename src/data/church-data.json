@@ -1,49 +1,5 @@
 {
-  "church": {
-    "name": "Mission Church of Our Lord Jesus Christ",
-    "shortName": "Mission Church",
-    "denomination": "COOLJC",
-    "pastor": "Bishop / Pastor Malcolm D. Mitchell",
-    "administrator": "Marshina Mitchell",
-    "themeYear": "2026",
-    "themeTitle": "Moving In Obedience: Possessing Our Blessings",
-    "themeScripture": "Joshua 1:11",
-    "themeScriptureUrl": "https://ref.ly/Josh%201.11;kjv1900?t=biblia",
-    "address": "130 Highland Avenue, Somerville, MA 02143",
-    "phone": "617-863-6614",
-    "phoneHref": "tel:+16178636614",
-    "email": "missionchurch1@gmail.com",
-    "directionsUrl": "https://goo.gl/maps/NGivzYmXp2YyWqzs9",
-    "officialSiteUrl": "https://missionchurchcooljc.com/",
-    "pastorQuote": "We are excited that you are considering visiting Mission Church. We want to dispel any reservations you might have before you come by informing you as much as we can, so that you can come and worship Jesus.",
-    "welcomeBody": "We all had a 'first day' at church—you'll find we are a friendly congregation. If you don't understand something, please simply ask. Come worship, grow, and serve with us in Somerville.",
-    "social": {
-      "facebook": "https://www.facebook.com/missionchurchsomervillema",
-      "instagram": "https://www.instagram.com/missionchurchofchrist/",
-      "youtube": "https://www.youtube.com/channel/UC-WFNdLaIzvjKeXmXTfOf3A",
-      "tabithasClosetFb": "https://www.facebook.com/profile.php?id=100093219860986",
-      "shepherdsKitchenFb": "https://www.facebook.com/MCShepherdskitchen/",
-      "bandApp": "https://www.band.us/n/ada0bcJfJ1f9z"
-    },
-    "giving": {
-      "cashApp": {
-        "handle": "$missionchurch238",
-        "url": "https://cash.app/$missionchurch238"
-      },
-      "venmo": {
-        "handle": "@Mission-ChurchofChrist",
-        "url": "https://account.venmo.com/u/Mission-ChurchofChrist"
-      },
-      "buildingFundUrl": "https://docs.google.com/forms/d/e/1FAIpQLSemoHVA0noqAJ74iNJIcZ-tqP_A0BRWd4g0Qv9D-BbWytbqPg/viewform",
-      "apostleForehand": {
-        "cashApp": "$BishopDarylForehand",
-        "venmo": "@Daryl-Forehand",
-        "url": "https://venmo.com/Daryl-Forehand"
-      },
-      "scripture": "Give, and it shall be given unto you; good measure, pressed down, and shaken together, and running over... — Luke 6:38 (KJV)",
-      "note": "Offerings and tithes for Bishop Pastor Mitchell use the same church accounts—include a memo/designation (e.g. 'tithe', 'offering', or 'building fund'). For non-cash donations, contact Church Administrator Marshina Mitchell at missionchurch1@gmail.com or 617-863-6614."
-    }
-  },
+  "updatedAt": "2026-11-18T04:48:45.330Z",
   "sundaySchedule": [
     {
       "time": "10:00 AM",
@@ -70,6 +26,225 @@
       "description": "Vibrant praise, testimonies, announcements, and the preached Word. Arrive 15 minutes early; greeters and ushers will welcome you."
     }
   ],
+  "ministries": {
+    "allDepartments": [
+      {
+        "name": "Women's Department",
+        "focus": "Sisterhood Week, prayer, mentorship, and Women in His Kingdom groups."
+      },
+      {
+        "name": "Men's Department (Brotherhood)",
+        "focus": "Men in His Kingdom groups, leadership service, and community outreach."
+      },
+      {
+        "name": "Youth Department (ABYPU)",
+        "focus": "Quarterly youth services, Plugged In fellowship, and Christian Wellness."
+      },
+      {
+        "name": "Sunday School Department",
+        "focus": "Sundays at 10:30 AM for children, teens, adults, and VBS."
+      },
+      {
+        "name": "Shepherd's Kitchen",
+        "focus": "10th year food pantry on the 1st Saturday of every month (9:15 AM–11 AM)."
+      },
+      {
+        "name": "Tabitha's Closet",
+        "focus": "New and gently used clothing distribution and neighborhood care."
+      },
+      {
+        "name": "Abundant Life Groups",
+        "focus": "Tue & Thu 7:30 PM interactive Zoom small groups (Passcode: ALG2022)."
+      },
+      {
+        "name": "Prayer Ministry",
+        "focus": "Sun 10 AM Sanctuary, Mon 6/6:30 AM Pastor's Prayer, Tue–Thu 7 AM Prayer Line."
+      },
+      {
+        "name": "Usher Board",
+        "focus": "Welcoming guests, sanctuary hospitality, parking assistance, and order."
+      },
+      {
+        "name": "Allied Health Ministry",
+        "focus": "Community health fairs, wellness screenings, and healthcare education."
+      },
+      {
+        "name": "Counseling Ministry",
+        "focus": "Confidential spiritual lay counseling & Last Friday 8 PM Zoom sessions."
+      }
+    ],
+    "interactiveThree": [
+      {
+        "id": "tabithas-closet",
+        "name": "Tabitha's Closet",
+        "tagline": "New & Gently Used Clothing Ministry",
+        "description": "Clothing individuals and families across Somerville and Greater Boston with dignity—offering new and gently used seasonal wear, coats, children's clothing, and essentials.",
+        "imageUrl": "/assets/photos/06_compassion_backpack_giveaway_families.jpg",
+        "externalUrl": "https://www.facebook.com/profile.php?id=100093219860986",
+        "externalLabel": "Tabitha's Closet on Facebook ↗",
+        "modes": [
+          "Request Clothing Assistance",
+          "Schedule a Clothing Donation Drop-Off",
+          "Volunteer to Sort & Organize"
+        ],
+        "categories": [
+          "Women's Clothing",
+          "Men's Clothing",
+          "Children & Youth",
+          "Winter Coats & Shoes",
+          "Baby & Toddler Essentials"
+        ]
+      },
+      {
+        "id": "shepherds-kitchen",
+        "name": "Shepherd's Kitchen",
+        "tagline": "10th Year Monthly Food Pantry · 1st Saturday Monthly",
+        "description": "Now in its 10th year serving our neighbors! Free food distribution every 1st Saturday from 9:15 AM – 11:00 AM (while supplies last) with milk, eggs, fresh produce, juice, meat, and canned goods. Volunteers arrive at 8:15 AM.",
+        "imageUrl": "/assets/flyers/shepherds_kitchen_logo.jpg",
+        "flyerUrl": "/assets/flyers/shepherds_kitchen_dec_2026.png",
+        "externalUrl": "https://www.facebook.com/MCShepherdskitchen/",
+        "externalLabel": "Shepherd's Kitchen on Facebook ↗",
+        "nextDistribution": "Saturday, December 5, 2026 · 9:15 AM – 11:00 AM",
+        "volunteerArrival": "8:15 AM setup & sorting",
+        "items": [
+          "Milk & Eggs",
+          "Fresh Seasonal Produce",
+          "Meat & Poultry",
+          "Juices & Breakfast Staples",
+          "Canned Goods & Pantry Basics"
+        ],
+        "modes": [
+          "Get Dec 5 Pantry Reminder & Dietary Note",
+          "Volunteer (8:15 AM Setup Team)",
+          "Sponsor / Donate Non-Perishables"
+        ]
+      },
+      {
+        "id": "counseling-ministry",
+        "name": "Counseling Ministry",
+        "tagline": "Pray on it, Pray over it, Pray through it",
+        "description": "Provides prayerful, compassionate, and confidential support with trained lay counselors, plus equipping resources to foster a culture of care. Meets the last Friday of every month at 8:00 PM on Zoom.",
+        "imageUrl": "/assets/photos/08_compassion_prayer_counseling_ministry.jpg",
+        "zoomId": "832 5047 3693",
+        "zoomPasscode": "012849",
+        "zoomUrl": "https://us02web.zoom.us/j/83250473693?pwd=N0JWUFQvdDFXUGZiNkJYN29xdHM1QT09",
+        "intakeFormUrl": "https://forms.gle/EUCSe2Nm1DtTuER19",
+        "externalLabel": "Official Google Intake Form ↗",
+        "modes": [
+          "Request Confidential Lay Counselor Follow-Up",
+          "Join Last Friday Virtual Care Service (8:00 PM)",
+          "Ask a Care Question"
+        ],
+        "privacyNote": "Your responses are strictly confidential and shared only with assigned Counseling Ministry care leaders."
+      }
+    ]
+  },
+  "church": {
+    "phoneHref": "tel:+16178636614",
+    "administrator": "Marshina Mitchell",
+    "phone": "617-863-6614",
+    "name": "Mission Church of Our Lord Jesus Christ",
+    "pastor": "Bishop / Pastor Malcolm D. Mitchell",
+    "themeTitle": "Moving In Obedience: Possessing Our Blessings",
+    "welcomeBody": "We all had a 'first day' at church—you'll find we are a friendly congregation. If you don't understand something, please simply ask. Come worship, grow, and serve with us in Somerville.",
+    "social": {
+      "tabithasClosetFb": "https://www.facebook.com/profile.php?id=100093219860986",
+      "bandApp": "https://www.band.us/n/ada0bcJfJ1f9z",
+      "facebook": "https://www.facebook.com/missionchurchsomervillema",
+      "shepherdsKitchenFb": "https://www.facebook.com/MCShepherdskitchen/",
+      "instagram": "https://www.instagram.com/missionchurchofchrist/",
+      "youtube": "https://www.youtube.com/channel/UC-WFNdLaIzvjKeXmXTfOf3A"
+    },
+    "themeYear": "2026",
+    "themeScripture": "Joshua 1:11",
+    "giving": {
+      "cashApp": {
+        "handle": "$missionchurch238",
+        "url": "https://cash.app/$missionchurch238"
+      },
+      "note": "Offerings and tithes for Bishop Pastor Mitchell use the same church accounts—include a memo/designation (e.g. 'tithe', 'offering', or 'building fund'). For non-cash donations, contact Church Administrator Marshina Mitchell at missionchurch1@gmail.com or 617-863-6614.",
+      "apostleForehand": {
+        "url": "https://venmo.com/Daryl-Forehand",
+        "cashApp": "$BishopDarylForehand",
+        "venmo": "@Daryl-Forehand"
+      },
+      "scripture": "Give, and it shall be given unto you; good measure, pressed down, and shaken together, and running over... — Luke 6:38 (KJV)",
+      "buildingFundUrl": "https://docs.google.com/forms/d/e/1FAIpQLSemoHVA0noqAJ74iNJIcZ-tqP_A0BRWd4g0Qv9D-BbWytbqPg/viewform",
+      "venmo": {
+        "handle": "@Mission-ChurchofChrist",
+        "url": "https://account.venmo.com/u/Mission-ChurchofChrist"
+      }
+    },
+    "address": "130 Highland Avenue, Somerville, MA 02143",
+    "themeScriptureUrl": "https://ref.ly/Josh%201.11;kjv1900?t=biblia",
+    "shortName": "Mission Church",
+    "officialSiteUrl": "https://missionchurchcooljc.com/",
+    "pastorQuote": "We are excited that you are considering visiting Mission Church. We want to dispel any reservations you might have before you come by informing you as much as we can, so that you can come and worship Jesus.",
+    "denomination": "COOLJC",
+    "email": "missionchurch1@gmail.com",
+    "directionsUrl": "https://goo.gl/maps/NGivzYmXp2YyWqzs9"
+  },
+  "faqs": [
+    {
+      "q": "Where Can I Find Mission Church?",
+      "a": "130 Highland Avenue, Somerville, MA 02143. The main Sunday worship service begins at 12:00 PM and normally includes singing, prayers, announcements, and testimonies. We suggest arriving at least 15 minutes early."
+    },
+    {
+      "q": "Where Do I Park?",
+      "a": "We have parking lots on both sides of the building and across the street. Our church deacons are happy to direct you to overflow parking, and we also use space graciously donated by our neighbors."
+    },
+    {
+      "q": "I Won't Know Anyone, Where Will I Sit?",
+      "a": "As soon as you walk through the doors, someone will greet you and welcome you. Our friendly ushers and greeters will help with any special needs and help you find a comfortable seat. You can also connect with us ahead of time so someone meets you at the door."
+    },
+    {
+      "q": "What Should I Wear?",
+      "a": "You are welcome in whatever feels comfortable! Most of our congregation wears 'Sunday Best' (ties, jackets, and slacks for men; dresses and head coverings for women), but what matters most is that you feel at home."
+    },
+    {
+      "q": "What Do I Need To Bring?",
+      "a": "A Bible will help you follow along in worship and Bible Study—we use the King James Version (KJV). Bishop Mitchell refers to Scripture often during his messages. If you don't have one or forget yours, ushers have Bibles available."
+    },
+    {
+      "q": "Can I Meet The Pastor?",
+      "a": "Yes! Bishop Malcolm D. Mitchell loves to meet guests and is available at the conclusion of any worship service to personally greet visitors."
+    },
+    {
+      "q": "I Have Physical Disabilities. Can You Accommodate Me?",
+      "a": "Yes—we aim to be an all-inclusive church. Our building is wheelchair accessible with handicapped-accessible restrooms, elevators, and lifts. Contact the church office at 617-863-6614 for any specific arrangements."
+    },
+    {
+      "q": "What Else Happens On Sunday?",
+      "a": "Morning Prayer begins at 10:00 AM, followed by Sunday School (and Next Steps Class) at 10:30 AM. At 11:30 AM light refreshments are served in the Fellowship Hall. On the 1st Sunday we celebrate Communion; on other Sundays stay after 12 PM worship for Sunday dinner or refreshments."
+    }
+  ],
+  "prayerWall": [
+    {
+      "id": "prayer-seed-1",
+      "name": "Mission Prayer Team",
+      "category": "2026 Church Vision",
+      "request": "Praying for every family in Somerville and Greater Boston to experience peace, provision, and obedience in 2026 (Joshua 1:11).",
+      "amens": 18,
+      "createdAt": "2026-11-16T10:00:00Z"
+    },
+    {
+      "id": "prayer-seed-2",
+      "name": "Shepherd's Kitchen Team",
+      "category": "Community Outreach",
+      "request": "Praying for abundant food supplies, warm fellowship, and volunteers for our December 5th 10th-Year Food Pantry.",
+      "amens": 14,
+      "createdAt": "2026-11-17T08:30:00Z"
+    },
+    {
+      "id": "prayer-seed-3",
+      "name": "Sister Angela",
+      "category": "Healing & Strength",
+      "request": "Grateful for Pastor Mitchell's message on 'The Value In Our Vulnerability.' Asking for strength and wisdom for my family this week.",
+      "amens": 11,
+      "createdAt": "2026-11-17T12:15:00Z"
+    }
+  ],
+  "visitPlans": [],
   "weeklyVirtualSchedule": [
     {
       "id": "monday-prayer",
@@ -218,151 +393,7 @@
       "description": "Hosted with Elder Joseph C. Black Jr. studying 'The Bait of Satan' by John Bevere."
     }
   ],
-  "shorts": [
-    {
-      "id": "1174440914928847",
-      "source": "facebook",
-      "title": "We Owe God A Praise For His Investment In Us!",
-      "speaker": "Apostle Dr. Henry Davenport",
-      "date": "Nov 17, 2026",
-      "duration": "0:40",
-      "views": "434 views",
-      "scripture": "Psalm 150:6",
-      "caption": "What a blessed and powerful time in the Lord we had this Sunday! We were reminded that WE OWE GOD A PRAISE FOR HIS INVESTMENT IN US! God has invested too much in us for us to remain silent!",
-      "videoUrl": "/assets/shorts/reel_1174440914928847.mp4",
-      "posterUrl": "/assets/shorts/reel_1174440914928847.jpg",
-      "permalink": "https://www.facebook.com/reel/1174440914928847/",
-      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1174440914928847%2F&show_text=false"
-    },
-    {
-      "id": "1650803123756413",
-      "source": "facebook",
-      "title": "Feasting on the Overflow (Region I Conference)",
-      "speaker": "Apostle Dr. Henry Davenport",
-      "date": "Nov 16, 2026",
-      "duration": "1:03",
-      "views": "3K views",
-      "scripture": "Luke 6:38",
-      "caption": "We're still feasting on the overflow from Region I Conference! Apostle Dr. Henry Davenport preached 'I Owe God Because He Invested in Me.' The overflow is still flowing!",
-      "videoUrl": "/assets/shorts/reel_1650803123756413.mp4",
-      "posterUrl": "/assets/shorts/reel_1650803123756413.jpg",
-      "permalink": "https://www.facebook.com/reel/1650803123756413/",
-      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1650803123756413%2F&show_text=false"
-    },
-    {
-      "id": "1836718757568031",
-      "source": "facebook",
-      "title": "The Value In Our Vulnerability",
-      "speaker": "Pastor Malcolm D. Mitchell",
-      "date": "Nov 1, 2026",
-      "duration": "0:55",
-      "views": "2.1K views",
-      "scripture": "2 Corinthians 12:9",
-      "caption": "Communion Sunday reflection: Even in our most vulnerable moments, God's grace is sufficient, and His strength is made perfect in our weakness!",
-      "videoUrl": "/assets/shorts/reel_1836718757568031.mp4",
-      "posterUrl": "/assets/shorts/reel_1836718757568031.jpg",
-      "permalink": "https://www.facebook.com/reel/1836718757568031/",
-      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1836718757568031%2F&show_text=false"
-    },
-    {
-      "id": "4471641409714022",
-      "source": "facebook",
-      "title": "Put Your Trust in God Because He Is Able",
-      "speaker": "Bishop Mark E. Parrott · 19th Pastoral Anniversary",
-      "date": "Oct 27, 2026",
-      "duration": "0:45",
-      "views": "2.7K views",
-      "scripture": "II Kings 19:1-4",
-      "caption": "Celebrating Pastor Malcolm D. Mitchell's 19th Pastoral Anniversary with Bishop Mark E. Parrott preaching 'Put Your Trust in God Because He Is Able.'",
-      "videoUrl": "/assets/shorts/reel_4471641409714022.mp4",
-      "posterUrl": "/assets/shorts/reel_4471641409714022.jpg",
-      "permalink": "https://www.facebook.com/reel/4471641409714022/",
-      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F4471641409714022%2F&show_text=false"
-    },
-    {
-      "id": "2548908615616237",
-      "source": "facebook",
-      "title": "God Has Not Changed His Mind!",
-      "speaker": "Pastor Malcolm D. Mitchell",
-      "date": "Oct 22, 2026",
-      "duration": "0:58",
-      "views": "2.8K views",
-      "scripture": "Numbers 23:19",
-      "caption": "From Apostolic Fellowship in Connecticut back home to Mission Church in Somerville—Elder Malcolm Mitchell delivered a timely word: 'God Has Not Changed His Mind!'",
-      "videoUrl": "/assets/shorts/reel_2548908615616237.mp4",
-      "posterUrl": "/assets/shorts/reel_2548908615616237.jpg",
-      "permalink": "https://www.facebook.com/reel/2548908615616237/",
-      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F2548908615616237%2F&show_text=false"
-    },
-    {
-      "id": "1478756640850112",
-      "source": "facebook",
-      "title": "Clergy Appreciation Month Tribute",
-      "speaker": "Mission Church Family",
-      "date": "Oct 29, 2026",
-      "duration": "1:52",
-      "views": "1.4K views",
-      "scripture": "1 Timothy 5:17",
-      "caption": "Thanking God for all of our clergy! Grateful for your dedication, sacrifice, prayers, and faithful service to God's people.",
-      "videoUrl": "/assets/shorts/reel_1478756640850112.mp4",
-      "posterUrl": "/assets/shorts/reel_1478756640850112.jpg",
-      "permalink": "https://www.facebook.com/reel/1478756640850112/",
-      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1478756640850112%2F&show_text=false"
-    },
-    {
-      "id": "2142592296349453",
-      "source": "facebook",
-      "title": "Come Worship With Us This Sunday at 12:00 PM",
-      "speaker": "Mission Church Invite",
-      "date": "Nov 7, 2026",
-      "duration": "0:16",
-      "views": "820 views",
-      "scripture": "Psalm 122:1",
-      "caption": "Sunday is almost here! Invite your family, friends, and loved ones to Mission Church at 130 Highland Ave, Somerville.",
-      "videoUrl": "/assets/shorts/reel_2142592296349453.mp4",
-      "posterUrl": "/assets/shorts/reel_2142592296349453.jpg",
-      "permalink": "https://www.facebook.com/reel/2142592296349453/",
-      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F2142592296349453%2F&show_text=false"
-    },
-    {
-      "id": "1885402276284840",
-      "source": "facebook",
-      "title": "Family Week Fellowship at Mission",
-      "speaker": "Mission Church Family",
-      "date": "Nov 5, 2026",
-      "duration": "0:16",
-      "views": "1.6K views",
-      "scripture": "Romans 12:10",
-      "caption": "It's Family Week and we're enjoying sweet fellowship with church family all week. At Mission YOU are family!",
-      "videoUrl": "/assets/shorts/reel_1885402276284840.mp4",
-      "posterUrl": "/assets/shorts/reel_1885402276284840.jpg",
-      "permalink": "https://www.facebook.com/reel/1885402276284840/",
-      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1885402276284840%2F&show_text=false"
-    }
-  ],
-  "youtubeNuggets": [
-    {
-      "id": "O_3tm0bDi8M",
-      "title": "I Still Believe",
-      "duration": "3:06",
-      "url": "https://youtu.be/O_3tm0bDi8M",
-      "embedUrl": "https://www.youtube.com/embed/O_3tm0bDi8M"
-    },
-    {
-      "id": "QD45OGjkj9o",
-      "title": "Unstoppable Faith",
-      "duration": "4:06",
-      "url": "https://youtu.be/QD45OGjkj9o",
-      "embedUrl": "https://www.youtube.com/embed/QD45OGjkj9o"
-    },
-    {
-      "id": "fAaAX61ybUM",
-      "title": "Be A True Worshipper",
-      "duration": "3:56",
-      "url": "https://youtu.be/fAaAX61ybUM",
-      "embedUrl": "https://www.youtube.com/embed/fAaAX61ybUM"
-    }
-  ],
+  "ministrySubmissions": [],
   "feed": [
     {
       "id": "shepherds-kitchen-dec-2026",
@@ -502,201 +533,255 @@
       "ctaAction": "scroll-ministries"
     }
   ],
-  "ministries": {
-    "interactiveThree": [
-      {
-        "id": "tabithas-closet",
-        "name": "Tabitha's Closet",
-        "tagline": "New & Gently Used Clothing Ministry",
-        "description": "Clothing individuals and families across Somerville and Greater Boston with dignity—offering new and gently used seasonal wear, coats, children's clothing, and essentials.",
-        "imageUrl": "/assets/photos/06_compassion_backpack_giveaway_families.jpg",
-        "externalUrl": "https://www.facebook.com/profile.php?id=100093219860986",
-        "externalLabel": "Tabitha's Closet on Facebook ↗",
-        "modes": [
-          "Request Clothing Assistance",
-          "Schedule a Clothing Donation Drop-Off",
-          "Volunteer to Sort & Organize"
-        ],
-        "categories": [
-          "Women's Clothing",
-          "Men's Clothing",
-          "Children & Youth",
-          "Winter Coats & Shoes",
-          "Baby & Toddler Essentials"
-        ]
-      },
-      {
-        "id": "shepherds-kitchen",
-        "name": "Shepherd's Kitchen",
-        "tagline": "10th Year Monthly Food Pantry · 1st Saturday Monthly",
-        "description": "Now in its 10th year serving our neighbors! Free food distribution every 1st Saturday from 9:15 AM – 11:00 AM (while supplies last) with milk, eggs, fresh produce, juice, meat, and canned goods. Volunteers arrive at 8:15 AM.",
-        "imageUrl": "/assets/flyers/shepherds_kitchen_logo.jpg",
-        "flyerUrl": "/assets/flyers/shepherds_kitchen_dec_2026.png",
-        "externalUrl": "https://www.facebook.com/MCShepherdskitchen/",
-        "externalLabel": "Shepherd's Kitchen on Facebook ↗",
-        "nextDistribution": "Saturday, December 5, 2026 · 9:15 AM – 11:00 AM",
-        "volunteerArrival": "8:15 AM setup & sorting",
-        "items": [
-          "Milk & Eggs",
-          "Fresh Seasonal Produce",
-          "Meat & Poultry",
-          "Juices & Breakfast Staples",
-          "Canned Goods & Pantry Basics"
-        ],
-        "modes": [
-          "Get Dec 5 Pantry Reminder & Dietary Note",
-          "Volunteer (8:15 AM Setup Team)",
-          "Sponsor / Donate Non-Perishables"
-        ]
-      },
-      {
-        "id": "counseling-ministry",
-        "name": "Counseling Ministry",
-        "tagline": "Pray on it, Pray over it, Pray through it",
-        "description": "Provides prayerful, compassionate, and confidential support with trained lay counselors, plus equipping resources to foster a culture of care. Meets the last Friday of every month at 8:00 PM on Zoom.",
-        "imageUrl": "/assets/photos/08_compassion_prayer_counseling_ministry.jpg",
-        "zoomId": "832 5047 3693",
-        "zoomPasscode": "012849",
-        "zoomUrl": "https://us02web.zoom.us/j/83250473693?pwd=N0JWUFQvdDFXUGZiNkJYN29xdHM1QT09",
-        "intakeFormUrl": "https://forms.gle/EUCSe2Nm1DtTuER19",
-        "externalLabel": "Official Google Intake Form ↗",
-        "modes": [
-          "Request Confidential Lay Counselor Follow-Up",
-          "Join Last Friday Virtual Care Service (8:00 PM)",
-          "Ask a Care Question"
-        ],
-        "privacyNote": "Your responses are strictly confidential and shared only with assigned Counseling Ministry care leaders."
-      }
-    ],
-    "allDepartments": [
-      {
-        "name": "Women's Department",
-        "focus": "Sisterhood Week, prayer, mentorship, and Women in His Kingdom groups."
-      },
-      {
-        "name": "Men's Department (Brotherhood)",
-        "focus": "Men in His Kingdom groups, leadership service, and community outreach."
-      },
-      {
-        "name": "Youth Department (ABYPU)",
-        "focus": "Quarterly youth services, Plugged In fellowship, and Christian Wellness."
-      },
-      {
-        "name": "Sunday School Department",
-        "focus": "Sundays at 10:30 AM for children, teens, adults, and VBS."
-      },
-      {
-        "name": "Shepherd's Kitchen",
-        "focus": "10th year food pantry on the 1st Saturday of every month (9:15 AM–11 AM)."
-      },
-      {
-        "name": "Tabitha's Closet",
-        "focus": "New and gently used clothing distribution and neighborhood care."
-      },
-      {
-        "name": "Abundant Life Groups",
-        "focus": "Tue & Thu 7:30 PM interactive Zoom small groups (Passcode: ALG2022)."
-      },
-      {
-        "name": "Prayer Ministry",
-        "focus": "Sun 10 AM Sanctuary, Mon 6/6:30 AM Pastor's Prayer, Tue–Thu 7 AM Prayer Line."
-      },
-      {
-        "name": "Usher Board",
-        "focus": "Welcoming guests, sanctuary hospitality, parking assistance, and order."
-      },
-      {
-        "name": "Allied Health Ministry",
-        "focus": "Community health fairs, wellness screenings, and healthcare education."
-      },
-      {
-        "name": "Counseling Ministry",
-        "focus": "Confidential spiritual lay counseling & Last Friday 8 PM Zoom sessions."
-      }
-    ]
-  },
-  "faqs": [
+  "pendingPosts": [
     {
-      "q": "Where Can I Find Mission Church?",
-      "a": "130 Highland Avenue, Somerville, MA 02143. The main Sunday worship service begins at 12:00 PM and normally includes singing, prayers, announcements, and testimonies. We suggest arriving at least 15 minutes early."
+      "id": "draft-band-81028122207",
+      "sourceId": "band-album:95924055:81028122207",
+      "sourceType": "band",
+      "sourceLabel": "BAND Album · Founder's Day Wknd 2026- Sunday",
+      "badge": "BAND ALBUM",
+      "category": "Youth & Fellowship",
+      "title": "Founder's Day Wknd 2026- Sunday Highlight",
+      "dateDisplay": "Mission Church BAND Album",
+      "location": "Mission Church Sanctuary",
+      "summary": "New moments shared from Founder's Day Wknd 2026- Sunday by Shayna Wright on the Mission Church BAND community.",
+      "imageUrl": "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
+      "ctaLabel": "View on BAND ↗",
+      "externalUrl": "https://www.band.us/band/74073849/album/95924055/photo/81028122207",
+      "status": "pending_approval",
+      "createdAt": "2026-11-18T04:47:30.730Z",
+      "emailStatus": "awaiting-gmail-send-scope"
     },
     {
-      "q": "Where Do I Park?",
-      "a": "We have parking lots on both sides of the building and across the street. Our church deacons are happy to direct you to overflow parking, and we also use space graciously donated by our neighbors."
+      "id": "draft-gmail-1a1e8bc63fb82f41",
+      "sourceId": "gmail:1a1e8bc63fb82f41",
+      "sourceType": "gmail",
+      "sourceLabel": "Gmail Watch · Mission Church",
+      "badge": "EMAIL UPDATE",
+      "category": "Upcoming Events",
+      "title": "PLEASE EMAIL YOUR STAFF MEETING AGENDA ITEMS TO MISSIONCHURCH1@GMAIL.C",
+      "dateDisplay": "Tue, 17 Nov 2026 04:00:22 -0500 (EST)",
+      "location": "Mission Church · 130 Highland Ave, Somerville, MA",
+      "summary": "﻿Please email your staff meeting agenda items to missionchurch1@gmail.com no later than 12noon TUESDAY. Mission Church of Christ | 130 Highland Avenue | Somerville, MA 02143 US Unsubscribe | Update",
+      "imageUrl": "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
+      "ctaLabel": "Plan to Attend",
+      "ctaAction": "scroll-visit",
+      "status": "pending_approval",
+      "createdAt": "2026-11-18T04:47:27.133Z",
+      "emailStatus": "awaiting-gmail-send-scope"
     },
     {
-      "q": "I Won't Know Anyone, Where Will I Sit?",
-      "a": "As soon as you walk through the doors, someone will greet you and welcome you. Our friendly ushers and greeters will help with any special needs and help you find a comfortable seat. You can also connect with us ahead of time so someone meets you at the door."
+      "id": "draft-gmail-1a1e8bc6c719a689",
+      "sourceId": "gmail:1a1e8bc6c719a689",
+      "sourceType": "gmail",
+      "sourceLabel": "Gmail Watch · Mission Church",
+      "badge": "EMAIL UPDATE",
+      "category": "Upcoming Events",
+      "title": "STAFF MEETING LINK FOR TONIGHT AT 6:15PM",
+      "dateDisplay": "Tue, 17 Nov 2026 04:00:24 -0500 (EST)",
+      "location": "Mission Church · 130 Highland Ave, Somerville, MA",
+      "summary": "DEPARTMENT/TEAM/MINISTRY COORDINATORS &amp; REPRESENTATIVES: PLEASE JOIN THE STAFF MEETING AT 6:15PM Join Zoom Meeting Topic: TUESDAY LEADERSHIP STAFF MEETING Time: 6:15PM https://us02web.zoom.us/j/",
+      "imageUrl": "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
+      "ctaLabel": "Plan to Attend",
+      "ctaAction": "scroll-visit",
+      "status": "pending_approval",
+      "createdAt": "2026-11-18T04:47:24.043Z",
+      "emailStatus": "awaiting-gmail-send-scope"
     },
     {
-      "q": "What Should I Wear?",
-      "a": "You are welcome in whatever feels comfortable! Most of our congregation wears 'Sunday Best' (ties, jackets, and slacks for men; dresses and head coverings for women), but what matters most is that you feel at home."
-    },
-    {
-      "q": "What Do I Need To Bring?",
-      "a": "A Bible will help you follow along in worship and Bible Study—we use the King James Version (KJV). Bishop Mitchell refers to Scripture often during his messages. If you don't have one or forget yours, ushers have Bibles available."
-    },
-    {
-      "q": "Can I Meet The Pastor?",
-      "a": "Yes! Bishop Malcolm D. Mitchell loves to meet guests and is available at the conclusion of any worship service to personally greet visitors."
-    },
-    {
-      "q": "I Have Physical Disabilities. Can You Accommodate Me?",
-      "a": "Yes—we aim to be an all-inclusive church. Our building is wheelchair accessible with handicapped-accessible restrooms, elevators, and lifts. Contact the church office at 617-863-6614 for any specific arrangements."
-    },
-    {
-      "q": "What Else Happens On Sunday?",
-      "a": "Morning Prayer begins at 10:00 AM, followed by Sunday School (and Next Steps Class) at 10:30 AM. At 11:30 AM light refreshments are served in the Fellowship Hall. On the 1st Sunday we celebrate Communion; on other Sundays stay after 12 PM worship for Sunday dinner or refreshments."
+      "id": "draft-gmail-1a1ec0e97aa2eaff",
+      "sourceId": "gmail:1a1ec0e97aa2eaff",
+      "sourceType": "gmail",
+      "sourceLabel": "Gmail Watch · Mission Church",
+      "badge": "EMAIL UPDATE",
+      "category": "Upcoming Events",
+      "title": "BIBLE STUDY TONIGHT AT 7:30 PM",
+      "dateDisplay": "Tue, 17 Nov 2026 19:29:01 -0500 (EST)",
+      "location": "Mission Church · 130 Highland Ave, Somerville, MA",
+      "summary": "MC Zoom is inviting you to a scheduled Zoom meeting. Topic: TUESDAY BIBLE STUDY Time: 7:30PM Join Zoom Meeting https://us02web.zoom.us/j/81903345217 ﻿ PASSCODE 823028 Meeting ID: 819 0334 5217 Mission",
+      "imageUrl": "https://files.constantcontact.com/7295eed6701/64b4d7a8-ce02-4596-acd3-a102b1065b57.jpg?rdr=true",
+      "ctaLabel": "Plan to Attend",
+      "ctaAction": "scroll-visit",
+      "status": "pending_approval",
+      "createdAt": "2026-11-18T04:47:20.258Z",
+      "emailStatus": "awaiting-gmail-send-scope"
     }
   ],
-  "prayerWall": [
+  "shorts": [
     {
-      "id": "prayer-seed-1",
-      "name": "Mission Prayer Team",
-      "category": "2026 Church Vision",
-      "request": "Praying for every family in Somerville and Greater Boston to experience peace, provision, and obedience in 2026 (Joshua 1:11).",
-      "amens": 18,
-      "createdAt": "2026-11-16T10:00:00Z"
+      "id": "1174440914928847",
+      "source": "facebook",
+      "title": "We Owe God A Praise For His Investment In Us!",
+      "speaker": "Apostle Dr. Henry Davenport",
+      "date": "Nov 17, 2026",
+      "duration": "0:40",
+      "views": "434 views",
+      "scripture": "Psalm 150:6",
+      "caption": "What a blessed and powerful time in the Lord we had this Sunday! We were reminded that WE OWE GOD A PRAISE FOR HIS INVESTMENT IN US! God has invested too much in us for us to remain silent!",
+      "videoUrl": "/assets/shorts/reel_1174440914928847.mp4",
+      "posterUrl": "/assets/shorts/reel_1174440914928847.jpg",
+      "permalink": "https://www.facebook.com/reel/1174440914928847/",
+      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1174440914928847%2F&show_text=false"
     },
     {
-      "id": "prayer-seed-2",
-      "name": "Shepherd's Kitchen Team",
-      "category": "Community Outreach",
-      "request": "Praying for abundant food supplies, warm fellowship, and volunteers for our December 5th 10th-Year Food Pantry.",
-      "amens": 14,
-      "createdAt": "2026-11-17T08:30:00Z"
+      "id": "1650803123756413",
+      "source": "facebook",
+      "title": "Feasting on the Overflow (Region I Conference)",
+      "speaker": "Apostle Dr. Henry Davenport",
+      "date": "Nov 16, 2026",
+      "duration": "1:03",
+      "views": "3K views",
+      "scripture": "Luke 6:38",
+      "caption": "We're still feasting on the overflow from Region I Conference! Apostle Dr. Henry Davenport preached 'I Owe God Because He Invested in Me.' The overflow is still flowing!",
+      "videoUrl": "/assets/shorts/reel_1650803123756413.mp4",
+      "posterUrl": "/assets/shorts/reel_1650803123756413.jpg",
+      "permalink": "https://www.facebook.com/reel/1650803123756413/",
+      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1650803123756413%2F&show_text=false"
     },
     {
-      "id": "prayer-seed-3",
-      "name": "Sister Angela",
-      "category": "Healing & Strength",
-      "request": "Grateful for Pastor Mitchell's message on 'The Value In Our Vulnerability.' Asking for strength and wisdom for my family this week.",
-      "amens": 11,
-      "createdAt": "2026-11-17T12:15:00Z"
+      "id": "1836718757568031",
+      "source": "facebook",
+      "title": "The Value In Our Vulnerability",
+      "speaker": "Pastor Malcolm D. Mitchell",
+      "date": "Nov 1, 2026",
+      "duration": "0:55",
+      "views": "2.1K views",
+      "scripture": "2 Corinthians 12:9",
+      "caption": "Communion Sunday reflection: Even in our most vulnerable moments, God's grace is sufficient, and His strength is made perfect in our weakness!",
+      "videoUrl": "/assets/shorts/reel_1836718757568031.mp4",
+      "posterUrl": "/assets/shorts/reel_1836718757568031.jpg",
+      "permalink": "https://www.facebook.com/reel/1836718757568031/",
+      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1836718757568031%2F&show_text=false"
+    },
+    {
+      "id": "4471641409714022",
+      "source": "facebook",
+      "title": "Put Your Trust in God Because He Is Able",
+      "speaker": "Bishop Mark E. Parrott · 19th Pastoral Anniversary",
+      "date": "Oct 27, 2026",
+      "duration": "0:45",
+      "views": "2.7K views",
+      "scripture": "II Kings 19:1-4",
+      "caption": "Celebrating Pastor Malcolm D. Mitchell's 19th Pastoral Anniversary with Bishop Mark E. Parrott preaching 'Put Your Trust in God Because He Is Able.'",
+      "videoUrl": "/assets/shorts/reel_4471641409714022.mp4",
+      "posterUrl": "/assets/shorts/reel_4471641409714022.jpg",
+      "permalink": "https://www.facebook.com/reel/4471641409714022/",
+      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F4471641409714022%2F&show_text=false"
+    },
+    {
+      "id": "2548908615616237",
+      "source": "facebook",
+      "title": "God Has Not Changed His Mind!",
+      "speaker": "Pastor Malcolm D. Mitchell",
+      "date": "Oct 22, 2026",
+      "duration": "0:58",
+      "views": "2.8K views",
+      "scripture": "Numbers 23:19",
+      "caption": "From Apostolic Fellowship in Connecticut back home to Mission Church in Somerville—Elder Malcolm Mitchell delivered a timely word: 'God Has Not Changed His Mind!'",
+      "videoUrl": "/assets/shorts/reel_2548908615616237.mp4",
+      "posterUrl": "/assets/shorts/reel_2548908615616237.jpg",
+      "permalink": "https://www.facebook.com/reel/2548908615616237/",
+      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F2548908615616237%2F&show_text=false"
+    },
+    {
+      "id": "1478756640850112",
+      "source": "facebook",
+      "title": "Clergy Appreciation Month Tribute",
+      "speaker": "Mission Church Family",
+      "date": "Oct 29, 2026",
+      "duration": "1:52",
+      "views": "1.4K views",
+      "scripture": "1 Timothy 5:17",
+      "caption": "Thanking God for all of our clergy! Grateful for your dedication, sacrifice, prayers, and faithful service to God's people.",
+      "videoUrl": "/assets/shorts/reel_1478756640850112.mp4",
+      "posterUrl": "/assets/shorts/reel_1478756640850112.jpg",
+      "permalink": "https://www.facebook.com/reel/1478756640850112/",
+      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1478756640850112%2F&show_text=false"
+    },
+    {
+      "id": "2142592296349453",
+      "source": "facebook",
+      "title": "Come Worship With Us This Sunday at 12:00 PM",
+      "speaker": "Mission Church Invite",
+      "date": "Nov 7, 2026",
+      "duration": "0:16",
+      "views": "820 views",
+      "scripture": "Psalm 122:1",
+      "caption": "Sunday is almost here! Invite your family, friends, and loved ones to Mission Church at 130 Highland Ave, Somerville.",
+      "videoUrl": "/assets/shorts/reel_2142592296349453.mp4",
+      "posterUrl": "/assets/shorts/reel_2142592296349453.jpg",
+      "permalink": "https://www.facebook.com/reel/2142592296349453/",
+      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F2142592296349453%2F&show_text=false"
+    },
+    {
+      "id": "1885402276284840",
+      "source": "facebook",
+      "title": "Family Week Fellowship at Mission",
+      "speaker": "Mission Church Family",
+      "date": "Nov 5, 2026",
+      "duration": "0:16",
+      "views": "1.6K views",
+      "scripture": "Romans 12:10",
+      "caption": "It's Family Week and we're enjoying sweet fellowship with church family all week. At Mission YOU are family!",
+      "videoUrl": "/assets/shorts/reel_1885402276284840.mp4",
+      "posterUrl": "/assets/shorts/reel_1885402276284840.jpg",
+      "permalink": "https://www.facebook.com/reel/1885402276284840/",
+      "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmissionchurchsomervillema%2Fvideos%2F1885402276284840%2F&show_text=false"
     }
   ],
-  "ministrySubmissions": [],
-  "visitPlans": [],
-  "pendingPosts": [],
-  "processedSourceIds": [],
+  "processedSourceIds": [
+    "gmail:1a1ec0e97aa2eaff",
+    "gmail:1a1e8bc6c719a689",
+    "gmail:1a1e8bc63fb82f41",
+    "band-album:95924055:81028122207"
+  ],
+  "youtubeNuggets": [
+    {
+      "id": "O_3tm0bDi8M",
+      "title": "I Still Believe",
+      "duration": "3:06",
+      "url": "https://youtu.be/O_3tm0bDi8M",
+      "embedUrl": "https://www.youtube.com/embed/O_3tm0bDi8M"
+    },
+    {
+      "id": "QD45OGjkj9o",
+      "title": "Unstoppable Faith",
+      "duration": "4:06",
+      "url": "https://youtu.be/QD45OGjkj9o",
+      "embedUrl": "https://www.youtube.com/embed/QD45OGjkj9o"
+    },
+    {
+      "id": "fAaAX61ybUM",
+      "title": "Be A True Worshipper",
+      "duration": "3:56",
+      "url": "https://youtu.be/fAaAX61ybUM",
+      "embedUrl": "https://www.youtube.com/embed/fAaAX61ybUM"
+    }
+  ],
   "syncState": {
-    "gmail": {
-      "targetInbox": "phillipskevin386@gmail.com",
-      "senderFilter": "missionchurch1@gmail.com",
-      "status": "Synced 5 emails",
-      "lastRunAt": "2026-11-18T03:52:35.355Z",
-      "scannedFlyersCount": 6
-    },
     "bandApp": {
-      "bandId": "74073849",
       "bandUrl": "https://www.band.us/n/ada0bcJfJ1f9z",
-      "status": "24 curated photos across 19 albums",
-      "lastRunAt": "2026-11-18T03:52:35.355Z"
+      "bandId": "74073849",
+      "lastRunAt": "2026-11-18T03:52:35.355Z",
+      "status": "24 curated photos across 19 albums"
     },
     "facebookReels": {
+      "lastRunAt": "2026-11-17T15:25:00-05:00",
       "pageUrl": "https://www.facebook.com/missionchurchsomervillema",
-      "status": "8 Recent Oct–Nov 2026 Shorts Downloaded Locally",
-      "lastRunAt": "2026-11-17T15:25:00-05:00"
+      "status": "8 Recent Oct–Nov 2026 Shorts Downloaded Locally"
+    },
+    "gmail": {
+      "targetInbox": "phillipskevin386@gmail.com",
+      "scannedFlyersCount": 6,
+      "watch": {
+        "status": "watch-error",
+        "error": "Invalid topicName does not match projects/concessionstand-420708/topics/*",
+        "ok": false,
+        "statusCode": 400
+      },
+      "status": "4 draft(s) awaiting approval",
+      "lastRunAt": "2026-11-18T04:47:30.767Z",
+      "senderFilter": "missionchurch1@gmail.com"
     }
   }
 }

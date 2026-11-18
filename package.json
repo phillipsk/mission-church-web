@@ -13,6 +13,7 @@
     "dev": "node --watch src/server.js",
     "sync:shorts": "bash scripts/download-fb-shorts.sh",
     "sync:pipeline": "node scripts/run-sync.mjs",
+    "sync:band": "node scripts/sync-band-posts.mjs",
     "auth:gmail": "node scripts/auth-gmail.mjs",
     "deploy": "bash scripts/deploy-gcp.sh gen-lang-client-0150678391 us-central1"
   }

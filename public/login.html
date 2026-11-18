@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login · Mission Church COOLJC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    .login-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at top, #4a0d13 0%, #120e14 100%);
+    }
+    .login-card {
+      width: min(460px, 100%);
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+    }
+    .login-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .login-head img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+    }
+    .login-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--parchment);
+      padding: 4px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+    }
+    .login-tab {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .login-tab.active {
+      background: var(--burgundy);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <main class="login-shell">
+    <section class="login-card">
+      <div class="login-head">
+        <img src="/assets/photos/church_logo.png" alt="Mission Church Logo" />
+        <div>
+          <span class="eyebrow" style="margin-bottom:2px;">MISSION CHURCH COOLJC</span>
+          <h1 style="font-family:var(--font-display);font-size:1.75rem;margin:0;line-height:1.1;">Admin Studio Login</h1>
+        </div>
+      </div>
+      <p class="muted" style="margin-top:0;">
+        Sign in to manage Gmail/BAND post approvals, review ministry requests, and trigger AI flyer scans.
+      </p>
+
+      <div class="login-tabs" role="tablist">
+        <button type="button" class="login-tab active" data-tab="passcode">Passcode Sign-In</button>
+        <button type="button" class="login-tab" data-tab="email">Email Login Link</button>
+      </div>
+
+      <form id="passcode-form" class="stacked-form">
+        <label class="field">
+          <span>Authorized Church Admin Email</span>
+          <input id="login-email" type="email" name="email" required value="phillipskevin386@gmail.com" placeholder="phillipskevin386@gmail.com or missionchurch1@gmail.com" />
+        </label>
+        <label class="field">
+          <span>Admin Passcode</span>
+          <input id="login-passcode" type="password" name="passcode" required placeholder="Enter admin passcode" />
+        </label>
+        <button type="submit" class="btn btn-primary">Sign In to Admin Studio</button>
+        <p id="passcode-status" class="form-status" aria-live="polite"></p>
+      </form>
+
+      <form id="magic-form" class="stacked-form hidden">
+        <label class="field">
+          <span>Authorized Church Admin Email</span>
+          <input id="magic-email" type="email" name="email" required value="phillipskevin386@gmail.com" />
+        </label>
+        <button type="submit" class="btn btn-gold">Send 1-Click Login Link &amp; Code</button>
+        <div id="code-verify-wrap" class="stacked-form hidden">
+          <label class="field">
+            <span>Enter 6-Digit Email Code (or click the link in Gmail)</span>
+            <input id="magic-code" type="text" maxlength="6" placeholder="123456" />
+          </label>
+          <button id="verify-code-btn" type="button" class="btn btn-primary">Verify Code &amp; Sign In</button>
+        </div>
+        <p id="magic-status" class="form-status" aria-live="polite"></p>
+      </form>
+
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+        <a href="/" style="color:var(--burgundy);font-weight:700;text-decoration:none;">← Back to Public Website</a>
+        <span class="muted">missionchurch1@gmail.com · Protected</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll(".login-tab");
+    const passcodeForm = document.getElementById("passcode-form");
+    const magicForm = document.getElementById("magic-form");
+    let codeEnvelope = "";
+
+    tabs.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        tabs.forEach((b) => b.classList.toggle("active", b === btn));
+        const isPasscode = btn.dataset.tab === "passcode";
+        passcodeForm.classList.toggle("hidden", !isPasscode);
+        magicForm.classList.toggle("hidden", isPasscode);
+      });
+    });
+
+    fetch("/api/bootstrap")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.isAdmin) window.location.replace("/?admin=1");
+      })
+      .catch(() => {});
+
+    passcodeForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.getElementById("passcode-status");
+      status.style.color = "#5d525f";
+      status.textContent = "Verifying credentials...";
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: document.getElementById("login-email").value,
+            passcode: document.getElementById("login-passcode").value,
+          }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "Sign-in failed");
+        status.style.color = "#1f6f4a";
+        status.textContent = "Signed in! Opening Admin Studio...";
+        window.location.href = "/?admin=1";
+      } catch (err) {
+        status.style.color = "#a11a26";
+        status.textContent = err.message;
+      }
+    });
+
+    magicForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.getElementById("magic-status");
+      status.style.color = "#5d525f";
+      status.textContent = "Sending login email...";
+      try {
+        const res = await fetch("/api/auth/send-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: document.getElementById("magic-email").value }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "Unable to send email");
+        codeEnvelope = json.codeEnvelope || "";
+        document.getElementById("code-verify-wrap").classList.remove("hidden");
+        status.style.color = "#1f6f4a";
+        status.textContent = "Check your Gmail inbox for the 1-click sign-in link or 6-digit code.";
+      } catch (err) {
+        status.style.color = "#a11a26";
+        status.textContent = err.message;
+      }
+    });
+
+    document.getElementById("verify-code-btn").addEventListener("click", async () => {
+      const status = document.getElementById("magic-status");
+      try {
+        const res = await fetch("/api/auth/verify-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: document.getElementById("magic-email").value,
+            code: document.getElementById("magic-code").value,
+            codeEnvelope,
+          }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "Invalid code");
+        window.location.href = "/?admin=1";
+      } catch (err) {
+        status.style.color = "#a11a26";
+        status.textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>
