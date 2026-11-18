@@ -201,6 +201,8 @@ function extractBestImageUrlFromHtml(html) {
       lower.includes("on.jsp") ||
       lower.includes("spacer") ||
       lower.includes("constantcontact.com/images") ||
+      lower.includes("imgssl.constantcontact.com/letters/images") ||
+      lower.endsWith(".gif") ||
       lower.includes("referral") ||
       lower.includes("footer")
     ) {
@@ -339,7 +341,7 @@ export async function runBandSync(publicDir) {
 }
 
 export async function registerGmailWatch({
-  topicName = `projects/${process.env.GCP_PROJECT_ID || "gen-lang-client-0150678391"}/topics/mission-church-gmail-watch`,
+  topicName = process.env.GMAIL_WATCH_TOPIC || "projects/concessionstand-420708/topics/mission-church-gmail-watch",
 } = {}) {
   const token = await fetchGmailTokenIfConfigured();
   if (!token) {
