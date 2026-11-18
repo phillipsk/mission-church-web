@@ -65,12 +65,15 @@ async function main() {
   authUrl.searchParams.set("client_id", client.client_id);
   authUrl.searchParams.set("redirect_uri", REDIRECT_URI);
   authUrl.searchParams.set("response_type", "code");
-  authUrl.searchParams.set("scope", "https://www.googleapis.com/auth/gmail.readonly");
+  authUrl.searchParams.set(
+    "scope",
+    "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send"
+  );
   authUrl.searchParams.set("access_type", "offline");
   authUrl.searchParams.set("prompt", "consent");
   authUrl.searchParams.set("login_hint", "phillipskevin386@gmail.com");
 
-  console.log("=== Gmail Read-Only OAuth Setup (phillipskevin386@gmail.com) ===");
+  console.log("=== Gmail Watch & Approval Send OAuth Setup (phillipskevin386@gmail.com) ===");
   console.log(`Listening for OAuth callback on ${REDIRECT_URI}`);
   console.log("AUTHORIZATION_URL=" + authUrl.toString());
 

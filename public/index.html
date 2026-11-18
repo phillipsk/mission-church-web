@@ -489,10 +489,15 @@
     <div class="admin-body">
       <div class="sync-status-grid" id="admin-sync-cards"></div>
       <div class="admin-actions-row">
-        <button id="trigger-sync-btn" class="btn btn-primary btn-sm" type="button">↻ Run Gmail &amp; BAND Sync</button>
-        <button id="scan-flyers-btn" class="btn btn-gold btn-sm" type="button">✦ Scan Local Flyers with Gemini Vision</button>
+        <button id="watch-poll-btn" class="btn btn-primary btn-sm" type="button">✦ Watch Gmail &amp; BAND for Drafts</button>
+        <button id="trigger-sync-btn" class="btn btn-outline btn-sm" type="button">↻ Sync Status</button>
+        <button id="scan-flyers-btn" class="btn btn-gold btn-sm" type="button">Scan Local Flyers</button>
       </div>
       <div id="admin-sync-output" class="admin-output hidden"></div>
+      <div class="admin-pending">
+        <h4>Pending Post Approvals (Gmail &amp; BAND)</h4>
+        <div id="admin-pending-list" class="pending-list"></div>
+      </div>
       <div class="admin-submissions">
         <h4>Recent Ministry &amp; Visit Submissions</h4>
         <div id="admin-submissions-list" class="submissions-list"></div>

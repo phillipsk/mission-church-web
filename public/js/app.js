@@ -711,10 +711,10 @@ function renderGallery() {
 }
 
 function renderAdminDrawer() {
-  const { syncState, ministrySubmissions, visitPlans } = state.data;
+  const { syncState, ministrySubmissions, visitPlans, pendingPosts = [], persistenceBackend = "local-json" } = state.data;
   qs("#admin-sync-cards").innerHTML = `
     <div class="sync-card">
-      <strong>Gmail Pipeline</strong>
+      <strong>Gmail Watch</strong>
       <span>${esc(syncState.gmail.senderFilter)} → ${esc(syncState.gmail.targetInbox)}</span>
       <p>${esc(syncState.gmail.status)}</p>
     </div>
@@ -723,10 +723,79 @@ function renderAdminDrawer() {
       <span>${esc(syncState.bandApp.status)}</span>
     </div>
     <div class="sync-card">
-      <strong>Facebook Reels</strong>
-      <span>${esc(syncState.facebookReels.status)}</span>
+      <strong>Cloud Persistence</strong>
+      <span>${esc(persistenceBackend)} · ${esc(syncState.facebookReels.status)}</span>
     </div>
   `;
+
+  const pendingEl = qs("#admin-pending-list");
+  pendingEl.innerHTML = pendingPosts.length
+    ? pendingPosts
+        .map(
+          (d) => `
+      <div class="pending-card">
+        <img src="${esc(d.imageUrl || "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg")}" alt="${esc(d.title)}" class="pending-thumb" />
+        <div>
+          <span class="feed-source">${esc(d.sourceLabel)} · ${esc(d.emailStatus || "draft ready")}</span>
+          <div><strong>${esc(d.title)}</strong></div>
+          <div class="muted">${esc(d.dateDisplay)}</div>
+          <p style="margin:6px 0 0;">${esc(d.summary)}</p>
+          <div class="pending-actions">
+            <button type="button" class="chip-action chip-action-primary approve-draft-btn" data-id="${esc(d.id)}">✓ Approve &amp; Publish</button>
+            <button type="button" class="chip-action resend-draft-btn" data-id="${esc(d.id)}">Email Approval</button>
+            <button type="button" class="chip-action reject-draft-btn" data-id="${esc(d.id)}">Reject</button>
+          </div>
+        </div>
+      </div>`
+        )
+        .join("")
+    : `<div class="submission-row">No pending post drafts right now. Click <strong>✦ Watch Gmail &amp; BAND for Drafts</strong> to scan for new emails or BAND highlights.</div>`;
+
+  qsa(".approve-draft-btn", pendingEl).forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const res = await fetch("/api/admin/approve-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: btn.dataset.id }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        state.data.feed = json.feed;
+        state.data.pendingPosts = json.pendingPosts;
+        renderFeed();
+        renderAdminDrawer();
+        showToast(`Published "${json.published.title}" to website!`);
+      }
+    });
+  });
+
+  qsa(".reject-draft-btn", pendingEl).forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const res = await fetch("/api/admin/reject-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: btn.dataset.id }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        state.data.pendingPosts = json.pendingPosts;
+        renderAdminDrawer();
+        showToast("Draft rejected");
+      }
+    });
+  });
+
+  qsa(".resend-draft-btn", pendingEl).forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const res = await fetch("/api/admin/resend-approval", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: btn.dataset.id }),
+      });
+      const json = await res.json();
+      showToast(json.ok ? "Approval email sent to phillipskevin386@gmail.com!" : `Email status: ${json.reason || "needs gmail.send permission"}`);
+    });
+  });
 
   const allSubs = [
     ...ministrySubmissions.map((s) => ({
@@ -965,6 +1034,18 @@ function wireStaticListeners() {
     toggleAdmin(true);
   });
   qs("#close-admin-btn")?.addEventListener("click", () => toggleAdmin(false));
+
+  qs("#watch-poll-btn")?.addEventListener("click", async () => {
+    const out = qs("#admin-sync-output");
+    out.classList.remove("hidden");
+    out.textContent = "Watching Gmail & BAND and drafting AI posts for approval...";
+    const res = await fetch("/api/admin/watch-poll", { method: "POST" });
+    const json = await res.json();
+    state.data.pendingPosts = json.pendingPosts || state.data.pendingPosts;
+    state.data.persistenceBackend = json.persistenceBackend || state.data.persistenceBackend;
+    renderAdminDrawer();
+    out.innerHTML = `<pre style="margin:0;white-space:pre-wrap;">${esc(JSON.stringify({ newDraftsCount: json.newDraftsCount, emailResults: json.emailResults, persistenceBackend: json.persistenceBackend }, null, 2))}</pre>`;
+  });
 
   qs("#trigger-sync-btn")?.addEventListener("click", async () => {
     const out = qs("#admin-sync-output");

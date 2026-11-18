@@ -677,6 +677,8 @@
   ],
   "ministrySubmissions": [],
   "visitPlans": [],
+  "pendingPosts": [],
+  "processedSourceIds": [],
   "syncState": {
     "gmail": {
       "targetInbox": "phillipskevin386@gmail.com",

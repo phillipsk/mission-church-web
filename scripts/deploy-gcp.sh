@@ -58,7 +58,8 @@ SECRETS_ARG="GEMINI_API_KEY=MISSION_CHURCH_GEMINI_API_KEY:latest"
 for pair in \
   "GMAIL_CLIENT_ID=MISSION_GMAIL_CLIENT_ID" \
   "GMAIL_CLIENT_SECRET=MISSION_GMAIL_CLIENT_SECRET" \
-  "GMAIL_REFRESH_TOKEN=MISSION_GMAIL_REFRESH_TOKEN"; do
+  "GMAIL_REFRESH_TOKEN=MISSION_GMAIL_REFRESH_TOKEN" \
+  "APPROVAL_HMAC_SECRET=MISSION_APPROVAL_SECRET"; do
   env_key="${pair%%=*}"
   sec_name="${pair#*=}"
   if gcloud secrets describe "$sec_name" >/dev/null 2>&1; then
@@ -75,7 +76,7 @@ gcloud run deploy "$SERVICE_NAME" \
   --min-instances=0 \
   --memory=512Mi \
   --cpu=1 \
-  --set-env-vars="GEMINI_MODEL=gemini-2.5-flash" \
+  --set-env-vars="GEMINI_MODEL=gemini-2.5-flash,GCP_PROJECT_ID=${PROJECT_ID},PUBLIC_BASE_URL=https://mission-church-web-5jdy3d7zua-uc.a.run.app" \
   --set-secrets="$SECRETS_ARG"
 
 SERVICE_URL="$(gcloud run services describe "$SERVICE_NAME" --region "$REGION" --format='value(status.url)')"

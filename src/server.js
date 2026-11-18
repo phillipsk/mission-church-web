@@ -4,12 +4,21 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { askChurchConcierge, resolveGeminiApiKey } from "./services/gemini-concierge.js";
-import { parseFlyerWithGemini, runBandSync, runGmailSync, scanLocalFlyers } from "./services/sync-pipeline.js";
+import { loadStore, saveStore } from "./services/firestore-store.js";
+import {
+  parseFlyerWithGemini,
+  registerGmailWatch,
+  runBandSync,
+  runGmailSync,
+  scanLocalFlyers,
+  sendApprovalEmail,
+  verifyApprovalToken,
+  watchAndPrepareDrafts,
+} from "./services/sync-pipeline.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, "..");
 const PUBLIC_DIR = path.join(PROJECT_ROOT, "public");
-const DATA_FILE = path.join(__dirname, "data", "church-data.json");
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -26,14 +35,6 @@ const MIME_TYPES = {
   ".ico": "image/x-icon",
 };
 
-function readStore() {
-  return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
-}
-
-function writeStore(data) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2) + "\n", "utf8");
-}
-
 function sendJson(res, statusCode, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(statusCode, {
@@ -41,6 +42,37 @@ function sendJson(res, statusCode, payload) {
     "Cache-Control": "no-store",
   });
   res.end(body);
+}
+
+function sendHtml(res, statusCode, title, heading, message, publicBaseUrl) {
+  const safe = (v) =>
+    String(v ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  res.writeHead(statusCode, {
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "no-store",
+  });
+  res.end(`<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safe(title)}</title></head>
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#faf7f2;color:#1e1720;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:24px;">
+  <div style="max-width:520px;background:#fff;border:1px solid #e5d8dc;border-radius:18px;padding:30px;text-align:center;box-shadow:0 18px 45px rgba(24,14,24,0.1);">
+    <div style="color:#7e151c;font-weight:800;letter-spacing:1.2px;font-size:12px;text-transform:uppercase;">Mission Church COOLJC</div>
+    <h1 style="margin:10px 0 12px;font-size:24px;">${safe(heading)}</h1>
+    <p style="color:#5d525f;line-height:1.55;margin:0 0 22px;">${safe(message)}</p>
+    <a href="${safe(publicBaseUrl)}" style="display:inline-block;background:#7e151c;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:999px;">View Live Website ↗</a>
+  </div>
+</body>
+</html>`);
+}
+
+function getPublicBaseUrl(req) {
+  if (process.env.PUBLIC_BASE_URL) return process.env.PUBLIC_BASE_URL;
+  const proto = req.headers["x-forwarded-proto"] || "http";
+  const host = req.headers.host || "localhost:8095";
+  return `${proto}://${host}`;
 }
 
 async function readJsonBody(req, maxBytes = 1_000_000) {
@@ -77,7 +109,6 @@ function serveStaticFile(req, res, urlPath) {
   const ext = path.extname(targetPath).toLowerCase();
   const contentType = MIME_TYPES[ext] || "application/octet-stream";
 
-  // Range support for video streaming
   const range = req.headers.range;
   if (range && (ext === ".mp4" || ext === ".webm")) {
     const match = range.match(/bytes=(\d+)-(\d*)/);
@@ -108,11 +139,38 @@ function serveStaticFile(req, res, urlPath) {
   fs.createReadStream(targetPath).pipe(res);
 }
 
+async function publishDraftById(store, draftId, overrides = {}) {
+  const idx = (store.pendingPosts || []).findIndex((p) => p.id === draftId);
+  if (idx === -1) return null;
+  const draft = store.pendingPosts[idx];
+  store.pendingPosts.splice(idx, 1);
+
+  const feedItem = {
+    id: draft.id.replace(/^draft-/, "live-"),
+    category: overrides.category || draft.category || "Upcoming Events",
+    badge: draft.badge || "PUBLISHED",
+    title: overrides.title || draft.title,
+    dateIso: new Date().toISOString(),
+    endIso: new Date(Date.now() + 2 * 3600 * 1000).toISOString(),
+    dateDisplay: overrides.dateDisplay || draft.dateDisplay,
+    location: overrides.location || draft.location,
+    summary: overrides.summary || draft.summary,
+    imageUrl: draft.imageUrl || "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg",
+    sourceLabel: draft.sourceLabel || "Approved Church Update",
+    ctaLabel: draft.ctaLabel || "Learn More",
+    ...(draft.externalUrl ? { externalUrl: draft.externalUrl } : { ctaAction: draft.ctaAction || "scroll-visit" }),
+  };
+
+  store.feed.unshift(feedItem);
+  return feedItem;
+}
+
 export function createAppServer() {
   return http.createServer(async (req, res) => {
     const method = req.method || "GET";
     const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
     const pathname = url.pathname;
+    const publicBaseUrl = getPublicBaseUrl(req);
 
     try {
       if (pathname === "/health" && method === "GET") {
@@ -120,7 +178,7 @@ export function createAppServer() {
       }
 
       if (pathname === "/api/bootstrap" && method === "GET") {
-        const store = readStore();
+        const store = await loadStore();
         const photosManifestPath = path.join(PUBLIC_DIR, "assets", "photos", "curated_photos_manifest.json");
         let curatedPhotos = [];
         if (fs.existsSync(photosManifestPath)) {
@@ -136,6 +194,7 @@ export function createAppServer() {
         }
         return sendJson(res, 200, {
           ...store,
+          persistenceBackend: store._persistence,
           curatedPhotos,
           geminiConfigured: Boolean(resolveGeminiApiKey()),
         });
@@ -147,7 +206,7 @@ export function createAppServer() {
         if (!message || message.length > 1000) {
           return sendJson(res, 400, { error: "Please enter a question (1–1000 characters)." });
         }
-        const store = readStore();
+        const store = await loadStore();
         const result = await askChurchConcierge({
           message,
           history: Array.isArray(body.history) ? body.history : [],
@@ -169,7 +228,7 @@ export function createAppServer() {
           return sendJson(res, 400, { error: "Please provide your name and select a ministry action." });
         }
 
-        const store = readStore();
+        const store = await loadStore();
         const entry = {
           id: `sub-${crypto.randomUUID().slice(0, 8)}`,
           ministry,
@@ -191,7 +250,7 @@ export function createAppServer() {
             createdAt: entry.createdAt,
           };
           store.prayerWall.unshift(prayerItem);
-          writeStore(store);
+          await saveStore(store);
           return sendJson(res, 201, {
             ok: true,
             message: "Your prayer request has been added to the Mission Church Prayer Wall.",
@@ -200,7 +259,7 @@ export function createAppServer() {
         }
 
         store.ministrySubmissions.unshift(entry);
-        writeStore(store);
+        await saveStore(store);
         return sendJson(res, 201, {
           ok: true,
           message: `Thank you, ${entry.name}! Your ${ministry.replace("-", " ")} submission has been recorded for the Mission Church care team.`,
@@ -211,13 +270,13 @@ export function createAppServer() {
       const amenMatch = pathname.match(/^\/api\/prayer\/([^/]+)\/amen$/);
       if (amenMatch && method === "POST") {
         const prayerId = amenMatch[1];
-        const store = readStore();
+        const store = await loadStore();
         const target = store.prayerWall.find((p) => p.id === prayerId);
         if (!target) {
           return sendJson(res, 404, { error: "Prayer item not found." });
         }
         target.amens = (target.amens || 0) + 1;
-        writeStore(store);
+        await saveStore(store);
         return sendJson(res, 200, { ok: true, id: target.id, amens: target.amens });
       }
 
@@ -232,7 +291,7 @@ export function createAppServer() {
         if (name.length < 2) {
           return sendJson(res, 400, { error: "Please enter at least 2 characters for your name." });
         }
-        const store = readStore();
+        const store = await loadStore();
         const plan = {
           id: `visit-${crypto.randomUUID().slice(0, 8)}`,
           name: name.slice(0, 80),
@@ -243,7 +302,7 @@ export function createAppServer() {
           createdAt: new Date().toISOString(),
         };
         store.visitPlans.unshift(plan);
-        writeStore(store);
+        await saveStore(store);
         return sendJson(res, 201, {
           ok: true,
           message: `We look forward to welcoming ${plan.name} (${plan.partySize} ${plan.partySize === 1 ? "guest" : "guests"})! Our ushers at 130 Highland Ave are ready to greet you.`,
@@ -252,7 +311,7 @@ export function createAppServer() {
       }
 
       if (pathname === "/api/admin/sync" && method === "POST") {
-        const store = readStore();
+        const store = await loadStore();
         const [gmailResult, bandResult] = await Promise.all([
           runGmailSync(store.syncState.gmail),
           runBandSync(PUBLIC_DIR),
@@ -262,20 +321,110 @@ export function createAppServer() {
         store.syncState.gmail.status = gmailResult.note || `Synced ${gmailResult.messagesFound} emails`;
         store.syncState.bandApp.lastRunAt = now;
         store.syncState.bandApp.status = `${bandResult.curatedPhotosCount} curated photos across ${bandResult.curatedAlbumsCount} albums`;
-        writeStore(store);
+        const persist = await saveStore(store);
 
         return sendJson(res, 200, {
           ok: true,
           syncedAt: now,
+          persistenceBackend: persist.backend,
           gmail: gmailResult,
-          bandApp: bandResult,
+          bandApp: { ...bandResult, manifestPhotos: undefined, items: undefined },
           syncState: store.syncState,
+          pendingPosts: store.pendingPosts,
         });
+      }
+
+      if ((pathname === "/api/admin/watch-poll" || pathname === "/api/webhooks/gmail-push") && method === "POST") {
+        const store = await loadStore();
+        const { newDrafts, emailResults } = await watchAndPrepareDrafts({
+          store,
+          publicDir: PUBLIC_DIR,
+          publicBaseUrl,
+          sendEmails: true,
+        });
+        const now = new Date().toISOString();
+        store.syncState.gmail.lastRunAt = now;
+        if (newDrafts.length > 0) {
+          store.syncState.gmail.status = `${store.pendingPosts.length} draft(s) awaiting approval`;
+        }
+        const persist = await saveStore(store);
+        return sendJson(res, 200, {
+          ok: true,
+          checkedAt: now,
+          persistenceBackend: persist.backend,
+          newDraftsCount: newDrafts.length,
+          newDrafts,
+          emailResults,
+          pendingPosts: store.pendingPosts,
+        });
+      }
+
+      if (pathname === "/api/admin/register-watch" && method === "POST") {
+        const result = await registerGmailWatch();
+        const store = await loadStore();
+        store.syncState.gmail.watch = result;
+        await saveStore(store);
+        return sendJson(res, result.ok ? 200 : 400, result);
+      }
+
+      if (pathname === "/api/admin/resend-approval" && method === "POST") {
+        const body = await readJsonBody(req);
+        const store = await loadStore();
+        const draft = (store.pendingPosts || []).find((p) => p.id === body.id);
+        if (!draft) return sendJson(res, 404, { error: "Draft post not found." });
+        const emailRes = await sendApprovalEmail({ draft, publicBaseUrl });
+        draft.emailStatus = emailRes.sent ? "emailed" : emailRes.reason;
+        await saveStore(store);
+        return sendJson(res, 200, { ok: emailRes.sent, draftId: draft.id, ...emailRes });
+      }
+
+      if (pathname === "/api/admin/approve-post") {
+        const store = await loadStore();
+        if (method === "GET") {
+          const id = url.searchParams.get("id") || "";
+          const token = url.searchParams.get("token") || "";
+          if (!verifyApprovalToken(id, "approve", token)) {
+            return sendHtml(res, 403, "Invalid Approval Link", "Approval Link Invalid or Expired", "Please approve this post from the Admin & AI Sync drawer on the website.", publicBaseUrl);
+          }
+          const published = await publishDraftById(store, id);
+          if (!published) {
+            return sendHtml(res, 200, "Already Processed", "Already Published or Removed", "This draft has already been processed. Check the live community feed!", publicBaseUrl);
+          }
+          await saveStore(store);
+          return sendHtml(res, 200, "Published!", "Post Approved & Published!", `"${published.title}" is now live in the Mission Church community feed.`, publicBaseUrl);
+        }
+        if (method === "POST") {
+          const body = await readJsonBody(req);
+          const published = await publishDraftById(store, body.id, body);
+          if (!published) return sendJson(res, 404, { error: "Pending post not found." });
+          await saveStore(store);
+          return sendJson(res, 200, { ok: true, published, feed: store.feed, pendingPosts: store.pendingPosts });
+        }
+      }
+
+      if (pathname === "/api/admin/reject-post") {
+        const store = await loadStore();
+        if (method === "GET") {
+          const id = url.searchParams.get("id") || "";
+          const token = url.searchParams.get("token") || "";
+          if (!verifyApprovalToken(id, "reject", token)) {
+            return sendHtml(res, 403, "Invalid Link", "Invalid Rejection Link", "Please manage pending drafts from the Admin & AI Sync drawer.", publicBaseUrl);
+          }
+          store.pendingPosts = (store.pendingPosts || []).filter((p) => p.id !== id);
+          await saveStore(store);
+          return sendHtml(res, 200, "Skipped", "Draft Skipped", "The draft was removed and will not appear on the public website.", publicBaseUrl);
+        }
+        if (method === "POST") {
+          const body = await readJsonBody(req);
+          store.pendingPosts = (store.pendingPosts || []).filter((p) => p.id !== body.id);
+          await saveStore(store);
+          return sendJson(res, 200, { ok: true, pendingPosts: store.pendingPosts });
+        }
       }
 
       if (pathname === "/api/admin/parse-flyer" && method === "POST") {
         const body = await readJsonBody(req);
-        const store = readStore();
+        const store = await loadStore();
         if (body.filename) {
           const safeName = path.basename(String(body.filename));
           const fullPath = path.join(PUBLIC_DIR, "assets", "flyers", safeName);
@@ -288,7 +437,7 @@ export function createAppServer() {
         const scanned = await scanLocalFlyers(PUBLIC_DIR);
         store.syncState.gmail.scannedFlyersCount = scanned.length;
         store.syncState.gmail.lastRunAt = new Date().toISOString();
-        writeStore(store);
+        await saveStore(store);
         return sendJson(res, 200, { ok: true, scanned });
       }
 
