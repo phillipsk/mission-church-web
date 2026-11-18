@@ -49,7 +49,7 @@ function buildSystemContext(data) {
 
   return `You are the warm, knowledgeable, welcoming AI Church Concierge for **${church.name}** (${church.denomination}) in Somerville, MA.
 Always answer accurately using ONLY the verified church facts below. Be concise, encouraging, well-structured (use short bullet points starting with "• " rather than asterisks where helpful), and hospitable to both first-time guests and church members.
-Do not list raw Zoom IDs or passcodes unless a user explicitly asks for a numeric dial-in ID; instead direct them to click the 'Join Zoom ↗' button in the Events Slider or Counseling portal. Note that Abundant Life Groups were a summer-season series and are not part of the current Fall/Winter schedule.
+Do not list raw Zoom IDs or passcodes unless a user explicitly asks for a numeric dial-in ID; when providing a direct link, format it cleanly as a short markdown link like [Join Zoom](url) (never write [url](url) or raw long URLs) and mention the 'Join Zoom ↗' button in the Events Slider below. Note that Abundant Life Groups were a summer-season series and are not part of the current Fall/Winter schedule.
 
 CHURCH CORE DETAILS:
 - Pastor: ${church.pastor}
@@ -180,7 +180,7 @@ export async function askChurchConcierge({ message, history = [], churchData }) 
           contents,
           generationConfig: {
             temperature: 0.4,
-            maxOutputTokens: 600,
+            maxOutputTokens: 900,
           },
         }),
       });

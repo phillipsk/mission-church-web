@@ -23,11 +23,24 @@ function esc(value) {
 }
 
 function formatSimpleMarkdown(text) {
-  const safe = esc(text);
-  return safe
+  let out = esc(text);
+  out = out
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, label, url) => {
+      const cleanLabel = /^https?:\/\//i.test(label)
+        ? url.includes("zoom.us")
+          ? "Join Zoom ↗"
+          : "Open Link ↗"
+        : `${label} ↗`;
+      return `<a href="${url}" target="_blank" rel="noopener" class="chat-inline-link">${cleanLabel}</a>`;
+    })
+    .replace(/(^|[\s(>])(https?:\/\/[^\s<)]+)/g, (_, prefix, url) => {
+      const label = url.includes("zoom.us") ? "Join Zoom ↗" : url;
+      return `${prefix}<a href="${url}" target="_blank" rel="noopener" class="chat-inline-link">${label}</a>`;
+    })
     .replace(/(^|\n)[ \t]*[\*-][ \t]+/g, "$1• ")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/`([^`]+)`/g, "<code>$1</code>");
+  return out;
 }
 
 function showToast(msg) {

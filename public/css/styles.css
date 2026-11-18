@@ -1925,6 +1925,18 @@ body.is-preview-embed #device-stage {
 .chat-msg p {
   margin: 0;
   white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.chat-inline-link {
+  color: var(--burgundy);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.chat-msg-user .chat-inline-link {
+  color: var(--gold-bright);
 }
 
 .chat-msg-bot {
