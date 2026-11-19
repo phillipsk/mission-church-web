@@ -46,6 +46,20 @@ function getWpAuthHeader() {
 }
 
 /**
+ * Resolves whether a parsed item targets WordPress Posts only or both Posts + M.E. Calendar Events.
+ * Routine recurring weekly events are filtered earlier in triage.
+ */
+export function resolveTargetTypesForDraft(item = {}) {
+  if (Array.isArray(item.targetTypes) && item.targetTypes.length) {
+    return item.targetTypes;
+  }
+  if (item.contentType === "announcement_post") {
+    return ["post"];
+  }
+  return ["post", "mec-events"];
+}
+
+/**
  * Strips regular lay participant names & personal contacts from public copy,
  * while preserving clergy titles and designated speakers.
  */
@@ -283,7 +297,11 @@ Inspect the email text and/or attached flyer or Monthly Church Calendar image.
 
 RULES:
 1. Detect whether this email is a Monthly Church Calendar ("isMonthlyCalendar": true) or a single event/announcement ("isMonthlyCalendar": false).
-2. If it is a Monthly Church Calendar, separate standard recurring weekly items (regular Sunday Worship at 12 PM, regular Tuesday Night Bible Study at 7:30 PM, weekday Morning Prayer Line) into "recurringSummary", and extract ONLY public net-new / special monthly events into "netNewEvents" (e.g. 1st Sunday Communion, 5th Sunday Family & Friends Fellowship, 1st Saturday Shepherd's Kitchen, guest speakers like Elder Joseph C. Black Jr., Youth Service, Candlelight Service, Watch Night, concerts, special prayer/fasting, conferences — omit private internal-only meetings like Staff/Trustees/Deacon meetings unless emphasized). If "isMonthlyCalendar" is false, ALWAYS extract the main event from the flyer/email into "netNewEvents" (at least 1 item).
+2. Classify each item with "contentType" and "isRecurring":
+   - "recurring_event" ("isRecurring": true): Routine recurring weekly schedule already on M.E. Calendar (regular Sunday Worship at 12 PM, regular Monday 6:30 AM Prayer, regular Tue–Thu 7:00 AM Prayer Line, regular Tuesday 7:30 PM Bible Study). Put these in "recurringSummary" and omit from "netNewEvents".
+   - "special_event" ("isRecurring": false): Dated net-new event or special gathering (1st Sunday Communion, 5th Sunday Fellowship, Shepherd's Kitchen, guest speakers like Elder Joseph C. Black Jr., Youth Service, Candlelight Service, Watch Night, conferences, concerts) -> creates BOTH a WordPress Post and M.E. Calendar Event.
+   - "announcement_post" ("isRecurring": false): General non-event church update (Building Fund pledge, BAND App invite, pastoral letter, ministry news without a dated calendar slot) -> creates ONLY a WordPress Post (no M.E. Calendar Event).
+   - Always omit private internal-only meetings (Staff/Trustees/Deacon meetings) unless explicitly emphasized for the congregation. If "isMonthlyCalendar" is false and it is not routine recurring weekly clutter, include at least 1 item in "netNewEvents".
 3. PRIVACY & SPEAKER RULE: In "publicSummary" and "title", STRIP regular church participant / lay member names (e.g., Sister X, Brother Y organizing snacks/logistics) while KEEPING clergy members and billed speakers (Bishop, Pastor, Apostle, Elder, First Lady, Evangelist, Minister, featured guest speakers).
 4. Return ONLY valid JSON (no markdown fences):
 {
@@ -293,9 +311,11 @@ RULES:
   "netNewEvents": [
     {
       "title": "clean public title (max 70 chars)",
-      "category": "one of: Upcoming Events, Outreach & Pantry, Youth & Fellowship, Zoom Gatherings",
-      "badge": "uppercase pill e.g. 5TH SUNDAY · NOV 29",
-      "startDate": "YYYY-MM-DD",
+      "contentType": "special_event | announcement_post | recurring_event",
+      "isRecurring": boolean,
+      "category": "one of: Upcoming Events, Outreach & Pantry, Youth & Fellowship, Zoom Gatherings, Stewardship & News",
+      "badge": "uppercase pill e.g. 5TH SUNDAY · NOV 29 or CHURCH NEWS",
+      "startDate": "YYYY-MM-DD (empty if announcement_post with no event date)",
       "startTime": "HH:MM (24h)",
       "endDate": "YYYY-MM-DD",
       "endTime": "HH:MM (24h)",
@@ -344,12 +364,27 @@ ${String(bodyText).slice(0, 4500)}`;
       const cleaned = raw.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
       const parsed = JSON.parse(cleaned);
       if (Array.isArray(parsed.netNewEvents)) {
-        parsed.netNewEvents = parsed.netNewEvents.map((ev) => ({
-          ...ev,
-          publicSummary: sanitizePublicCopy(ev.publicSummary || "", {
-            preserveSpeakers: ev.speaker ? ev.speaker.split(/[,;&]+/) : [],
-          }),
-        }));
+        const filtered = [];
+        parsed.recurringSummary = Array.isArray(parsed.recurringSummary) ? parsed.recurringSummary : [];
+        for (const ev of parsed.netNewEvents) {
+          if (ev.isRecurring || ev.contentType === "recurring_event") {
+            if (ev.title && !parsed.recurringSummary.includes(ev.title)) {
+              parsed.recurringSummary.push(`${ev.title} (${ev.dateDisplay || "Recurring"})`);
+            }
+            continue;
+          }
+          const contentType = ev.contentType === "announcement_post" ? "announcement_post" : "special_event";
+          filtered.push({
+            ...ev,
+            contentType,
+            isRecurring: false,
+            targetTypes: resolveTargetTypesForDraft({ contentType, targetTypes: ev.targetTypes }),
+            publicSummary: sanitizePublicCopy(ev.publicSummary || "", {
+              preserveSpeakers: ev.speaker ? ev.speaker.split(/[,;&]+/) : [],
+            }),
+          });
+        }
+        parsed.netNewEvents = filtered;
       }
       return parsed;
     } catch {
@@ -443,9 +478,11 @@ export async function publishDraftToWordPress({
   draft,
   imageChoice = "original",
   wpStatus = "draft",
-  targetTypes = ["post", "mec-events"],
+  targetTypes,
   publicDir,
 }) {
+  const effectiveTargetTypes =
+    Array.isArray(targetTypes) && targetTypes.length ? targetTypes : resolveTargetTypesForDraft(draft);
   const { baseUrl, approvalSecret, appPassword } = getWordPressConfig();
   if (!isWordPressConfigured()) {
     throw new Error("WordPress credentials or signing secret are not configured.");
@@ -474,8 +511,8 @@ export async function publishDraftToWordPress({
       content: gutenbergHtml,
       excerpt: cleanSummary,
       status: wpStatus,
-      createPost: targetTypes.includes("post"),
-      createMecEvent: targetTypes.includes("mec-events"),
+      createPost: effectiveTargetTypes.includes("post"),
+      createMecEvent: effectiveTargetTypes.includes("mec-events"),
       startDate: draft.startDate || new Date().toISOString().slice(0, 10),
       endDate: draft.endDate || draft.startDate || new Date().toISOString().slice(0, 10),
       startTime: draft.startTime || "12:00",
@@ -533,7 +570,7 @@ export async function publishDraftToWordPress({
 
   const results = { featuredMediaId: media?.id || null, featuredMediaUrl: media?.source_url || null };
 
-  if (targetTypes.includes("post")) {
+  if (effectiveTargetTypes.includes("post")) {
     const postRes = await fetch(`${baseUrl}/wp-json/wp/v2/posts`, {
       method: "POST",
       headers: {
@@ -560,7 +597,7 @@ export async function publishDraftToWordPress({
     };
   }
 
-  if (targetTypes.includes("mec-events")) {
+  if (effectiveTargetTypes.includes("mec-events")) {
     const eventRes = await fetch(`${baseUrl}/wp-json/wp/v2/mec-events`, {
       method: "POST",
       headers: {

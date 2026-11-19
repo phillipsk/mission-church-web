@@ -33,6 +33,7 @@ import {
   parseMonthlyCalendarOrEmail,
   prepareDualEventImages,
   publishDraftToWordPress,
+  resolveTargetTypesForDraft,
 } from "./services/wordpress-publisher.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -629,6 +630,7 @@ export function createAppServer() {
             draft,
             imageChoice: img,
             wpStatus: mode,
+            targetTypes: resolveTargetTypesForDraft(draft),
             publicDir: PUBLIC_DIR,
           });
           draft.wpResult = wpResult;
@@ -653,7 +655,9 @@ export function createAppServer() {
             draft,
             imageChoice: body.img === "ai" ? "ai" : "original",
             wpStatus: body.mode === "publish" ? "publish" : "draft",
-            targetTypes: Array.isArray(body.targetTypes) ? body.targetTypes : ["post", "mec-events"],
+            targetTypes: Array.isArray(body.targetTypes)
+              ? body.targetTypes
+              : resolveTargetTypesForDraft(draft),
             publicDir: PUBLIC_DIR,
           });
           draft.wpResult = wpResult;
@@ -801,6 +805,8 @@ export function createAppServer() {
             sourceLabel: parsed.isMonthlyCalendar
               ? `Monthly Calendar · ${parsed.monthLabel || "Net-New Event"}`
               : "Church Email / Flyer Parser",
+            contentType: ev.contentType || "special_event",
+            targetTypes: resolveTargetTypesForDraft(ev),
             badge: ev.badge || "CHURCH EVENT",
             category: ev.category || "Upcoming Events",
             title: ev.title,

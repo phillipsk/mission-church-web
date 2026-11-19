@@ -5,6 +5,7 @@ import { resolveGeminiApiKey } from "./gemini-concierge.js";
 import {
   parseMonthlyCalendarOrEmail,
   prepareDualEventImages,
+  resolveTargetTypesForDraft,
   sanitizePublicCopy,
 } from "./wordpress-publisher.js";
 
@@ -84,12 +85,18 @@ async function extractStructuredPostWithGemini({
 
   const prompt = `You are drafting a warm, clear announcement card for Mission Church of Our Lord Jesus Christ (130 Highland Ave, Somerville, MA).
 Given the source text and optional flyer/event image:
+- TRIAGE RULE: Classify "contentType" as:
+  - "recurring_event" ("isRecurring": true) if it is purely a routine recurring weekly service reminder already on M.E. Calendar (regular Sunday Worship at 12 PM, Monday 6:30 AM Morning Prayer, Tue–Thu 7:00 AM Prayer Line, Tuesday 7:30 PM Bible Study).
+  - "special_event" ("isRecurring": false) if it is a net-new dated gathering/service/pantry/conference -> publishes WordPress Post + M.E. Calendar Event.
+  - "announcement_post" ("isRecurring": false) if it is a general non-event church update (Building Fund pledge, BAND highlight, community news) -> publishes WordPress Post ONLY.
 - PRIVACY & SPEAKER RULE: In "summary" and "title", STRIP regular church participant / lay member names (e.g., Sister X, Brother Y organizing snacks/logistics or personal contact info) while KEEPING clergy members and billed speakers (Bishop, Pastor, Apostle, Elder, First Lady, Evangelist, Minister, featured speakers).
 Return ONLY valid JSON (no markdown fences) with keys:
 {
   "title": "concise, engaging post title (max 70 chars)",
+  "contentType": "special_event | announcement_post | recurring_event",
+  "isRecurring": boolean,
   "badge": "short uppercase pill like UPCOMING · DEC 2026 or SUNDAY WORSHIP or BAND HIGHLIGHT",
-  "category": "one of: Upcoming Events, Outreach & Pantry, Youth & Fellowship, Zoom Gatherings",
+  "category": "one of: Upcoming Events, Outreach & Pantry, Youth & Fellowship, Zoom Gatherings, Stewardship & News",
   "dateDisplay": "human readable date & time",
   "location": "address or Zoom/BAND link info",
   "speaker": "clergy or platform speaker names if any, else empty string",
@@ -137,8 +144,17 @@ ${String(textContext).slice(0, 3500)}`;
       const cleanSummary = sanitizePublicCopy(parsed.summary || fallback.summary, {
         preserveSpeakers: parsed.speaker ? parsed.speaker.split(/[,;&]+/) : [],
       });
+      const contentType =
+        parsed.isRecurring || parsed.contentType === "recurring_event"
+          ? "recurring_event"
+          : parsed.contentType === "announcement_post"
+          ? "announcement_post"
+          : "special_event";
       return {
         title: parsed.title || fallback.title,
+        contentType,
+        isRecurring: contentType === "recurring_event",
+        targetTypes: resolveTargetTypesForDraft({ contentType }),
         badge: parsed.badge || fallback.badge || "CHURCH UPDATE",
         category: parsed.category || fallback.category || "Upcoming Events",
         dateDisplay: parsed.dateDisplay || fallback.dateDisplay || "Check Church Calendar",
@@ -430,11 +446,19 @@ export async function sendApprovalEmail({
       : `${publicBaseUrl}${draft.aiImageUrl}`
     : "";
 
+  const targetTypes = resolveTargetTypesForDraft(draft);
+  const wpTargetLabel = targetTypes.includes("mec-events")
+    ? "WORDPRESS EVENT + POST"
+    : "WORDPRESS POST ONLY";
+  const wpPublishBtnLabel = targetTypes.includes("mec-events")
+    ? "Publish Event + Post"
+    : "Publish Post";
+
   const subject = `[Mission Church Approval Needed] ${draft.title}`;
   const html = `
   <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 660px; margin: 0 auto; background: #ffffff; border: 1px solid #e6e2e8; border-radius: 16px; overflow: hidden;">
     <div style="background: #7e151c; color: #fff; padding: 20px 24px;">
-      <div style="font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #ecd363; font-weight: 700;">${escapeHtmlBasic(draft.sourceLabel)} · AI Public Draft &amp; Dual Image Options</div>
+      <div style="font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #ecd363; font-weight: 700;">${escapeHtmlBasic(draft.sourceLabel)} · ${wpTargetLabel} · Dual Image Options</div>
       <h2 style="margin: 6px 0 0; font-size: 22px;">${escapeHtmlBasic(draft.title)}</h2>
     </div>
     <div style="padding: 18px 24px 0;">
@@ -453,10 +477,10 @@ export async function sendApprovalEmail({
       ${draft.speaker ? `<p style="margin: 0 0 10px; font-size: 13px; color: #4a0d13;"><strong>Speaker / Leadership:</strong> ${escapeHtmlBasic(draft.speaker)}</p>` : ""}
       <p style="margin: 0 0 22px; font-size: 15px; line-height: 1.55;">${escapeHtmlBasic(draft.summary)}</p>
       <div style="margin-bottom: 14px;">
-        <a href="${wpOrigPubUrl}" style="display: inline-block; background: #7e151c; color: #ffffff; text-decoration: none; font-weight: 700; padding: 11px 18px; border-radius: 999px; margin: 0 8px 8px 0;">Publish to WordPress (Option A)</a>
+        <a href="${wpOrigPubUrl}" style="display: inline-block; background: #7e151c; color: #ffffff; text-decoration: none; font-weight: 700; padding: 11px 18px; border-radius: 999px; margin: 0 8px 8px 0;">${wpPublishBtnLabel} (Option A)</a>
         ${
           previewAiUrl
-            ? `<a href="${wpAiPubUrl}" style="display: inline-block; background: #4a0d13; color: #ecd363; text-decoration: none; font-weight: 700; padding: 11px 18px; border-radius: 999px; margin: 0 8px 8px 0;">Publish to WordPress (Option B AI)</a>`
+            ? `<a href="${wpAiPubUrl}" style="display: inline-block; background: #4a0d13; color: #ecd363; text-decoration: none; font-weight: 700; padding: 11px 18px; border-radius: 999px; margin: 0 8px 8px 0;">${wpPublishBtnLabel} (Option B AI)</a>`
             : ""
         }
         <a href="${wpOrigDraftUrl}" style="display: inline-block; background: #f7f7f9; color: #1e1720; border: 1px solid #d7c8cd; text-decoration: none; font-weight: 700; padding: 11px 16px; border-radius: 999px; margin: 0 8px 8px 0;">Stage WP Draft</a>
@@ -578,31 +602,41 @@ export async function watchAndPrepareDrafts({
           imageMimeType: effectiveImageData?.mimeType || "image/jpeg",
         });
 
-        const parsedItems =
-          calendarCheck.isMonthlyCalendar && calendarCheck.netNewEvents?.length
-            ? calendarCheck.netNewEvents
-            : [
-                await extractStructuredPostWithGemini({
-                  apiKey,
-                  textContext: `Email Subject: ${subject}\nFrom: ${headers.from || ""}\nDate: ${headers.date || ""}\nBody:\n${plain || msg.snippet || ""}`,
-                  imageBase64: effectiveImageData?.base64 || "",
-                  imageMimeType: effectiveImageData?.mimeType || "image/jpeg",
-                  fallback: {
-                    title: sanitizePublicCopy(subject).slice(0, 70),
-                    badge: "EMAIL UPDATE",
-                    category: "Upcoming Events",
-                    dateDisplay: headers.date || "Recent Church Email",
-                    location: "Mission Church · 130 Highland Ave, Somerville, MA",
-                    summary: sanitizePublicCopy(msg.snippet || plain || subject).slice(0, 220),
-                    ctaLabel: "Plan to Attend",
-                  },
-                }),
-              ];
+        const parsedItemsRaw = calendarCheck.isMonthlyCalendar
+          ? calendarCheck.netNewEvents || []
+          : calendarCheck.netNewEvents?.length
+          ? calendarCheck.netNewEvents
+          : [
+              await extractStructuredPostWithGemini({
+                apiKey,
+                textContext: `Email Subject: ${subject}\nFrom: ${headers.from || ""}\nDate: ${headers.date || ""}\nBody:\n${plain || msg.snippet || ""}`,
+                imageBase64: effectiveImageData?.base64 || "",
+                imageMimeType: effectiveImageData?.mimeType || "image/jpeg",
+                fallback: {
+                  title: sanitizePublicCopy(subject).slice(0, 70),
+                  contentType: "announcement_post",
+                  isRecurring: false,
+                  targetTypes: ["post"],
+                  badge: "EMAIL UPDATE",
+                  category: "Upcoming Events",
+                  dateDisplay: headers.date || "Recent Church Email",
+                  location: "Mission Church · 130 Highland Ave, Somerville, MA",
+                  summary: sanitizePublicCopy(msg.snippet || plain || subject).slice(0, 220),
+                  ctaLabel: "Plan to Attend",
+                },
+              }),
+            ];
+
+        const parsedItems = parsedItemsRaw.filter(
+          (item) => !item.isRecurring && item.contentType !== "recurring_event"
+        );
 
         for (let idx = 0; idx < parsedItems.length; idx++) {
           const item = parsedItems[idx];
           const suffix = parsedItems.length > 1 ? `-${idx + 1}` : "";
           const draftId = `draft-gmail-${ref.id}${suffix}`;
+          const contentType = item.contentType === "announcement_post" ? "announcement_post" : "special_event";
+          const targetTypes = resolveTargetTypesForDraft({ contentType, targetTypes: item.targetTypes });
           const origImgUrl = remoteImageUrl || "/assets/photos/00_cover_sanctuary_worship_1920x1080.jpg";
           const dualImages = await prepareDualEventImages({
             draftId,
@@ -623,6 +657,8 @@ export async function watchAndPrepareDrafts({
             sourceLabel: calendarCheck.isMonthlyCalendar
               ? `Monthly Calendar · ${calendarCheck.monthLabel || "Net-New Event"}`
               : "Gmail Watch · Mission Church",
+            contentType,
+            targetTypes,
             badge: item.badge || "CHURCH UPDATE",
             category: item.category || "Upcoming Events",
             title: item.title,
@@ -781,11 +817,20 @@ export async function ingestExternalBandPosts({
       },
     });
 
+    const hasSchedule = Boolean(schedule.start_at || schedule.title);
+    const contentType =
+      structured.contentType === "recurring_event" || structured.isRecurring
+        ? "recurring_event"
+        : hasSchedule || structured.contentType === "special_event"
+        ? "special_event"
+        : "announcement_post";
     const draft = {
       id: `draft-band-${postKey}`,
       sourceId,
       sourceType: "band",
       sourceLabel: "BAND Post (Text + Description + Photo)",
+      contentType,
+      targetTypes: resolveTargetTypesForDraft({ contentType }),
       badge: structured.badge,
       category: structured.category,
       title: structured.title,

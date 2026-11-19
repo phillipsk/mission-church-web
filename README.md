@@ -2,8 +2,13 @@
 
 Modern, responsive website, AI Church Concierge, and automated event/newsletter ingestion backend for **Mission Church of Our Lord Jesus Christ** (130 Highland Avenue, Somerville, MA 02143).
 
-- **Live Shareable Public URL:** https://mission-church-web-5jdy3d7zua-uc.a.run.app
+- **Live Shareable Public URL (Next-Gen MVP):** https://mission-church-web-5jdy3d7zua-uc.a.run.app
 - **Alternate Canonical Cloud Run URL:** https://mission-church-web-687901748717.us-central1.run.app
+- **Live WordPress Production Site Powered by This Harness:** https://missionchurchcooljc.com
+- **WordPress Agentic Wrapper & Overhaul Portfolio Repo:** https://github.com/phillipsk/mission-wp-agentic-harness
+
+> [!NOTE]
+> **Hybrid Production Role:** While the next-generation native web frontend (`mission-web`) incorporates Board of Technology feedback (white-forward palette, modern SVG emblem, 3-short homepage limit, strictly upcoming events slider, dedicated ministry subpages) and scales to zero at **~\$0.14/month idle**, its **Google Cloud Run backend + 15-minute Cloud Scheduler (`mission-church-watch-poll`) + Gemini 2.5 Flash Multimodal Orchestrator** actively serves as the **Agentic Automation Harness** for `https://missionchurchcooljc.com`! Incoming emails from `missionchurch1@gmail.com` / flyers / BAND posts are triaged into `recurring_event` (skipped), `special_event` (WordPress Post + M.E. Calendar Event), or `announcement_post` (WordPress Post only), redacted for public privacy, paired with dual Original + Gemini AI graphics, emailed for 1-click approval, and published via HMAC-SHA256 to `/wp-json/mission/v1/publish`.
 
 ---
 
