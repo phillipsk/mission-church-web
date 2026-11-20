@@ -214,6 +214,8 @@ function isAuthorizedAdmin(req) {
   return Boolean(getAuthenticatedAdmin(req) || hasAutomationHeader(req));
 }
 
+let pollInFlight = null;
+
 export function createAppServer() {
   return http.createServer(async (req, res) => {
     const method = req.method || "GET";
@@ -452,26 +454,34 @@ export function createAppServer() {
       }
 
       if ((pathname === "/api/admin/watch-poll" || pathname === "/api/webhooks/gmail-push") && method === "POST") {
-        const store = await loadStore();
-        const { newDrafts, emailResults } = await watchAndPrepareDrafts({
-          store,
-          publicDir: PUBLIC_DIR,
-          publicBaseUrl,
-          sendEmails: true,
-        });
-        const now = new Date().toISOString();
-        store.syncState.gmail.lastRunAt = now;
-        if (newDrafts.length > 0) {
-          store.syncState.gmail.status = `${store.pendingPosts.length} draft(s) awaiting approval`;
+        if (!pollInFlight) {
+          pollInFlight = (async () => {
+            const store = await loadStore();
+            const { newDrafts, emailResults } = await watchAndPrepareDrafts({
+              store,
+              publicDir: PUBLIC_DIR,
+              publicBaseUrl,
+              sendEmails: true,
+            });
+            const now = new Date().toISOString();
+            store.syncState.gmail.lastRunAt = now;
+            if (newDrafts.length > 0) {
+              store.syncState.gmail.status = `${store.pendingPosts.length} draft(s) awaiting approval`;
+            }
+            const persist = await saveStore(store);
+            return { now, persist, newDrafts, emailResults, pendingPosts: store.pendingPosts };
+          })().finally(() => {
+            pollInFlight = null;
+          });
         }
-        const persist = await saveStore(store);
+        const { now, persist, newDrafts, emailResults, pendingPosts } = await pollInFlight;
         const showDetails = isAuthorizedAdmin(req);
         return sendJson(res, 200, {
           ok: true,
           checkedAt: now,
           persistenceBackend: persist.backend,
           newDraftsCount: newDrafts.length,
-          ...(showDetails ? { newDrafts, emailResults, pendingPosts: store.pendingPosts } : {}),
+          ...(showDetails ? { newDrafts, emailResults, pendingPosts } : {}),
         });
       }
 

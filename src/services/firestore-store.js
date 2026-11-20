@@ -13,6 +13,45 @@ const DOC_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/data
 
 let cachedToken = { token: "", expiresAt: 0 };
 let writeQueue = Promise.resolve();
+const localClaimedIds = new Set();
+
+/**
+ * Atomically claims a sourceId in Firestore (`processed_sources/{docId}`) before
+ * running Gemini drafting or sending approval emails. Returns false if already claimed.
+ */
+export async function claimSourceId(sourceId) {
+  const key = String(sourceId || "").trim();
+  if (!key) return false;
+  if (localClaimedIds.has(key)) return false;
+  localClaimedIds.add(key);
+
+  const token = await getAccessToken();
+  if (!token) return true;
+
+  const docId = key.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 200);
+  const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/processed_sources?documentId=${encodeURIComponent(docId)}`;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fields: {
+          sourceId: { stringValue: key },
+          claimedAt: { stringValue: new Date().toISOString() },
+        },
+      }),
+    });
+    if (res.status === 409) {
+      return false;
+    }
+    return res.ok;
+  } catch {
+    return true;
+  }
+}
 
 function toFsValue(val) {
   if (val === null || val === undefined) return { nullValue: null };
